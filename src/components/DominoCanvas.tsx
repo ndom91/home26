@@ -11,6 +11,8 @@ type Domino = {
   seed: number
   topValue: number
   bottomValue: number
+  strokeOpacity: number
+  influence: number
 }
 
 const DOMINO_COUNT = 88
@@ -50,6 +52,8 @@ export function DominoCanvas() {
       seed: index * 10.91,
       topValue: Math.floor(randomFromSeed(index * 7.13 + 2.8) * 6),
       bottomValue: Math.floor(randomFromSeed(index * 11.73 + 6.2) * 6),
+      strokeOpacity: 0.03 + randomFromSeed(index * 31.17 + 4.9) * 0.07,
+      influence: 0,
     }))
     let animationFrame = 0
     let width = 0
@@ -117,7 +121,10 @@ export function DominoCanvas() {
       const dx = pointer.x - x
       const dy = pointer.y - y
       const distance = Math.hypot(dx, dy)
-      const influence = Math.max(0, 1 - distance / 180)
+      const targetInfluence = Math.max(0, 1 - distance / 180)
+      const easing = 1 - Math.exp(-delta / 250)
+      domino.influence += (targetInfluence - domino.influence) * easing
+      const influence = domino.influence
       const tileWidth = 16 * domino.size
       const tileHeight = 42 * domino.size
       const seconds = time * 0.001
@@ -135,7 +142,10 @@ export function DominoCanvas() {
       context.save()
       context.translate(x, y)
       context.rotate(domino.angle)
-      context.strokeStyle = influence > 0 ? 'rgba(200, 255, 0, 0.5)' : 'rgba(237, 232, 223, 0.1)'
+      const strokeAlpha = domino.strokeOpacity + (0.5 - domino.strokeOpacity) * influence
+      const pipAlpha = 0.05 + 0.7 * influence
+
+      context.strokeStyle = `rgba(${237 - 37 * influence}, ${232 + 23 * influence}, ${223 - 223 * influence}, ${strokeAlpha})`
       context.fillStyle = 'rgba(13, 12, 10, 0.1)'
       context.lineWidth = 1
       context.beginPath()
@@ -147,7 +157,7 @@ export function DominoCanvas() {
       context.lineTo(tileWidth / 2 - 3, 0)
       context.stroke()
 
-      context.fillStyle = influence > 0 ? 'rgba(200, 255, 0, 0.75)' : 'rgba(237, 232, 223, 0.05)'
+      context.fillStyle = `rgba(${237 - 37 * influence}, ${232 + 23 * influence}, ${223 - 223 * influence}, ${pipAlpha})`
       drawPips(domino.topValue, tileWidth, tileHeight, -tileHeight * 0.25)
       drawPips(domino.bottomValue, tileWidth, tileHeight, tileHeight * 0.25)
 
