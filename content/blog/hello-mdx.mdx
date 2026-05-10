@@ -1,0 +1,25 @@
+---
+title: Hello MDX
+description: A first bundled MDX post for the new site.
+publishedAt: 2026-05-10
+tags:
+  - tanstack
+  - mdx
+draft: false
+---
+
+import { Callout } from '../../src/components/mdx/callout'
+
+# Hello MDX
+
+This post lives in `content/blog` and is bundled into the site at build time.
+
+<Callout>
+  MDX lets posts include React components while still keeping content as files in this repo.
+</Callout>
+
+```tsx
+export function TinyCounter({ count }: { count: number }) {
+  return <span>{count}</span>
+}
+```
