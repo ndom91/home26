@@ -9,6 +9,8 @@ type Domino = {
   spin: number
   size: number
   seed: number
+  topValue: number
+  bottomValue: number
 }
 
 const DOMINO_COUNT = 88
@@ -44,8 +46,10 @@ export function DominoCanvas() {
       vy: (((index * 61) % 100) - 50) * 0.000001,
       angle: randomFromSeed(index * 29.17 + 9.2) * Math.PI * 2,
       spin: (index % 2 === 0 ? 1 : -1) * (0.00001 + (index % 5) * 0.000002),
-      size: 0.42 + randomFromSeed(index * 2.37 + 5.1) * 0.4,
-      seed: index * 19.91,
+      size: 0.49 + randomFromSeed(index * 2.37 + 5.1) * 0.4,
+      seed: index * 10.91,
+      topValue: Math.floor(randomFromSeed(index * 7.13 + 2.8) * 6),
+      bottomValue: Math.floor(randomFromSeed(index * 11.73 + 6.2) * 6),
     }))
     let animationFrame = 0
     let width = 0
@@ -60,6 +64,51 @@ export function DominoCanvas() {
       canvas.width = Math.max(1, Math.floor(width * pixelRatio))
       canvas.height = Math.max(1, Math.floor(height * pixelRatio))
       context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
+    }
+
+    const drawPips = (value: number, tileWidth: number, tileHeight: number, yOffset: number) => {
+      const xOffset = tileWidth * 0.22
+      const yUnit = tileHeight * 0.12
+      const positions: Record<number, Array<[number, number]>> = {
+        0: [],
+        1: [[0, 0]],
+        2: [
+          [-xOffset, -yUnit],
+          [xOffset, yUnit],
+        ],
+        3: [
+          [-xOffset, -yUnit],
+          [0, 0],
+          [xOffset, yUnit],
+        ],
+        4: [
+          [-xOffset, -yUnit],
+          [xOffset, -yUnit],
+          [-xOffset, yUnit],
+          [xOffset, yUnit],
+        ],
+        5: [
+          [-xOffset, -yUnit],
+          [xOffset, -yUnit],
+          [0, 0],
+          [-xOffset, yUnit],
+          [xOffset, yUnit],
+        ],
+        6: [
+          [-xOffset, -yUnit],
+          [xOffset, -yUnit],
+          [-xOffset, 0],
+          [xOffset, 0],
+          [-xOffset, yUnit],
+          [xOffset, yUnit],
+        ],
+      }
+
+      for (const [x, y] of positions[value]) {
+        context.beginPath()
+        context.arc(x, y + yOffset, Math.max(1, tileWidth * 0.09), 0, Math.PI * 2)
+        context.fill()
+      }
     }
 
     const drawDomino = (domino: Domino, time: number, delta: number) => {
@@ -86,8 +135,8 @@ export function DominoCanvas() {
       context.save()
       context.translate(x, y)
       context.rotate(domino.angle)
-      context.strokeStyle = influence > 0 ? 'rgba(200, 255, 0, 0.5)' : 'rgba(237, 232, 223, 0.16)'
-      context.fillStyle = 'rgba(13, 12, 10, 0.8)'
+      context.strokeStyle = influence > 0 ? 'rgba(200, 255, 0, 0.5)' : 'rgba(237, 232, 223, 0.1)'
+      context.fillStyle = 'rgba(13, 12, 10, 0.1)'
       context.lineWidth = 1
       context.beginPath()
       context.roundRect(-tileWidth / 2, -tileHeight / 2, tileWidth, tileHeight, 2)
@@ -98,12 +147,9 @@ export function DominoCanvas() {
       context.lineTo(tileWidth / 2 - 3, 0)
       context.stroke()
 
-      for (const dot of [-1, 1]) {
-        context.beginPath()
-        context.arc(0, dot * tileHeight * 0.24, 1.5, 0, Math.PI * 2)
-        context.fillStyle = influence > 0 ? 'rgba(200, 255, 0, 0.75)' : 'rgba(237, 232, 223, 0.3)'
-        context.fill()
-      }
+      context.fillStyle = influence > 0 ? 'rgba(200, 255, 0, 0.75)' : 'rgba(237, 232, 223, 0.05)'
+      drawPips(domino.topValue, tileWidth, tileHeight, -tileHeight * 0.25)
+      drawPips(domino.bottomValue, tileWidth, tileHeight, tileHeight * 0.25)
 
       context.restore()
     }
@@ -115,7 +161,7 @@ export function DominoCanvas() {
 
       previousTime = time
       context.clearRect(0, 0, width, height)
-      context.fillStyle = 'rgba(13, 12, 10, 0.22)'
+      context.fillStyle = 'rgba(13, 12, 10, 0.12)'
       context.fillRect(0, 0, width, height)
 
       for (const domino of dominoes) {
@@ -139,14 +185,16 @@ export function DominoCanvas() {
     resize()
     animationFrame = window.requestAnimationFrame(draw)
     window.addEventListener('resize', resize)
-    canvas.addEventListener('pointermove', onPointerMove)
-    canvas.addEventListener('pointerleave', onPointerLeave)
+    const pointerTarget = canvas.parentElement ?? canvas
+
+    pointerTarget.addEventListener('pointermove', onPointerMove)
+    pointerTarget.addEventListener('pointerleave', onPointerLeave)
 
     return () => {
       window.cancelAnimationFrame(animationFrame)
       window.removeEventListener('resize', resize)
-      canvas.removeEventListener('pointermove', onPointerMove)
-      canvas.removeEventListener('pointerleave', onPointerLeave)
+      pointerTarget.removeEventListener('pointermove', onPointerMove)
+      pointerTarget.removeEventListener('pointerleave', onPointerLeave)
     }
   }, [])
 

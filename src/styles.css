@@ -36,7 +36,7 @@ body {
 
 .ticker-track {
   display: inline-block;
-  animation: ticker-scroll 45s linear infinite;
+  animation: ticker-scroll 150s linear infinite;
   white-space: nowrap;
   will-change: transform;
 }
