@@ -35,7 +35,7 @@ function PostCard({ post }: { post: PostData }) {
     <Link
       to="/blog/$slug"
       params={{ slug: post.slug }}
-      className="group flex items-start justify-between gap-6 px-6 py-5 transition-colors hover:bg-[#131210]"
+      className="group flex items-start justify-between gap-6 px-6 py-5 transition-colors hover:bg-[#111009]"
     >
       <div className="min-w-0 flex-1">
         <h3 className="font-mono text-sm font-medium leading-snug text-[#ede8df] transition-colors group-hover:text-white">
