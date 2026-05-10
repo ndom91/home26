@@ -7,7 +7,9 @@ import viteReact from '@vitejs/plugin-react'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import rehypePrettyCode from 'rehype-pretty-code'
 import rehypeSlug from 'rehype-slug'
+import remarkFrontmatter from 'remark-frontmatter'
 import remarkGfm from 'remark-gfm'
+import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import { defineConfig } from 'vite'
 
 const config = defineConfig({
@@ -17,7 +19,7 @@ const config = defineConfig({
     cloudflare({ viteEnvironment: { name: 'ssr' } }),
     tailwindcss(),
     mdx({
-      remarkPlugins: [remarkGfm],
+      remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm],
       rehypePlugins: [
         rehypeSlug,
         rehypeAutolinkHeadings,
