@@ -21,7 +21,7 @@ function Ticker({ faint }: { faint?: boolean }) {
       <div className="py-1.5">
         <span
           className="ticker-track font-mono text-[9px] tracking-wide"
-          style={{ color: faint ? '#282828' : '#3a3a3a' }}
+          style={{ color: faint ? '#2a2723' : '#3d3a35' }}
         >
           {TICKER.repeat(10)}
         </span>
@@ -35,10 +35,10 @@ function PostCard({ post }: { post: PostData }) {
     <Link
       to="/blog/$slug"
       params={{ slug: post.slug }}
-      className="group flex items-start justify-between gap-6 px-6 py-5 transition-colors hover:bg-[#0c0c0c]"
+      className="group flex items-start justify-between gap-6 px-6 py-5 transition-colors hover:bg-[#131210]"
     >
       <div className="min-w-0 flex-1">
-        <h3 className="font-mono text-sm font-medium leading-snug text-[#f0ece3] transition-colors group-hover:text-white">
+        <h3 className="font-mono text-sm font-medium leading-snug text-[#ede8df] transition-colors group-hover:text-white">
           {post.title}
         </h3>
         <p className="font-mono mt-1 line-clamp-1 text-xs leading-relaxed text-[#505050]">
@@ -50,7 +50,7 @@ function PostCard({ post }: { post: PostData }) {
           <span
             key={tag}
             className="font-mono px-2 py-0.5 text-[9px] uppercase tracking-widest text-[#555] transition-colors group-hover:text-[#777]"
-            style={{ border: '1px solid #2a2a2a' }}
+            style={{ border: '1px solid #242220' }}
           >
             {tag}
           </span>
@@ -73,15 +73,15 @@ function Home() {
   const posts = Route.useLoaderData()
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#080808] text-[#f0ece3]">
+    <div className="flex min-h-screen flex-col bg-[#0d0c0a] text-[#ede8df]">
       <Ticker />
 
       {/* Navigation */}
       <nav
         className="grid border-b"
-        style={{ gridTemplateColumns: 'auto 1fr auto', borderColor: '#1a1a1a' }}
+        style={{ gridTemplateColumns: 'auto 1fr auto', borderColor: '#242220' }}
       >
-        <div className="border-r px-6 py-4" style={{ borderColor: '#1a1a1a' }}>
+        <div className="border-r px-6 py-4" style={{ borderColor: '#242220' }}>
           <span className="font-mono text-[11px] font-medium uppercase tracking-[0.25em]">
             NDOM91
           </span>
@@ -89,7 +89,7 @@ function Home() {
         <div className="flex items-center gap-7 px-7">
           <Link
             to="/blog"
-            className="font-mono text-[10px] uppercase tracking-widest text-[#606060] transition-colors hover:text-[#f0ece3]"
+            className="font-mono text-[10px] uppercase tracking-widest text-[#606060] transition-colors hover:text-[#ede8df]"
           >
             WRITING
           </Link>
@@ -97,20 +97,20 @@ function Home() {
             href="https://github.com/ndom91"
             target="_blank"
             rel="noreferrer"
-            className="font-mono text-[10px] uppercase tracking-widest text-[#606060] transition-colors hover:text-[#f0ece3]"
+            className="font-mono text-[10px] uppercase tracking-widest text-[#606060] transition-colors hover:text-[#ede8df]"
           >
             GITHUB
           </a>
           <a
             href="mailto:yo@ndo.dev"
-            className="font-mono text-[10px] uppercase tracking-widest text-[#606060] transition-colors hover:text-[#f0ece3]"
+            className="font-mono text-[10px] uppercase tracking-widest text-[#606060] transition-colors hover:text-[#ede8df]"
           >
             CONTACT
           </a>
         </div>
         <div
           className="flex items-center gap-2.5 border-l px-6 py-4"
-          style={{ borderColor: '#1a1a1a' }}
+          style={{ borderColor: '#242220' }}
         >
           <span className="block size-1.5 rounded-full bg-[#c8ff00]" />
           <span className="font-mono text-[10px] uppercase tracking-widest text-[#606060]">
@@ -121,19 +121,19 @@ function Home() {
 
       {/* Hero */}
       <section id="about">
-        <div className="flex items-center border-b px-6 py-2.5" style={{ borderColor: '#1a1a1a' }}>
+        <div className="flex items-center border-b px-6 py-2.5" style={{ borderColor: '#242220' }}>
           <span className="font-mono text-[9px] uppercase tracking-widest text-[#444]">
             SOFTWARE ENGINEER · OPEN SOURCE · TYPESCRIPT · REACT · GO
           </span>
           <span
             className="ml-auto border-l pl-5 font-mono text-[9px] uppercase tracking-widest text-[#444]"
-            style={{ borderColor: '#1a1a1a' }}
+            style={{ borderColor: '#242220' }}
           >
             BERLIN, DE
           </span>
           <span
             className="ml-4 border-l pl-4 font-mono text-[9px] uppercase tracking-widest text-[#444]"
-            style={{ borderColor: '#1a1a1a' }}
+            style={{ borderColor: '#242220' }}
           >
             {new Date().getFullYear()}
           </span>
@@ -143,7 +143,7 @@ function Home() {
         <div className="select-none overflow-hidden px-4 pb-0 pt-6">
           <div className="hero-in hero-in-1">
             <p
-              className="font-heading uppercase leading-none tracking-[-0.03em] text-[#f0ece3]"
+              className="font-heading uppercase leading-none tracking-[-0.03em] text-[#ede8df]"
               style={{ fontSize: 'clamp(5rem, 22vw, 28rem)', fontWeight: 800 }}
             >
               DOMINO
@@ -156,7 +156,7 @@ function Home() {
                 fontSize: 'clamp(5rem, 22vw, 28rem)',
                 fontWeight: 800,
                 color: 'transparent',
-                WebkitTextStroke: '1px #333',
+                WebkitTextStroke: '1px #383430',
               }}
             >
               EFFECT.
@@ -174,18 +174,18 @@ function Home() {
         {/* Info grid */}
         <div
           className="hero-in hero-in-3 grid grid-cols-3 border-b border-t"
-          style={{ borderColor: '#1a1a1a' }}
+          style={{ borderColor: '#242220' }}
         >
-          <div className="border-r px-6 py-5" style={{ borderColor: '#1a1a1a' }}>
+          <div className="border-r px-6 py-5" style={{ borderColor: '#242220' }}>
             <p className="font-mono mb-2 text-[9px] uppercase tracking-widest text-[#555]">
               CURRENTLY
             </p>
-            <p className="font-mono text-sm text-[#f0ece3]">Software Engineer</p>
+            <p className="font-mono text-sm text-[#ede8df]">Software Engineer</p>
             <p className="font-mono mt-0.5 text-xs text-[#555]">@ Plain · Berlin</p>
           </div>
-          <div className="border-r px-6 py-5" style={{ borderColor: '#1a1a1a' }}>
+          <div className="border-r px-6 py-5" style={{ borderColor: '#242220' }}>
             <p className="font-mono mb-2 text-[9px] uppercase tracking-widest text-[#555]">STACK</p>
-            <p className="font-mono text-sm text-[#f0ece3]">TypeScript · React</p>
+            <p className="font-mono text-sm text-[#ede8df]">TypeScript · React</p>
             <p className="font-mono mt-0.5 text-xs text-[#555]">Go · Kubernetes · Linux</p>
           </div>
           <div className="px-6 py-5">
@@ -194,7 +194,7 @@ function Home() {
             </p>
             <a
               href="mailto:yo@ndo.dev"
-              className="font-mono block text-sm text-[#f0ece3] transition-colors hover:text-[#c8ff00]"
+              className="font-mono block text-sm text-[#ede8df] transition-colors hover:text-[#c8ff00]"
             >
               yo@ndo.dev
             </a>
@@ -211,16 +211,16 @@ function Home() {
       </section>
 
       {/* Writing — flex-1 fills remaining height */}
-      <section className="flex flex-1 flex-col border-b" style={{ borderColor: '#1a1a1a' }}>
+      <section className="flex flex-1 flex-col border-b" style={{ borderColor: '#242220' }}>
         <div
           className="flex items-center justify-between border-b px-6 py-4"
-          style={{ borderColor: '#1a1a1a' }}
+          style={{ borderColor: '#242220' }}
         >
           <div className="flex items-center gap-4">
             <span className="font-mono text-[9px] uppercase tracking-widest text-[#555]">
               WRITING
             </span>
-            <span className="h-3 w-px bg-[#2a2a2a]" />
+            <span className="h-3 w-px bg-[#242220]" />
             <span className="font-mono text-[9px] uppercase tracking-widest text-[#555]">
               {posts.length} {posts.length === 1 ? 'ENTRY' : 'ENTRIES'}
             </span>
@@ -232,7 +232,7 @@ function Home() {
             ALL POSTS →
           </Link>
         </div>
-        <div className="divide-y" style={{ borderColor: '#1a1a1a' }}>
+        <div className="divide-y" style={{ borderColor: '#242220' }}>
           {posts.length === 0 ? (
             <div className="px-6 py-10">
               <p className="font-mono text-xs text-[#3a3a3a]">{'// no posts published yet'}</p>
@@ -248,9 +248,9 @@ function Home() {
       {/* Footer */}
       <footer
         className="grid border-t"
-        style={{ gridTemplateColumns: '1fr auto', borderColor: '#1a1a1a' }}
+        style={{ gridTemplateColumns: '1fr auto', borderColor: '#242220' }}
       >
-        <div className="border-r px-6 py-5" style={{ borderColor: '#1a1a1a' }}>
+        <div className="border-r px-6 py-5" style={{ borderColor: '#242220' }}>
           <p className="font-mono text-[9px] uppercase tracking-widest text-[#333]">
             NDOM91 · YO@NDO.DEV · NDO.DEV
           </p>
