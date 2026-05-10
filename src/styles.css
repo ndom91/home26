@@ -66,3 +66,17 @@ body {
 .hero-in-3 {
   animation-delay: 0.35s;
 }
+
+.domino-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  height: 100%;
+  width: 100%;
+  opacity: 0.72;
+}
+
+.domino-title {
+  position: relative;
+  text-shadow: 0 2px 0 #0d0c0a;
+}
