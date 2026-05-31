@@ -8,6 +8,30 @@ export const Route = createFileRoute('/')({
   component: Home,
 })
 
+const homeBarClass =
+  'relative z-10 grid grid-cols-[auto_1fr] items-center border-y border-rule bg-paper text-[0.7rem] uppercase tracking-[0.16em] max-[820px]:grid-cols-1'
+const homeBarCellClass = 'px-5 py-4'
+const themeIconClass =
+  'absolute top-1/2 left-1/2 size-[0.95rem] -translate-x-1/2 -translate-y-1/2 origin-center stroke-[2.2] transition-[opacity,transform] duration-[540ms] ease-spring-toggle motion-reduce:duration-[1ms]'
+const detailCardClass =
+  "relative min-h-32 overflow-hidden border-r border-rule p-[1.15rem] [--hover-color-strength:1] [--hover-tilt:3deg] [--hover-x:50%] before:pointer-events-none before:absolute before:inset-y-[-25%] before:left-0 before:w-[min(28rem,150%)] before:bg-[linear-gradient(90deg,transparent,rgb(var(--detail-accent)/calc(0.08*var(--hover-color-strength)))_18%,rgb(var(--detail-accent)/calc(0.25*var(--hover-color-strength)))_50%,rgb(var(--detail-accent)/calc(0.08*var(--hover-color-strength)))_78%,transparent)] before:content-[''] before:opacity-0 before:transition-opacity before:duration-500 before:translate-x-[calc(var(--hover-x)-50%)] before:rotate-[var(--hover-tilt)] after:pointer-events-none after:absolute after:inset-0 after:bg-[image:var(--grit-image)] after:bg-[length:180px_180px] after:bg-repeat after:content-[''] after:opacity-0 after:mix-blend-normal after:transition-opacity after:duration-500 hover:before:opacity-100 hover:before:duration-180 hover:after:opacity-[var(--grit-opacity)] hover:after:duration-180"
+const detailLabelClass = 'relative z-[1] mb-2 block text-[0.72rem] uppercase tracking-[0.22em]'
+const detailValueClass = 'relative z-[1] text-[0.72rem] uppercase tracking-[0.14em] text-muted'
+
+const eyebrowBars = [
+  'bg-accent-100',
+  'bg-accent-300',
+  'bg-accent-500',
+  'bg-accent-700',
+  'bg-accent-900',
+]
+const details = [
+  { label: 'Currently', value: 'Plain', accent: '136 169 0' },
+  { label: 'Based In', value: 'Berlin', accent: '28 111 154' },
+  { label: 'Habit', value: 'OSS', accent: '174 87 55' },
+  { label: 'Online', value: '2026', accent: '118 76 153' },
+] as const
+
 function Home() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
 
@@ -136,11 +160,14 @@ function Home() {
   }
 
   return (
-    <main className="home-page">
+    <main className="relative grid min-h-dvh grid-rows-[auto_1fr_auto] overflow-hidden bg-paper font-body text-ink">
       <TopographicField />
 
-      <header className="home-bar">
-        <nav aria-label="Primary">
+      <header className={homeBarClass}>
+        <nav
+          className={`${homeBarCellClass} flex justify-center gap-5 max-[820px]:justify-self-start`}
+          aria-label="Primary"
+        >
           <Link to="/blog">Writing</Link>
           <a href="https://github.com/ndom91" target="_blank" rel="noreferrer">
             GitHub
@@ -148,16 +175,19 @@ function Home() {
           <a href="mailto:home@ndo.dev">Contact</a>
         </nav>
         <button
-          className="theme-toggle"
+          className="group me-5 cursor-pointer justify-self-end border-0 bg-transparent p-0 text-inherit"
           type="button"
           onClick={toggleTheme}
           aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
           aria-pressed={theme === 'dark'}
         >
-          <span className="theme-toggle__track" aria-hidden="true">
-            <span className="theme-toggle__thumb">
+          <span
+            className="relative grid h-[1.82rem] w-[calc(1.82rem*2-0.4rem)] grid-cols-2 items-center rounded-full border border-rule bg-[linear-gradient(90deg,rgb(var(--globe-accent)/0.14),transparent_54%),var(--paper)] p-[0.2rem] transition-[border-color,background] duration-[260ms] ease-in-out before:absolute before:inset-[0.38rem] before:rounded-[inherit] before:bg-[radial-gradient(currentColor_0.7px,transparent_0.7px)] before:bg-[length:4px_4px] before:content-[''] before:opacity-[0.16] group-focus-visible:outline-2 group-focus-visible:outline-offset-3 group-focus-visible:outline-accent motion-reduce:duration-[1ms]"
+            aria-hidden="true"
+          >
+            <span className="relative grid aspect-square w-full translate-x-0 place-items-center rounded-full bg-ink text-paper transition-[background,color,transform] duration-[540ms] ease-spring-toggle dark:translate-x-full motion-reduce:duration-[1ms]">
               <svg
-                className="theme-toggle__icon theme-toggle__icon--sun"
+                className={`${themeIconClass} rotate-0 scale-100 opacity-100 dark:rotate-[70deg] dark:scale-[0.55] dark:opacity-0`}
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -179,7 +209,7 @@ function Home() {
                 <path d="m17.657 17.657.707.707" />
               </svg>
               <svg
-                className="theme-toggle__icon theme-toggle__icon--moon"
+                className={`${themeIconClass} -rotate-[70deg] scale-[0.55] opacity-0 dark:rotate-0 dark:scale-100 dark:opacity-100`}
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -199,71 +229,63 @@ function Home() {
         </button>
       </header>
 
-      <div className="home-main-grid">
-        <section className="home-hero" aria-labelledby="home-title">
-          <div className="home-wordmark">
-            <div className="home-eyebrow" aria-hidden="true">
-              <span />
-              <span />
-              <span />
-              <span />
-              <span />
+      <div className="relative z-[1] grid grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.9fr)] gap-px border-b border-rule max-[820px]:grid-cols-1">
+        <section
+          className="grid min-h-[72dvh] content-end overflow-hidden p-[clamp(1.5rem,4vw,4.5rem)]"
+          aria-labelledby="home-title"
+        >
+          <div>
+            <div className="mb-10 flex justify-self-end text-accent" aria-hidden="true">
+              {eyebrowBars.map((barClass) => (
+                <span
+                  key={barClass}
+                  className={`block h-[3.2rem] w-[2.2rem] border-2 border-r-0 border-paper ${barClass}`}
+                />
+              ))}
             </div>
-            <h1 id="home-title">.domino</h1>
+            <h1
+              id="home-title"
+              className="m-0 max-w-[12ch] font-logo text-[clamp(4.6rem,17vw,16rem)] font-black leading-[0.82] tracking-[-0.125em] lowercase"
+            >
+              .domino
+            </h1>
           </div>
         </section>
 
-        <aside className="home-intro" aria-label="Profile summary">
-          <section className="home-poster-card">
+        <aside
+          className="grid grid-rows-[1fr_auto] border-l border-rule max-[820px]:border-l-0 max-[820px]:border-t"
+          aria-label="Profile summary"
+        >
+          <section className="relative grid min-h-[28rem] content-end overflow-hidden bg-ink p-[clamp(1.25rem,3vw,3rem)] text-paper">
             <AsciiGlobe />
-            <p>
+            <p className="relative z-[1] m-0 max-w-[31rem] text-[clamp(1.25rem,2.1vw,2.3rem)] leading-[1.16] tracking-[-0.04em]">
               I build fast, durable product surfaces and developer systems with useful constraints.
             </p>
           </section>
 
-          <section className="home-details" aria-label="Details">
-            <div
-              style={{ '--detail-accent': '136 169 0' } as CSSProperties}
-              onPointerEnter={handleDetailPointerEnter}
-              onPointerMove={handleDetailPointerMove}
-              onPointerLeave={handleDetailPointerLeave}
-            >
-              <strong>Currently</strong>
-              <span>Plain</span>
-            </div>
-            <div
-              style={{ '--detail-accent': '28 111 154' } as CSSProperties}
-              onPointerEnter={handleDetailPointerEnter}
-              onPointerMove={handleDetailPointerMove}
-              onPointerLeave={handleDetailPointerLeave}
-            >
-              <strong>Based In</strong>
-              <span>Berlin</span>
-            </div>
-            <div
-              style={{ '--detail-accent': '174 87 55' } as CSSProperties}
-              onPointerEnter={handleDetailPointerEnter}
-              onPointerMove={handleDetailPointerMove}
-              onPointerLeave={handleDetailPointerLeave}
-            >
-              <strong>Habit</strong>
-              <span>OSS</span>
-            </div>
-            <div
-              style={{ '--detail-accent': '118 76 153' } as CSSProperties}
-              onPointerEnter={handleDetailPointerEnter}
-              onPointerMove={handleDetailPointerMove}
-              onPointerLeave={handleDetailPointerLeave}
-            >
-              <strong>Online</strong>
-              <span>2026</span>
-            </div>
+          <section
+            className="relative z-[2] grid grid-cols-2 border-t border-rule bg-paper"
+            aria-label="Details"
+          >
+            {details.map((detail, index) => (
+              <div
+                key={detail.label}
+                className={`${detailCardClass} ${index < 2 ? 'border-b border-rule' : ''}`}
+                style={{ '--detail-accent': detail.accent } as CSSProperties}
+                onPointerEnter={handleDetailPointerEnter}
+                onPointerMove={handleDetailPointerMove}
+                onPointerLeave={handleDetailPointerLeave}
+              >
+                <strong className={detailLabelClass}>{detail.label}</strong>
+                <span className={detailValueClass}>{detail.value}</span>
+              </div>
+            ))}
           </section>
         </aside>
       </div>
 
-      <footer className="home-bar home-footer">
-        <span className="home-ticker">
+      <footer className="relative z-10 grid grid-cols-[auto_1fr] items-center border-b border-rule bg-paper text-[0.7rem] uppercase tracking-[0.16em] max-[820px]:grid-cols-1">
+        <span className={`${homeBarCellClass} overflow-hidden whitespace-nowrap`}>
           Software Engineer · Open Source · Linux · Woodworking · Electronics
         </span>
       </footer>

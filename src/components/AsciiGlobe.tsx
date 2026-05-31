@@ -186,8 +186,12 @@ export function AsciiGlobe() {
   }, [])
 
   return (
-    <div ref={rootRef} className="ascii-globe" aria-hidden="true">
-      <canvas ref={canvasRef} />
+    <div
+      ref={rootRef}
+      className="absolute top-[max(-19rem,-24vw)] right-[max(-18rem,-22vw)] aspect-square w-[clamp(32rem,58vw,56rem)] overflow-hidden rounded-full border border-[rgb(var(--globe-text)/0.18)] bg-[image:var(--globe-background)] opacity-[0.96] max-[820px]:top-[-13rem] max-[820px]:right-[-12rem] max-[820px]:w-[32rem]"
+      aria-hidden="true"
+    >
+      <canvas ref={canvasRef} className="absolute inset-0 size-full" />
     </div>
   )
 }

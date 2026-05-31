@@ -29,12 +29,9 @@ function BlogPost() {
   const { Component } = post
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#0d0c0a] text-[#ede8df]">
-      <nav
-        className="grid border-b"
-        style={{ gridTemplateColumns: 'auto 1fr auto', borderColor: '#242220' }}
-      >
-        <div className="border-r px-6 py-4" style={{ borderColor: '#242220' }}>
+    <div className="flex min-h-screen flex-col bg-blog-bg text-blog-text">
+      <nav className="grid grid-cols-[auto_1fr_auto] border-b border-blog-rule">
+        <div className="border-r border-blog-rule px-6 py-4">
           <Link
             to="/"
             className="font-mono text-[11px] font-medium uppercase tracking-[0.25em] transition-colors hover:text-white"
@@ -45,7 +42,7 @@ function BlogPost() {
         <div className="flex items-center gap-7 px-7">
           <Link
             to="/blog"
-            className="font-mono text-[10px] uppercase tracking-widest text-[#606060] transition-colors hover:text-[#ede8df]"
+            className="font-mono text-[10px] uppercase tracking-widest text-blog-dim transition-colors hover:text-blog-text"
           >
             WRITING
           </Link>
@@ -53,51 +50,45 @@ function BlogPost() {
             href="https://github.com/ndom91"
             target="_blank"
             rel="noreferrer"
-            className="font-mono text-[10px] uppercase tracking-widest text-[#606060] transition-colors hover:text-[#ede8df]"
+            className="font-mono text-[10px] uppercase tracking-widest text-blog-dim transition-colors hover:text-blog-text"
           >
             GITHUB
           </a>
           <a
             href="mailto:home@ndo.dev"
-            className="font-mono text-[10px] uppercase tracking-widest text-[#606060] transition-colors hover:text-[#ede8df]"
+            className="font-mono text-[10px] uppercase tracking-widest text-blog-dim transition-colors hover:text-blog-text"
           >
             CONTACT
           </a>
         </div>
-        <div
-          className="flex items-center gap-2.5 border-l px-6 py-4"
-          style={{ borderColor: '#242220' }}
-        >
-          <span className="block size-1.5 rounded-full bg-[#c8ff00]" />
-          <span className="font-mono text-[10px] uppercase tracking-widest text-[#606060]">
+        <div className="flex items-center gap-2.5 border-l border-blog-rule px-6 py-4">
+          <span className="block size-1.5 rounded-full bg-blog-accent" />
+          <span className="font-mono text-[10px] uppercase tracking-widest text-blog-dim">
             PLAIN.COM
           </span>
         </div>
       </nav>
 
-      <div className="border-b px-6 py-10" style={{ borderColor: '#242220' }}>
+      <div className="border-b border-blog-rule px-6 py-10">
         <Link
           to="/blog"
-          className="font-mono mb-4 inline-block text-[9px] uppercase tracking-widest text-[#555] transition-colors hover:text-[#c8ff00]"
+          className="font-mono mb-4 inline-block text-[9px] uppercase tracking-widest text-blog-muted transition-colors hover:text-blog-accent"
         >
           ← WRITING
         </Link>
         <div className="mt-4 flex items-start justify-between gap-8">
           <div className="min-w-0 flex-1">
-            <h1
-              className="font-heading uppercase leading-none tracking-[-0.03em] text-[#ede8df]"
-              style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', fontWeight: 800 }}
-            >
+            <h1 className="font-heading text-[clamp(2rem,5vw,4rem)] font-extrabold uppercase leading-none tracking-[-0.03em] text-blog-text">
               {meta.title}
             </h1>
-            <p className="font-mono mt-3 max-w-prose text-sm leading-relaxed text-[#555]">
+            <p className="font-mono mt-3 max-w-prose text-sm leading-relaxed text-blog-muted">
               {meta.description}
             </p>
           </div>
           <div className="shrink-0 text-right">
             <time
               dateTime={meta.publishedAt}
-              className="font-mono text-[10px] uppercase tracking-widest text-[#555]"
+              className="font-mono text-[10px] uppercase tracking-widest text-blog-muted"
             >
               {meta.publishedAt}
             </time>
@@ -106,8 +97,7 @@ function BlogPost() {
                 {(meta.tags ?? []).map((tag) => (
                   <span
                     key={tag}
-                    className="font-mono px-2 py-0.5 text-[9px] uppercase tracking-widest text-[#555]"
-                    style={{ border: '1px solid #242220' }}
+                    className="font-mono border border-blog-rule px-2 py-0.5 text-[9px] uppercase tracking-widest text-blog-muted"
                   >
                     {tag}
                   </span>
@@ -124,12 +114,9 @@ function BlogPost() {
         </article>
       </div>
 
-      <footer
-        className="grid border-t"
-        style={{ gridTemplateColumns: '1fr auto', borderColor: '#242220' }}
-      >
-        <div className="border-r px-6 py-5" style={{ borderColor: '#242220' }}>
-          <p className="font-mono text-[9px] uppercase tracking-widest text-[#333]">
+      <footer className="grid grid-cols-[1fr_auto] border-t border-blog-rule">
+        <div className="border-r border-blog-rule px-6 py-5">
+          <p className="font-mono text-[9px] uppercase tracking-widest text-blog-faint">
             NDOM91 · YO@NDO.DEV · NDO.DEV
           </p>
         </div>
@@ -144,7 +131,7 @@ function BlogPost() {
             <a
               key={label}
               href={href}
-              className="font-mono text-[10px] uppercase tracking-widest text-[#555] transition-colors hover:text-[#c8ff00]"
+              className="font-mono text-[10px] uppercase tracking-widest text-blog-muted transition-colors hover:text-blog-accent"
             >
               {label}
             </a>

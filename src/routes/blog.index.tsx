@@ -13,12 +13,9 @@ function BlogIndex() {
   const posts = Route.useLoaderData()
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#0d0c0a] text-[#ede8df]">
-      <nav
-        className="grid border-b"
-        style={{ gridTemplateColumns: 'auto 1fr auto', borderColor: '#242220' }}
-      >
-        <div className="border-r px-6 py-4" style={{ borderColor: '#242220' }}>
+    <div className="flex min-h-screen flex-col bg-blog-bg text-blog-text">
+      <nav className="grid grid-cols-[auto_1fr_auto] border-b border-blog-rule">
+        <div className="border-r border-blog-rule px-6 py-4">
           <Link
             to="/"
             className="font-mono text-[11px] font-medium uppercase tracking-[0.25em] transition-colors hover:text-white"
@@ -29,7 +26,7 @@ function BlogIndex() {
         <div className="flex items-center gap-7 px-7">
           <Link
             to="/blog"
-            className="font-mono text-[10px] uppercase tracking-widest text-[#ede8df]"
+            className="font-mono text-[10px] uppercase tracking-widest text-blog-text"
           >
             WRITING
           </Link>
@@ -37,37 +34,33 @@ function BlogIndex() {
             href="https://github.com/ndom91"
             target="_blank"
             rel="noreferrer"
-            className="font-mono text-[10px] uppercase tracking-widest text-[#606060] transition-colors hover:text-[#ede8df]"
+            className="font-mono text-[10px] uppercase tracking-widest text-blog-dim transition-colors hover:text-blog-text"
           >
             GITHUB
           </a>
           <a
             href="mailto:home@ndo.dev"
-            className="font-mono text-[10px] uppercase tracking-widest text-[#606060] transition-colors hover:text-[#ede8df]"
+            className="font-mono text-[10px] uppercase tracking-widest text-blog-dim transition-colors hover:text-blog-text"
           >
             CONTACT
           </a>
         </div>
-        <div
-          className="flex items-center gap-2.5 border-l px-6 py-4"
-          style={{ borderColor: '#242220' }}
-        >
-          <span className="block size-1.5 rounded-full bg-[#c8ff00]" />
-          <span className="font-mono text-[10px] uppercase tracking-widest text-[#606060]">
+        <div className="flex items-center gap-2.5 border-l border-blog-rule px-6 py-4">
+          <span className="block size-1.5 rounded-full bg-blog-accent" />
+          <span className="font-mono text-[10px] uppercase tracking-widest text-blog-dim">
             PLAIN.COM
           </span>
         </div>
       </nav>
 
-      <div className="border-b px-6 py-10" style={{ borderColor: '#242220' }}>
-        <p className="font-mono mb-3 text-[9px] uppercase tracking-widest text-[#555]">ARCHIVE</p>
-        <h1
-          className="font-heading uppercase leading-none tracking-[-0.03em] text-[#ede8df]"
-          style={{ fontSize: 'clamp(3rem, 10vw, 8rem)', fontWeight: 800 }}
-        >
+      <div className="border-b border-blog-rule px-6 py-10">
+        <p className="font-mono mb-3 text-[9px] uppercase tracking-widest text-blog-muted">
+          ARCHIVE
+        </p>
+        <h1 className="font-heading text-[clamp(3rem,10vw,8rem)] font-extrabold uppercase leading-none tracking-[-0.03em] text-blog-text">
           WRITING
         </h1>
-        <p className="font-mono mt-3 text-xs text-[#555]">
+        <p className="font-mono mt-3 text-xs text-blog-muted">
           {posts.length} {posts.length === 1 ? 'ENTRY' : 'ENTRIES'}
         </p>
       </div>
@@ -75,22 +68,22 @@ function BlogIndex() {
       <div className="flex-1">
         {posts.length === 0 ? (
           <div className="px-6 py-10">
-            <p className="font-mono text-xs text-[#3a3a3a]">{'// no posts published yet'}</p>
+            <p className="font-mono text-xs text-blog-empty">{'// no posts published yet'}</p>
           </div>
         ) : (
-          <div className="divide-y" style={{ borderColor: '#242220' }}>
+          <div className="divide-y divide-blog-rule">
             {posts.map((post) => (
               <Link
                 key={post.slug}
                 to="/blog/$slug"
                 params={{ slug: post.slug }}
-                className="group flex items-start justify-between gap-6 px-6 py-5 transition-colors hover:bg-[#111009]"
+                className="group flex items-start justify-between gap-6 px-6 py-5 transition-colors hover:bg-blog-hover"
               >
                 <div className="min-w-0 flex-1">
-                  <h2 className="font-mono text-sm font-medium leading-snug text-[#ede8df] transition-colors group-hover:text-white">
+                  <h2 className="font-mono text-sm font-medium leading-snug text-blog-text transition-colors group-hover:text-white">
                     {post.title}
                   </h2>
-                  <p className="font-mono mt-1 line-clamp-1 text-xs leading-relaxed text-[#505050]">
+                  <p className="font-mono mt-1 line-clamp-1 text-xs leading-relaxed text-blog-description">
                     {post.description}
                   </p>
                 </div>
@@ -98,19 +91,18 @@ function BlogIndex() {
                   {(post.tags ?? []).slice(0, 1).map((tag) => (
                     <span
                       key={tag}
-                      className="font-mono px-2 py-0.5 text-[9px] uppercase tracking-widest text-[#555] transition-colors group-hover:text-[#777]"
-                      style={{ border: '1px solid #242220' }}
+                      className="font-mono border border-blog-rule px-2 py-0.5 text-[9px] uppercase tracking-widest text-blog-muted transition-colors group-hover:text-blog-tag-hover"
                     >
                       {tag}
                     </span>
                   ))}
                   <time
                     dateTime={post.publishedAt}
-                    className="font-mono whitespace-nowrap text-[10px] text-[#555] transition-colors group-hover:text-[#c8ff00]"
+                    className="font-mono whitespace-nowrap text-[10px] text-blog-muted transition-colors group-hover:text-blog-accent"
                   >
                     {post.publishedAt}
                   </time>
-                  <span className="font-mono text-xs text-[#444] transition-colors group-hover:text-[#c8ff00]">
+                  <span className="font-mono text-xs text-blog-arrow transition-colors group-hover:text-blog-accent">
                     →
                   </span>
                 </div>
@@ -120,12 +112,9 @@ function BlogIndex() {
         )}
       </div>
 
-      <footer
-        className="grid border-t"
-        style={{ gridTemplateColumns: '1fr auto', borderColor: '#242220' }}
-      >
-        <div className="border-r px-6 py-5" style={{ borderColor: '#242220' }}>
-          <p className="font-mono text-[9px] uppercase tracking-widest text-[#333]">
+      <footer className="grid grid-cols-[1fr_auto] border-t border-blog-rule">
+        <div className="border-r border-blog-rule px-6 py-5">
+          <p className="font-mono text-[9px] uppercase tracking-widest text-blog-faint">
             NDOM91 · YO@NDO.DEV · NDO.DEV
           </p>
         </div>
@@ -140,7 +129,7 @@ function BlogIndex() {
             <a
               key={label}
               href={href}
-              className="font-mono text-[10px] uppercase tracking-widest text-[#555] transition-colors hover:text-[#c8ff00]"
+              className="font-mono text-[10px] uppercase tracking-widest text-blog-muted transition-colors hover:text-blog-accent"
             >
               {label}
             </a>
