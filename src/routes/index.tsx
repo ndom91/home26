@@ -12,7 +12,6 @@ function Home() {
       <TopographicField />
 
       <header className="home-bar">
-        <strong>NDOM91</strong>
         <nav aria-label="Primary">
           <Link to="/blog">Writing</Link>
           <a href="https://github.com/ndom91" target="_blank" rel="noreferrer">
@@ -61,7 +60,6 @@ function Home() {
       </div>
 
       <footer className="home-bar home-footer">
-        <span>yo@ndo.dev</span>
         <span className="home-ticker">01001110 · 01000100 · product systems · developer tools</span>
         <span className="home-status">Available async</span>
       </footer>
