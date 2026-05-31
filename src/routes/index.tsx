@@ -324,7 +324,7 @@ function Home() {
             </div>
             <h1
               id="home-title"
-              className="m-0 max-w-[12ch] font-logo text-[clamp(3.2rem,12vw,12rem)] font-black leading-[0.8] tracking-tighter lowercase"
+              className="m-0 max-w-[12ch] font-logo text-[clamp(3.2rem,12vw,12rem)] font-bold leading-[0.8] -tracking-widest lowercase"
             >
               .domino
             </h1>
@@ -338,7 +338,8 @@ function Home() {
           <section className="relative grid min-h-[28rem] content-end overflow-hidden bg-ink p-[clamp(1.25rem,3vw,3rem)] text-paper">
             <AsciiGlobe />
             <p className="relative z-[1] m-0 max-w-[31rem] text-[clamp(1.25rem,2.1vw,2.3rem)] leading-[1.16] tracking-[-0.04em]">
-              I build fast, durable product surfaces and developer systems with useful constraints.
+              I build sharp web tools, developer systems, and the occasional over-engineered side
+              quest.
             </p>
           </section>
 
