@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { DominoCanvas } from '../components/DominoCanvas'
 
 export const Route = createFileRoute('/')({
   component: Home,
@@ -79,7 +78,7 @@ function Home() {
       </div>
 
       <section className="relative isolate grid min-h-0 flex-1 place-items-center overflow-hidden px-5 py-6 sm:px-8">
-        <DominoCanvas />
+        <HeroBackground />
 
         <div className="hero-in relative w-full max-w-7xl">
           <div className="mb-4 flex items-center justify-between gap-4 font-mono text-[9px] uppercase tracking-[0.28em] text-[#625d55] sm:mb-6">
@@ -146,5 +145,15 @@ function Home() {
         </div>
       </footer>
     </main>
+  )
+}
+
+function HeroBackground() {
+  return (
+    <div className="hero-background" aria-hidden="true">
+      <div className="hero-background-grid" />
+      <div className="hero-background-panel" />
+      <div className="hero-background-accent" />
+    </div>
   )
 }
