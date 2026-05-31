@@ -447,7 +447,7 @@ html[data-theme='dark'] .theme-toggle__icon--sun {
   --detail-accent: 136 169 0;
   --hover-color-strength: 1;
   --hover-x: 50%;
-  --hover-tilt: 2deg;
+  --hover-tilt: 3deg;
   position: relative;
   min-height: 8rem;
   overflow: hidden;

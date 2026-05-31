@@ -70,7 +70,7 @@ function Home() {
     const velocity = (targetX - lastX) / elapsed
     const direction = velocity < 0 ? -1 : 1
     const movementStrength = Math.abs(velocity)
-    const tilt = direction * Math.min(10, Math.max(2, movementStrength * 18))
+    const tilt = direction * Math.min(10, Math.max(2, movementStrength * 38))
     const colorStrength = Math.min(1.28, Math.max(0.82, 0.86 + movementStrength * 0.65))
     const currentX = Number.parseFloat(detail.style.getPropertyValue('--hover-x')) || targetX
 
@@ -99,7 +99,7 @@ function Home() {
         Number.parseFloat(detail.style.getPropertyValue('--hover-color-strength')) ||
         latestTargetColorStrength
       const nextX = latestX + (latestTargetX - latestX) * 0.025
-      const nextTilt = latestTilt + (latestTargetTilt - latestTilt) * 0.1
+      const nextTilt = latestTilt + (latestTargetTilt - latestTilt) * 0.2
       const nextColorStrength =
         latestColorStrength + (latestTargetColorStrength - latestColorStrength) * 0.12
 
