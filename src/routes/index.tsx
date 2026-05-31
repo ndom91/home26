@@ -120,14 +120,12 @@ function Home() {
           </a>
           <a href="mailto:home@ndo.dev">Contact</a>
         </nav>
-        <span className="home-status">Plain.com</span>
+        <span className="home-status">ndo.dev</span>
       </header>
 
       <div className="home-main-grid">
         <section className="home-hero" aria-labelledby="home-title">
-          <p className="home-eyebrow">
-            Software engineer · open source · TypeScript · React · Go · Berlin
-          </p>
+          <p className="home-eyebrow">cat /home/ndom91/portfolio</p>
           <h1 id="home-title">.domino</h1>
         </section>
 
@@ -181,8 +179,9 @@ function Home() {
       </div>
 
       <footer className="home-bar home-footer">
-        <span className="home-ticker">01001110 · 01000100 · product systems · developer tools</span>
-        <span className="home-status">Available async</span>
+        <span className="home-ticker">
+          Software Engineer · Open Source · Linux · Woodworking · Electronics
+        </span>
       </footer>
     </main>
   )

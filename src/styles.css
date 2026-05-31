@@ -131,13 +131,21 @@ a {
 }
 
 .home-eyebrow {
-  max-width: 30rem;
+  max-width: 100%;
   margin: 0 0 2rem;
-  color: var(--muted);
+  overflow: hidden;
+  color: var(--accent);
   font-size: 0.72rem;
   letter-spacing: 0.24em;
   line-height: 1.9;
+  text-overflow: ellipsis;
   text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.home-eyebrow::before {
+  content: '$> ';
+  color: var(--ink);
 }
 
 .home-hero h1 {
