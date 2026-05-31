@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { AsciiGlobe } from '../components/AsciiGlobe'
+import { TopographicField } from '../components/TopographicField'
 
 export const Route = createFileRoute('/')({
   component: Home,
@@ -8,6 +9,8 @@ export const Route = createFileRoute('/')({
 function Home() {
   return (
     <main className="home-page">
+      <TopographicField />
+
       <header className="home-bar">
         <strong>NDOM91</strong>
         <nav aria-label="Primary">
