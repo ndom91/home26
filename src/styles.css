@@ -208,7 +208,9 @@ a {
 
 .home-details div {
   --detail-accent: 136 169 0;
+  --hover-color-strength: 1;
   --hover-x: 50%;
+  --hover-tilt: 2deg;
   position: relative;
   min-height: 8rem;
   overflow: hidden;
@@ -232,12 +234,12 @@ a {
   background: linear-gradient(
     90deg,
     transparent,
-    rgb(var(--detail-accent) / 0.08) 22%,
-    rgb(var(--detail-accent) / 0.3) 50%,
-    rgb(var(--detail-accent) / 0.08) 78%,
+    rgb(var(--detail-accent) / calc(0.08 * var(--hover-color-strength))) 22%,
+    rgb(var(--detail-accent) / calc(0.25 * var(--hover-color-strength))) 50%,
+    rgb(var(--detail-accent) / calc(0.08 * var(--hover-color-strength))) 78%,
     transparent
   );
-  transform: translateX(calc(var(--hover-x) - 50%)) rotate(8deg);
+  transform: translateX(calc(var(--hover-x) - 50%)) rotate(var(--hover-tilt));
   transition: opacity 500ms ease;
 }
 
