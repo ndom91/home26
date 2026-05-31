@@ -5,7 +5,13 @@ export function TopographicField() {
     <svg className="topographic-field" aria-hidden="true">
       <title>Decorative topographic contour lines</title>
       <defs>
-        <pattern id="topographic-pattern" width="600" height="600" patternUnits="userSpaceOnUse">
+        <pattern
+          id="topographic-pattern"
+          width="600"
+          height="600"
+          patternUnits="userSpaceOnUse"
+          patternTransform="scale(1.25)"
+        >
           <path d={TOPOGRAPHY_PATH} />
         </pattern>
       </defs>

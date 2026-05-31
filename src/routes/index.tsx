@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
+import type { CSSProperties, PointerEvent } from 'react'
 import { AsciiGlobe } from '../components/AsciiGlobe'
 import { TopographicField } from '../components/TopographicField'
 
@@ -7,6 +8,13 @@ export const Route = createFileRoute('/')({
 })
 
 function Home() {
+  function handleDetailPointerMove(event: PointerEvent<HTMLDivElement>) {
+    const rect = event.currentTarget.getBoundingClientRect()
+
+    event.currentTarget.style.setProperty('--hover-x', `${event.clientX - rect.left}px`)
+    event.currentTarget.style.setProperty('--hover-y', `${event.clientY - rect.top}px`)
+  }
+
   return (
     <main className="home-page">
       <TopographicField />
@@ -39,19 +47,31 @@ function Home() {
           </section>
 
           <section className="home-details" aria-label="Details">
-            <div>
+            <div
+              style={{ '--detail-accent': '136 169 0' } as CSSProperties}
+              onPointerMove={handleDetailPointerMove}
+            >
               <strong>Currently</strong>
               <span>Plain</span>
             </div>
-            <div>
+            <div
+              style={{ '--detail-accent': '28 111 154' } as CSSProperties}
+              onPointerMove={handleDetailPointerMove}
+            >
               <strong>Based In</strong>
               <span>Berlin</span>
             </div>
-            <div>
+            <div
+              style={{ '--detail-accent': '174 87 55' } as CSSProperties}
+              onPointerMove={handleDetailPointerMove}
+            >
               <strong>Habit</strong>
               <span>OSS</span>
             </div>
-            <div>
+            <div
+              style={{ '--detail-accent': '118 76 153' } as CSSProperties}
+              onPointerMove={handleDetailPointerMove}
+            >
               <strong>Online</strong>
               <span>2026</span>
             </div>

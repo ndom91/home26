@@ -207,9 +207,52 @@ a {
 }
 
 .home-details div {
+  --detail-accent: 136 169 0;
+  --hover-x: 50%;
+  --hover-y: 50%;
+  position: relative;
   min-height: 8rem;
+  overflow: hidden;
   padding: 1.15rem;
   border-right: 1px solid var(--rule);
+}
+
+.home-details div::before,
+.home-details div::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+.home-details div::before {
+  background: radial-gradient(
+    circle at var(--hover-x) var(--hover-y),
+    rgb(var(--detail-accent) / 0.28),
+    rgb(var(--detail-accent) / 0.1) 28%,
+    transparent 68%
+  );
+}
+
+.home-details div::after {
+  background-image: radial-gradient(rgb(23 20 15 / 0.32) 0.7px, transparent 0.7px);
+  background-size: 3px 3px;
+  mix-blend-mode: multiply;
+}
+
+.home-details div:hover::before {
+  opacity: 1;
+}
+
+.home-details div:hover::after {
+  opacity: 0.16;
+}
+
+.home-details div > * {
+  position: relative;
+  z-index: 1;
 }
 
 .home-details div:nth-child(-n + 2) {
