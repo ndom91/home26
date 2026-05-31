@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=Red+Hat+Mono:wght@700&family=Syne:wght@700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
@@ -343,10 +343,10 @@ html[data-theme='dark'] .theme-toggle__icon--sun {
 .home-hero h1 {
   max-width: 12ch;
   margin: 0;
-  font-family: 'Space Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: 'Red Hat Mono', 'IBM Plex Mono', ui-monospace, monospace;
   font-size: clamp(4.6rem, 17vw, 16rem);
-  font-weight: 700;
-  letter-spacing: -0.15em;
+  font-weight: 900;
+  letter-spacing: -0.125em;
   line-height: 0.82;
   text-transform: lowercase;
 }
