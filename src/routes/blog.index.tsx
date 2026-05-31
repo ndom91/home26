@@ -42,7 +42,7 @@ function BlogIndex() {
             GITHUB
           </a>
           <a
-            href="mailto:yo@ndo.dev"
+            href="mailto:home@ndo.dev"
             className="font-mono text-[10px] uppercase tracking-widest text-[#606060] transition-colors hover:text-[#ede8df]"
           >
             CONTACT
@@ -133,8 +133,8 @@ function BlogIndex() {
           {(
             [
               ['GH', 'https://github.com/ndom91'],
-              ['X', 'https://x.com/ndom91'],
-              ['ML', 'mailto:yo@ndo.dev'],
+              ['X', 'https://bsky.app/ndom91'],
+              ['ML', 'mailto:home@ndo.dev'],
             ] as const
           ).map(([label, href]) => (
             <a

@@ -17,7 +17,7 @@ function Home() {
           <a href="https://github.com/ndom91" target="_blank" rel="noreferrer">
             GitHub
           </a>
-          <a href="mailto:yo@ndo.dev">Contact</a>
+          <a href="mailto:home@ndo.dev">Contact</a>
         </nav>
         <span className="home-status">Plain.com</span>
       </header>
