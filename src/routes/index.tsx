@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import type { PointerEvent } from 'react'
+import type { MouseEvent, PointerEvent } from 'react'
 import { useEffect, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { AsciiGlobe } from '../components/AsciiGlobe'
 import { TopographicField } from '../components/TopographicField'
 
@@ -32,6 +33,12 @@ const details = [
   { label: 'Online', value: '2026', accentClass: '[--detail-accent:118_76_153]' },
 ] as const
 
+type ViewTransitionDocument = Document & {
+  startViewTransition?: (updateCallback: () => void) => {
+    finished: Promise<void>
+  }
+}
+
 function Home() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
 
@@ -49,14 +56,46 @@ function Home() {
     setTheme(systemTheme)
   }, [])
 
-  function toggleTheme() {
+  function toggleTheme(event: MouseEvent<HTMLButtonElement>) {
     const nextTheme = theme === 'dark' ? 'light' : 'dark'
     const meta = document.querySelector('meta[name="color-scheme"]')
+    const root = document.documentElement
+    const rect = event.currentTarget.getBoundingClientRect()
+    const transitionX = rect.left + rect.width / 2
+    const transitionY = rect.top + rect.height / 2
+    const transitionRadius = Math.ceil(
+      Math.hypot(
+        Math.max(transitionX, window.innerWidth - transitionX),
+        Math.max(transitionY, window.innerHeight - transitionY)
+      )
+    )
 
-    document.documentElement.dataset.theme = nextTheme
-    meta?.setAttribute('content', nextTheme)
-    localStorage.setItem('theme', nextTheme)
-    setTheme(nextTheme)
+    function updateTheme() {
+      root.dataset.theme = nextTheme
+      meta?.setAttribute('content', nextTheme)
+      localStorage.setItem('theme', nextTheme)
+      flushSync(() => setTheme(nextTheme))
+    }
+
+    const viewTransitionDocument = document as ViewTransitionDocument
+
+    if (
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      !viewTransitionDocument.startViewTransition
+    ) {
+      updateTheme()
+      return
+    }
+
+    root.style.setProperty('--theme-transition-x', `${transitionX}px`)
+    root.style.setProperty('--theme-transition-y', `${transitionY}px`)
+    root.style.setProperty('--theme-transition-radius', `${transitionRadius}px`)
+
+    viewTransitionDocument.startViewTransition(updateTheme).finished.finally(() => {
+      root.style.removeProperty('--theme-transition-x')
+      root.style.removeProperty('--theme-transition-y')
+      root.style.removeProperty('--theme-transition-radius')
+    })
   }
 
   function setDetailHoverPosition(detail: HTMLDivElement, x: number) {

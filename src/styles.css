@@ -163,3 +163,48 @@
 ):focus-visible {
   @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-[var(--focus-ring-offset)];
 }
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 560ms;
+  animation-fill-mode: both;
+  animation-timing-function: var(--ease-spring-toggle);
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  animation-name: theme-snapshot-fade;
+}
+
+::view-transition-new(root) {
+  animation-name: theme-snapshot-reveal;
+}
+
+@keyframes theme-snapshot-fade {
+  to {
+    opacity: 0.72;
+  }
+}
+
+@keyframes theme-snapshot-reveal {
+  from {
+    clip-path: circle(0 at var(--theme-transition-x, 50vw) var(--theme-transition-y, 50vh));
+    filter: saturate(0.78) contrast(0.94);
+  }
+
+  to {
+    clip-path: circle(
+      var(--theme-transition-radius, 150vmax) at var(--theme-transition-x, 50vw)
+        var(--theme-transition-y, 50vh)
+    );
+    filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}
