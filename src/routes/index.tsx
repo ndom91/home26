@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import type { CSSProperties, PointerEvent } from 'react'
+import { useEffect, useState } from 'react'
 import { AsciiGlobe } from '../components/AsciiGlobe'
 import { TopographicField } from '../components/TopographicField'
 
@@ -8,6 +9,29 @@ export const Route = createFileRoute('/')({
 })
 
 function Home() {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem('theme')
+
+    if (storedTheme === 'light' || storedTheme === 'dark') {
+      setTheme(storedTheme)
+      return
+    }
+
+    setTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+  }, [])
+
+  function toggleTheme() {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark'
+    const meta = document.querySelector('meta[name="color-scheme"]')
+
+    document.documentElement.dataset.theme = nextTheme
+    meta?.setAttribute('content', nextTheme)
+    localStorage.setItem('theme', nextTheme)
+    setTheme(nextTheme)
+  }
+
   function setDetailHoverPosition(detail: HTMLDivElement, x: number) {
     detail.style.setProperty('--hover-x', `${x}px`)
     detail.style.setProperty('--hover-target-x', `${x}`)
@@ -120,7 +144,9 @@ function Home() {
           </a>
           <a href="mailto:home@ndo.dev">Contact</a>
         </nav>
-        <span className="home-status">ndo.dev</span>
+        <button className="theme-toggle" type="button" onClick={toggleTheme}>
+          {theme === 'dark' ? 'Light' : 'Dark'} mode
+        </button>
       </header>
 
       <div className="home-main-grid">

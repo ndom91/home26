@@ -9,7 +9,7 @@ type GlobePoint = {
   seed: number
 }
 
-const CHARS = '  .,:;-=+*x%#@01{}[]<>/\\ndom'
+const CHARS = '  ..::--==++**##0011//\\||'
 const ROWS = 54
 const COLS = 104
 
@@ -124,7 +124,12 @@ export function AsciiGlobe() {
       const scale = Math.min(width, height) * 0.594
 
       context.clearRect(0, 0, width, height)
-      context.fillStyle = 'rgba(23, 20, 15, 0.2)'
+      const styles = getComputedStyle(root)
+      const globeShade = styles.getPropertyValue('--globe-shade').trim()
+      const globeText = styles.getPropertyValue('--globe-text').trim()
+      const globeAccent = styles.getPropertyValue('--globe-accent').trim()
+
+      context.fillStyle = globeShade || 'rgba(23, 20, 15, 0.2)'
       context.fillRect(0, 0, width, height)
       context.font = '600 8.4px IBM Plex Mono, monospace'
       context.textAlign = 'center'
@@ -149,14 +154,14 @@ export function AsciiGlobe() {
         const shade = Math.max(0, Math.min(1, 0.18 + depth * 0.68 + influence * 0.18))
         const charIndex = Math.min(CHARS.length - 1, Math.floor(shade * CHARS.length))
         const char = orbitCue ? CHARS[Math.max(charIndex, CHARS.length - 5)] : CHARS[charIndex]
-        const frontAlpha = 0.22 + depth * 0.46
-        const backAlpha = 0.11 + depth * 0.12
+        const frontAlpha = 0.32 + depth * 0.54
+        const backAlpha = 0.04 + depth * 0.08
         const alpha = (z2 >= 0 ? frontAlpha : backAlpha) + highlightBand * 0.18
         const lime = influence > 0.22 || highlightBand > 0.45 || (z2 > 0.68 && y1 < -0.48)
 
         context.fillStyle = lime
-          ? `rgba(215, 255, 47, ${0.25 + influence * 0.38 + depth * 0.18 + highlightBand * 0.24})`
-          : `rgba(242, 234, 217, ${alpha})`
+          ? `rgb(${globeAccent || '134 169 0'} / ${0.25 + influence * 0.38 + depth * 0.18 + highlightBand * 0.24})`
+          : `rgb(${globeText || '242 234 217'} / ${alpha})`
         context.fillText(char, sx, sy)
       }
 
