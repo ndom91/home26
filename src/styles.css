@@ -204,13 +204,15 @@ a {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   background: var(--paper);
   border-top: 1px solid var(--rule);
-  border-left: 1px solid var(--rule);
 }
 
 .home-details div {
   min-height: 8rem;
   padding: 1.15rem;
   border-right: 1px solid var(--rule);
+}
+
+.home-details div:nth-child(-n + 2) {
   border-bottom: 1px solid var(--rule);
 }
 
