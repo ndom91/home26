@@ -53,6 +53,8 @@ a {
   --globe-shade: rgb(23 20 15 / 0.34);
   --globe-text: 205 197 181;
   --globe-accent: 176 206 20;
+  --grit-image: url('/blackgrit.webp');
+  --grit-opacity: 0.75;
   position: relative;
   display: grid;
   min-height: 100dvh;
@@ -81,6 +83,8 @@ a {
     --globe-shade: transparent;
     --globe-text: 54 48 38;
     --globe-accent: 124 148 10;
+    --grit-image: url('/whitegrit.png');
+    --grit-opacity: 0.2;
   }
 }
 
@@ -102,6 +106,8 @@ html[data-theme='light'] .home-page {
   --globe-shade: rgb(23 20 15 / 0.34);
   --globe-text: 205 197 181;
   --globe-accent: 176 206 20;
+  --grit-image: url('/blackgrit.webp');
+  --grit-opacity: 0.5;
 }
 
 html[data-theme='dark'],
@@ -122,6 +128,8 @@ html[data-theme='dark'] .home-page {
   --globe-shade: transparent;
   --globe-text: 54 48 38;
   --globe-accent: 124 148 10;
+  --grit-image: url('/whitegrit.png');
+  --grit-opacity: 0.3;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -344,6 +352,8 @@ html[data-theme='dark'] .theme-toggle__icon--sun {
   width: 2.2rem;
   height: 3.2rem;
   background: currentColor;
+  border: var(--paper) 2px solid;
+  border-right: none;
 }
 
 .home-eyebrow span:nth-child(1) {
@@ -461,7 +471,7 @@ html[data-theme='dark'] .theme-toggle__icon--sun {
   background: linear-gradient(
     90deg,
     transparent,
-    rgb(var(--detail-accent) / calc(0.08 * var(--hover-color-strength))) 22%,
+    rgb(var(--detail-accent) / calc(0.08 * var(--hover-color-strength))) 18%,
     rgb(var(--detail-accent) / calc(0.25 * var(--hover-color-strength))) 50%,
     rgb(var(--detail-accent) / calc(0.08 * var(--hover-color-strength))) 78%,
     transparent
@@ -471,9 +481,10 @@ html[data-theme='dark'] .theme-toggle__icon--sun {
 }
 
 .home-details div::after {
-  background-image: radial-gradient(rgb(23 20 15 / 0.32) 0.7px, transparent 0.7px);
-  background-size: 3px 3px;
-  mix-blend-mode: multiply;
+  background-image: var(--grit-image);
+  background-repeat: repeat;
+  background-size: 180px 180px;
+  mix-blend-mode: normal;
 }
 
 .home-details div:hover::before,
@@ -486,7 +497,7 @@ html[data-theme='dark'] .theme-toggle__icon--sun {
 }
 
 .home-details div:hover::after {
-  opacity: 0.16;
+  opacity: var(--grit-opacity);
 }
 
 .home-details div > * {

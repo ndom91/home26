@@ -202,7 +202,7 @@ function Home() {
       <div className="home-main-grid">
         <section className="home-hero" aria-labelledby="home-title">
           <div className="home-wordmark">
-            <div className="home-eyebrow" aria-label="Decorative scale marker">
+            <div className="home-eyebrow" aria-hidden="true">
               <span />
               <span />
               <span />
