@@ -48,12 +48,13 @@
     --globe-shade: rgb(23 20 15 / 0.34);
     --globe-text: 205 197 181;
     --globe-accent: 176 206 20;
-    --globe-background: radial-gradient(
+    --globe-light-background: radial-gradient(
         circle at 44% 48%,
         rgb(var(--globe-accent) / 0.07),
         transparent 44%
       ),
       radial-gradient(circle at 50% 50%, rgb(var(--globe-text) / 0.035), transparent 68%);
+    --globe-background: var(--globe-light-background);
     --grit-image: url('/blackgrit.webp');
     --grit-opacity: 0.75;
     color-scheme: light dark;
@@ -86,12 +87,7 @@
     --globe-shade: rgb(23 20 15 / 0.34);
     --globe-text: 205 197 181;
     --globe-accent: 176 206 20;
-    --globe-background: radial-gradient(
-        circle at 44% 48%,
-        rgb(var(--globe-accent) / 0.07),
-        transparent 44%
-      ),
-      radial-gradient(circle at 50% 50%, rgb(var(--globe-text) / 0.035), transparent 68%);
+    --globe-background: var(--globe-light-background);
     --grit-image: url('/blackgrit.webp');
     --grit-opacity: 0.5;
     color-scheme: light;

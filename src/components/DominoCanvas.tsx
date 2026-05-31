@@ -208,5 +208,5 @@ export function DominoCanvas() {
     }
   }, [])
 
-  return <canvas ref={canvasRef} className="domino-canvas" />
+  return <canvas ref={canvasRef} />
 }

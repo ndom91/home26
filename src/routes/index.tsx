@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import type { CSSProperties, PointerEvent } from 'react'
+import type { PointerEvent } from 'react'
 import { useEffect, useState } from 'react'
 import { AsciiGlobe } from '../components/AsciiGlobe'
 import { TopographicField } from '../components/TopographicField'
@@ -26,10 +26,10 @@ const eyebrowBars = [
   'bg-accent-900',
 ]
 const details = [
-  { label: 'Currently', value: 'Plain', accent: '136 169 0' },
-  { label: 'Based In', value: 'Berlin', accent: '28 111 154' },
-  { label: 'Habit', value: 'OSS', accent: '174 87 55' },
-  { label: 'Online', value: '2026', accent: '118 76 153' },
+  { label: 'Currently', value: 'Plain', accentClass: '[--detail-accent:136_169_0]' },
+  { label: 'Based In', value: 'Berlin', accentClass: '[--detail-accent:28_111_154]' },
+  { label: 'Habit', value: 'OSS', accentClass: '[--detail-accent:174_87_55]' },
+  { label: 'Online', value: '2026', accentClass: '[--detail-accent:118_76_153]' },
 ] as const
 
 function Home() {
@@ -270,8 +270,7 @@ function Home() {
             {details.map((detail, index) => (
               <div
                 key={detail.label}
-                className={`${detailCardClass} ${index < 2 ? 'border-b border-rule' : ''}`}
-                style={{ '--detail-accent': detail.accent } as CSSProperties}
+                className={`${detailCardClass} ${detail.accentClass} ${index < 2 ? 'border-b border-rule' : ''}`}
                 onPointerEnter={handleDetailPointerEnter}
                 onPointerMove={handleDetailPointerMove}
                 onPointerLeave={handleDetailPointerLeave}
