@@ -33,6 +33,16 @@ a {
   text-decoration: none;
 }
 
+::selection {
+  background: color-mix(in srgb, var(--accent) 36%, transparent);
+  color: var(--ink);
+}
+
+::target-text {
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+  color: var(--ink);
+}
+
 .home-page {
   --paper: #eee4cf;
   --ink: #17140f;
@@ -322,22 +332,30 @@ html[data-theme='dark'] .theme-toggle__icon--sun {
   padding: clamp(1.5rem, 4vw, 4.5rem);
 }
 
-.home-eyebrow {
+.home-wordmark {
+  width: fit-content;
   max-width: 100%;
-  margin: 0 0 2rem;
+}
+
+.home-eyebrow {
+  justify-self: end;
+  max-width: 100%;
+  margin: 0 0 2.5rem;
   overflow: hidden;
   color: var(--accent);
-  font-size: 0.72rem;
-  letter-spacing: 0.24em;
+  opacity: 0.85;
+  font-size: 0.85rem;
+  letter-spacing: 0.175em;
   line-height: 1.9;
+  text-align: right;
   text-overflow: ellipsis;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
 .home-eyebrow::before {
-  content: '$> ';
-  color: var(--ink);
+  content: '$ ';
+  color: var(--muted);
 }
 
 .home-hero h1 {

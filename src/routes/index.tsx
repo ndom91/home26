@@ -201,8 +201,10 @@ function Home() {
 
       <div className="home-main-grid">
         <section className="home-hero" aria-labelledby="home-title">
-          <p className="home-eyebrow">cat /home/ndom91/portfolio</p>
-          <h1 id="home-title">.domino</h1>
+          <div className="home-wordmark">
+            <p className="home-eyebrow">cat /home/ndom91/portfolio</p>
+            <h1 id="home-title">.domino</h1>
+          </div>
         </section>
 
         <aside className="home-intro" aria-label="Profile summary">
