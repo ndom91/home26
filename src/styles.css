@@ -182,6 +182,12 @@
   animation-name: theme-snapshot-reveal;
 }
 
+::view-transition-group(disabled),
+::view-transition-old(disabled),
+::view-transition-new(disabled) {
+  animation-duration: 0s !important;
+}
+
 @keyframes theme-snapshot-fade {
   to {
     opacity: 0.72;
