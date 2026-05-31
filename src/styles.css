@@ -208,7 +208,7 @@ a {
 
 .home-details div {
   --detail-accent: 136 169 0;
-  --hover-target-x: 50%;
+  --hover-x: 50%;
   position: relative;
   min-height: 8rem;
   overflow: hidden;
@@ -223,30 +223,33 @@ a {
   content: '';
   opacity: 0;
   pointer-events: none;
-  transition: opacity 180ms ease;
+  transition: opacity 500ms ease;
 }
 
 .home-details div::before {
   inset-block: -25%;
-  width: min(22rem, 120%);
+  width: min(28rem, 150%);
   background: linear-gradient(
     90deg,
     transparent,
-    rgb(var(--detail-accent) / 0.09) 18%,
+    rgb(var(--detail-accent) / 0.08) 22%,
     rgb(var(--detail-accent) / 0.3) 50%,
-    rgb(var(--detail-accent) / 0.09) 82%,
+    rgb(var(--detail-accent) / 0.08) 78%,
     transparent
   );
-  transform: translateX(calc(var(--hover-target-x) - 50%)) rotate(10deg);
-  transition:
-    opacity 180ms ease,
-    transform 520ms cubic-bezier(0.19, 1, 0.22, 1);
+  transform: translateX(calc(var(--hover-x) - 50%)) rotate(8deg);
+  transition: opacity 500ms ease;
 }
 
 .home-details div::after {
   background-image: radial-gradient(rgb(23 20 15 / 0.32) 0.7px, transparent 0.7px);
   background-size: 3px 3px;
   mix-blend-mode: multiply;
+}
+
+.home-details div:hover::before,
+.home-details div:hover::after {
+  transition-duration: 180ms;
 }
 
 .home-details div:hover::before {
