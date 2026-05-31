@@ -15,7 +15,7 @@ const homeBarCellClass = 'px-5 py-4'
 const themeIconClass =
   'absolute top-1/2 left-1/2 size-[0.95rem] -translate-x-1/2 -translate-y-1/2 origin-center stroke-[2.2] transition-[opacity,translate,rotate,scale] duration-[540ms] ease-spring-toggle motion-reduce:duration-[1ms]'
 const detailCardClass =
-  "relative min-h-32 overflow-hidden border-r border-rule p-[1.15rem] [--hover-color-strength:1] [--hover-tilt:3deg] [--hover-x:50%] before:pointer-events-none before:absolute before:inset-y-[-25%] before:left-0 before:w-[min(28rem,150%)] before:bg-[linear-gradient(90deg,transparent,rgb(var(--detail-accent)/calc(0.08*var(--hover-color-strength)))_18%,rgb(var(--detail-accent)/calc(0.25*var(--hover-color-strength)))_50%,rgb(var(--detail-accent)/calc(0.08*var(--hover-color-strength)))_78%,transparent)] before:content-[''] before:opacity-0 before:transition-opacity before:duration-500 before:translate-x-[calc(var(--hover-x)-50%)] before:rotate-[var(--hover-tilt)] after:pointer-events-none after:absolute after:inset-0 after:bg-[image:var(--grit-image)] after:bg-[length:180px_180px] after:bg-repeat after:content-[''] after:opacity-0 after:mix-blend-normal after:transition-opacity after:duration-500 hover:before:opacity-100 hover:before:duration-180 hover:after:opacity-[var(--grit-opacity)] hover:after:duration-180"
+  "relative min-h-32 overflow-hidden border-r border-rule p-[1.15rem] [--hover-color-strength:1] [--hover-tilt:2.5deg] [--hover-x:50%] before:pointer-events-none before:absolute before:inset-y-[-30%] before:left-0 before:w-[min(32rem,160%)] before:bg-[linear-gradient(90deg,transparent,rgb(var(--detail-accent)/calc(0.034*var(--hover-color-strength)))_22%,rgb(var(--detail-accent)/calc(0.14*var(--hover-color-strength)))_50%,rgb(var(--detail-accent)/calc(0.034*var(--hover-color-strength)))_78%,transparent)] before:content-[''] before:opacity-0 before:blur-[8px] before:transition-opacity before:duration-500 before:translate-x-[calc(var(--hover-x)-50%)] before:rotate-[var(--hover-tilt)] after:pointer-events-none after:absolute after:inset-0 after:bg-[image:var(--grit-image)] after:bg-[length:180px_180px] after:bg-repeat after:content-[''] after:opacity-0 after:mix-blend-normal after:transition-opacity after:duration-500 hover:before:opacity-100 hover:before:duration-180 hover:after:opacity-[var(--grit-opacity)] hover:after:duration-180"
 const detailLabelClass = 'relative z-[1] mb-2 block text-[0.72rem] uppercase tracking-[0.22em]'
 const detailValueClass = 'relative z-[1] text-[0.72rem] uppercase tracking-[0.14em] text-muted'
 
@@ -161,8 +161,8 @@ function Home() {
     const velocity = (targetX - lastX) / elapsed
     const direction = velocity < 0 ? -1 : 1
     const movementStrength = Math.abs(velocity)
-    const tilt = direction * Math.min(10, Math.max(2, movementStrength * 38))
-    const colorStrength = Math.min(1.28, Math.max(0.82, 0.86 + movementStrength * 0.65))
+    const tilt = direction * Math.min(8, Math.max(2, movementStrength * 32))
+    const colorStrength = Math.min(1.12, Math.max(0.82, 0.84 + movementStrength * 0.38))
     const currentX = Number.parseFloat(detail.style.getPropertyValue('--hover-x')) || targetX
 
     detail.style.setProperty('--hover-target-x', `${targetX}`)
@@ -189,8 +189,8 @@ function Home() {
       const latestColorStrength =
         Number.parseFloat(detail.style.getPropertyValue('--hover-color-strength')) ||
         latestTargetColorStrength
-      const nextX = latestX + (latestTargetX - latestX) * 0.025
-      const nextTilt = latestTilt + (latestTargetTilt - latestTilt) * 0.2
+      const nextX = latestX + (latestTargetX - latestX) * 0.11
+      const nextTilt = latestTilt + (latestTargetTilt - latestTilt) * 0.18
       const nextColorStrength =
         latestColorStrength + (latestTargetColorStrength - latestColorStrength) * 0.12
 
