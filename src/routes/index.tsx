@@ -11,8 +11,7 @@ function Home() {
   function handleDetailPointerMove(event: PointerEvent<HTMLDivElement>) {
     const rect = event.currentTarget.getBoundingClientRect()
 
-    event.currentTarget.style.setProperty('--hover-x', `${event.clientX - rect.left}px`)
-    event.currentTarget.style.setProperty('--hover-y', `${event.clientY - rect.top}px`)
+    event.currentTarget.style.setProperty('--hover-target-x', `${event.clientX - rect.left}px`)
   }
 
   return (
