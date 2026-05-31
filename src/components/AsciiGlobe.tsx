@@ -9,7 +9,7 @@ type GlobePoint = {
   seed: number
 }
 
-const CHARS = '  ..::--==++**##0011//\\||'
+const CHARS = Array.from('  .,:;i!+><*#%@')
 const ROWS = 54
 const COLS = 104
 
