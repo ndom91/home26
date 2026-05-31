@@ -202,7 +202,13 @@ function Home() {
       <div className="home-main-grid">
         <section className="home-hero" aria-labelledby="home-title">
           <div className="home-wordmark">
-            <p className="home-eyebrow">cat /home/ndom91/portfolio</p>
+            <div className="home-eyebrow" aria-label="Decorative scale marker">
+              <span />
+              <span />
+              <span />
+              <span />
+              <span />
+            </div>
             <h1 id="home-title">.domino</h1>
           </div>
         </section>
