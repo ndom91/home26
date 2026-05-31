@@ -13,7 +13,7 @@ function BlogIndex() {
   const posts = Route.useLoaderData()
 
   return (
-    <div className="flex min-h-screen flex-col bg-blog-bg text-blog-text">
+    <div className="flex min-h-screen flex-col bg-blog-bg text-blog-text [--focus-ring-offset:var(--color-blog-bg)]">
       <nav className="grid grid-cols-[auto_1fr_auto] border-b border-blog-rule">
         <div className="border-r border-blog-rule px-6 py-4">
           <Link

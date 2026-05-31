@@ -175,14 +175,14 @@ function Home() {
           <a href="mailto:home@ndo.dev">Contact</a>
         </nav>
         <button
-          className="group me-5 cursor-pointer justify-self-end border-0 bg-transparent p-0 text-inherit"
+          className="me-5 cursor-pointer justify-self-end rounded-full border-0 bg-transparent p-0 text-inherit"
           type="button"
           onClick={toggleTheme}
           aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
           aria-pressed={theme === 'dark'}
         >
           <span
-            className="relative grid h-[1.82rem] w-[calc(1.82rem*2-0.4rem)] grid-cols-2 items-center rounded-full border border-rule bg-[linear-gradient(90deg,rgb(var(--globe-accent)/0.14),transparent_54%),var(--paper)] p-[0.2rem] transition-[border-color,background] duration-[260ms] ease-in-out before:absolute before:inset-[0.38rem] before:rounded-[inherit] before:bg-[radial-gradient(currentColor_0.7px,transparent_0.7px)] before:bg-[length:4px_4px] before:content-[''] before:opacity-[0.16] group-focus-visible:outline-2 group-focus-visible:outline-offset-3 group-focus-visible:outline-accent motion-reduce:duration-[1ms]"
+            className="relative grid h-[1.82rem] w-[calc(1.82rem*2-0.4rem)] grid-cols-2 items-center rounded-full border border-rule bg-[linear-gradient(90deg,rgb(var(--globe-accent)/0.14),transparent_54%),var(--paper)] p-[0.2rem] transition-[border-color,background] duration-[260ms] ease-in-out before:absolute before:inset-[0.38rem] before:rounded-[inherit] before:bg-[radial-gradient(currentColor_0.7px,transparent_0.7px)] before:bg-[length:4px_4px] before:content-[''] before:opacity-[0.16] motion-reduce:duration-[1ms]"
             aria-hidden="true"
           >
             <span className="relative grid aspect-square w-full translate-x-0 place-items-center rounded-full bg-ink text-paper transition-[background,color,transform] duration-[540ms] ease-spring-toggle dark:translate-x-full motion-reduce:duration-[1ms]">

@@ -57,6 +57,7 @@
     --globe-background: var(--globe-light-background);
     --grit-image: url('/blackgrit.webp');
     --grit-opacity: 0.75;
+    --focus-ring-offset: var(--paper);
     color-scheme: light dark;
   }
 
@@ -136,4 +137,29 @@
     background: color-mix(in oklab, var(--accent) 28%, transparent);
     color: var(--ink);
   }
+}
+
+:where(
+  a:any-link,
+  input,
+  textarea,
+  select,
+  summary,
+  [tabindex]:not([tabindex='-1']),
+  [contenteditable='true']
+):focus-visible {
+  @apply rounded-sm;
+}
+
+:where(
+  a:any-link,
+  button,
+  input,
+  textarea,
+  select,
+  summary,
+  [tabindex]:not([tabindex='-1']),
+  [contenteditable='true']
+):focus-visible {
+  @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-[var(--focus-ring-offset)];
 }
