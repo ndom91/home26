@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react'
 
 type GlobePoint = {
+  lat: number
+  lon: number
   x: number
   y: number
   z: number
@@ -23,6 +25,8 @@ function createPoints() {
       const theta = u * Math.PI * 2
 
       points.push({
+        lat,
+        lon,
         x: Math.sin(phi) * Math.cos(theta),
         y: Math.cos(phi),
         z: Math.sin(phi) * Math.sin(theta),
@@ -55,9 +59,11 @@ export function AsciiGlobe() {
     }
 
     const pointer = { x: 0, y: 0, tx: 0, ty: 0, vx: 0, vy: 0 }
+    const scrollSpring = { x: 0, y: 0, vx: 0, vy: 0 }
     let animationFrame = 0
     let width = 1
     let height = 1
+    let previousTime = 0
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
 
     const resize = () => {
@@ -81,13 +87,34 @@ export function AsciiGlobe() {
       pointer.ty = nextY
     }
 
+    const onWheel = (event: WheelEvent) => {
+      if (reduceMotion.matches) {
+        return
+      }
+
+      scrollSpring.vx += Math.max(-80, Math.min(80, event.deltaY)) * 0.00035
+      scrollSpring.vy += Math.max(-80, Math.min(80, event.deltaX)) * 0.00025
+    }
+
     const draw = (time: number) => {
+      const delta = Math.min(40, time - previousTime || 16) / 16.6667
       const t = time * 0.001
+      previousTime = time
       pointer.x += (pointer.tx - pointer.x) * 0.045
       pointer.y += (pointer.ty - pointer.y) * 0.045
+      scrollSpring.vx += -scrollSpring.x * 0.018 * delta
+      scrollSpring.vy += -scrollSpring.y * 0.018 * delta
+      scrollSpring.vx *= 1 - Math.min(0.18, 0.06 * delta)
+      scrollSpring.vy *= 1 - Math.min(0.18, 0.06 * delta)
+      scrollSpring.x += scrollSpring.vx * delta
+      scrollSpring.y += scrollSpring.vy * delta
 
-      const rotY = (reduceMotion.matches ? 0.25 : t * 0.105) + pointer.x * 0.24 + pointer.vx * 0.08
-      const rotX = pointer.y * -0.18 + pointer.vy * -0.05
+      const rotY =
+        (reduceMotion.matches ? 0.25 : t * 0.105) +
+        pointer.x * 0.24 +
+        pointer.vx * 0.08 +
+        scrollSpring.x
+      const rotX = pointer.y * -0.18 + pointer.vy * -0.05 + scrollSpring.y
       const cosY = Math.cos(rotY)
       const sinY = Math.sin(rotY)
       const cosX = Math.cos(rotX)
@@ -115,15 +142,20 @@ export function AsciiGlobe() {
         const sx = centerX + x1 * scale * perspective * warp
         const sy = centerY + y1 * scale * perspective * warp
         const depth = Math.max(0, Math.min(1, (z2 + 1) / 2))
+        const meridian = point.lon % 13 === 0
+        const latitude = point.lat % 9 === 0
+        const orbitCue = meridian || latitude
+        const highlightBand = Math.max(0, 1 - Math.abs(x1 - 0.28) / 0.08) * Math.max(0, z2)
         const shade = Math.max(0, Math.min(1, 0.18 + depth * 0.68 + influence * 0.18))
-        const char = CHARS[Math.min(CHARS.length - 1, Math.floor(shade * CHARS.length))]
+        const charIndex = Math.min(CHARS.length - 1, Math.floor(shade * CHARS.length))
+        const char = orbitCue ? CHARS[Math.max(charIndex, CHARS.length - 5)] : CHARS[charIndex]
         const frontAlpha = 0.22 + depth * 0.46
         const backAlpha = 0.11 + depth * 0.12
-        const alpha = z2 >= 0 ? frontAlpha : backAlpha
-        const lime = influence > 0.22 || (z2 > 0.68 && y1 < -0.48)
+        const alpha = (z2 >= 0 ? frontAlpha : backAlpha) + highlightBand * 0.18
+        const lime = influence > 0.22 || highlightBand > 0.45 || (z2 > 0.68 && y1 < -0.48)
 
         context.fillStyle = lime
-          ? `rgba(215, 255, 47, ${0.25 + influence * 0.38 + depth * 0.18})`
+          ? `rgba(215, 255, 47, ${0.25 + influence * 0.38 + depth * 0.18 + highlightBand * 0.24})`
           : `rgba(242, 234, 217, ${alpha})`
         context.fillText(char, sx, sy)
       }
@@ -137,11 +169,13 @@ export function AsciiGlobe() {
     const observer = new ResizeObserver(resize)
     observer.observe(root)
     window.addEventListener('pointermove', onPointerMove)
+    window.addEventListener('wheel', onWheel, { passive: true })
     animationFrame = window.requestAnimationFrame(draw)
 
     return () => {
       window.cancelAnimationFrame(animationFrame)
       window.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('wheel', onWheel)
       observer.disconnect()
     }
   }, [])
