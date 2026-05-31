@@ -268,9 +268,9 @@ function Home() {
         </button>
       </header>
 
-      <div className="relative z-[1] grid grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.9fr)] gap-px border-b border-rule max-[820px]:grid-cols-1">
+      <div className="relative z-1 grid grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.9fr)] gap-px border-b border-rule max-[820px]:grid-cols-1">
         <section
-          className="grid min-h-[72dvh] content-end overflow-hidden p-[clamp(1.5rem,4vw,4.5rem)]"
+          className="grid min-h-[72dvh] justify-end content-end overflow-hidden p-[clamp(1.5rem,4vw,4.5rem)]"
           aria-labelledby="home-title"
         >
           <div>
@@ -284,7 +284,7 @@ function Home() {
             </div>
             <h1
               id="home-title"
-              className="m-0 max-w-[12ch] font-logo text-[clamp(4.6rem,17vw,16rem)] font-black leading-[0.82] tracking-[-0.125em] lowercase"
+              className="m-0 max-w-[12ch] font-logo text-[clamp(3.2rem,12vw,12rem)] font-black leading-[0.8] tracking-tighter lowercase"
             >
               .domino
             </h1>

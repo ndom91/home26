@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=Red+Hat+Mono:wght@700&family=Syne:wght@700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@700;800;900&family=Chivo+Mono:wght@700;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=JetBrains+Mono:wght@700;800&family=Kode+Mono:wght@700&family=Major+Mono+Display&family=Martian+Mono:wght@700;800&family=Red+Hat+Mono:wght@700&family=Sono:wght@700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syne:wght@700;800&family=Workbench&display=swap');
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
@@ -7,7 +7,9 @@
 @theme {
   --font-body: 'IBM Plex Mono', ui-monospace, monospace;
   --font-heading: 'Syne', sans-serif;
-  --font-logo: 'Red Hat Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  --font-logo: var(--font-logo-jetbrains);
+  --font-logo-jetbrains: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  --font-logo-red-hat: 'Red Hat Mono', 'IBM Plex Mono', ui-monospace, monospace;
   --font-mono: 'Space Mono', monospace;
 
   --color-paper: var(--paper);
