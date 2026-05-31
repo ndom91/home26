@@ -84,6 +84,7 @@ a {
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
+  background: var(--paper);
   border-block: 1px solid var(--rule);
   font-size: 0.7rem;
   letter-spacing: 0.16em;
@@ -125,6 +126,7 @@ a {
   display: grid;
   align-content: end;
   min-height: 72dvh;
+  overflow: hidden;
   padding: clamp(1.5rem, 4vw, 4.5rem);
 }
 
@@ -196,19 +198,20 @@ a {
 }
 
 .home-details {
+  position: relative;
+  z-index: 2;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  background: var(--paper);
   border-top: 1px solid var(--rule);
+  border-left: 1px solid var(--rule);
 }
 
 .home-details div {
   min-height: 8rem;
   padding: 1.15rem;
   border-right: 1px solid var(--rule);
-}
-
-.home-details div:nth-child(2n) {
-  border-right: 0;
+  border-bottom: 1px solid var(--rule);
 }
 
 .home-details strong {
