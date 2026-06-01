@@ -3,7 +3,7 @@ date: "2025-03-08"
 title: "Getting Started with Matter + Thread"
 tags: ["iot", "matter", "thread", "networking"]
 cover:
-  imageFile: "matter-thread/cover.png"
+  imageFile: "./cover.png"
 ---
 
 Every few months my smart home addiction kicks in and I tend to buy another little sensor, light, widget, etc. This time around I decided I wanted to finally get into Matter + Thread. Going into this all I knew was that Matter and Thread were very much hyped IoT communication standards that were supposed to harmonize a lot of splintering of the various ecosystems over the past few years, and I finally started seeing more and more manufacturers launching products that offered support, so my assumption was that many of the early kinks had most likely been worked out already.. 😂
@@ -44,7 +44,7 @@ My very first, uninformed, attempt to be an early adopter here resulted in me bu
 
 That brings us to the last important piece of prerequisite equipment - the Thread Border Router (TBR). A TBR is the device that bridges your physically separate Thread network to the rest of your home network. It is responsible for routing traffic between the two networks and is the device that your Thread devices will connect to in order to communicate with the rest of your network. You can think of it as a "hub" like you might already have for many other manufacturers' smart home devices. However, this one is not manufacturer specific and will act as a hub for any and all Thread devices, like a Zigbee coordinator.
 
-![Thread Network Topology](/assets/blog/matter-thread/network-topology.png)
+![Thread Network Topology](./network-topology.png)
 
 A Border Router can come in many shapes and sizes. Initially I attempted to use the Espressif development board (https://github.com/espressif/esp-thread-br) which combines both an ESP32 C3 (for WiFi + Bluetooth) and an ESP32 H2 (for 802.15.4 Thread) on a single board. Unfortunately I was unable to get this to work, so I ended up buying the [Nabu Casa ZBT-1 USB Dongle](https://www.home-assistant.io/connectzbt1/) (previously known as the Homeassistant Skyconnect) as that had many more successful users using it on the Homeassistant forums and elsewhere on the web. Looking back, it was probably just me misconfiguring my local IPv6 setup, but that's neither here nor there haha.
 
@@ -172,4 +172,3 @@ Some other notes that I didn't know where to put here, but that I found helpful 
 You can ping IPv6 addresses by passing `ping` the `-6` flag. However, these multicast addresses also often necessitate you explicitly defining which interface you want to send them out of. This can be done by adding a suffix of `%` followed by your interface name to the target address. So a full `ping` command to the `all nodes` endpoint would look something like this:
 
 `ping -6 ff02::1%eth0`
-

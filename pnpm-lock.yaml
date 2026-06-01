@@ -129,6 +129,9 @@ importers:
       jsdom:
         specifier: 28.1.0
         version: 28.1.0
+      rehype-mdx-import-media:
+        specifier: 1.4.0
+        version: 1.4.0
       vite:
         specifier: 8.0.11
         version: 8.0.11(@types/node@22.19.18)(esbuild@0.27.3)(jiti@2.7.0)(yaml@2.8.4)
@@ -2220,6 +2223,9 @@ packages:
   hast-util-parse-selector@4.0.0:
     resolution: {integrity: sha512-wkQCkSYoOGCRKERFWcxMVMOcYE2K1AaNLU8DXS9arxnLOUEWbOXKXiJUNzEpqZ3JOKpnha3jkFrumEjVliDe7A==}
 
+  hast-util-properties-to-mdx-jsx-attributes@1.1.1:
+    resolution: {integrity: sha512-MMrAoGgvhYULEqMB/r6AlcVz1D3Cyml/9cMB2NIqZsIsEJ+XEXPMqH0gjba8dVs9AnQUYvPReAS+OIYx4ip+Ug==}
+
   hast-util-to-estree@3.1.3:
     resolution: {integrity: sha512-48+B/rJWAp0jamNbAAf9M7Uf//UVqAoMmgXhBdxTDJLGKY+LRnZ99qcG+Qjl5HfMpYNzS5v4EAwVEF34LeAj7w==}
 
@@ -2661,6 +2667,9 @@ packages:
   parse-numeric-range@1.3.0:
     resolution: {integrity: sha512-twN+njEipszzlMJd4ONUYgSfZPDxgHhT9Ahed5uTigpQn90FggW4SA/AIPq/6a149fTbE9qBEcSwE3FAEp6wQQ==}
 
+  parse-srcset@1.0.2:
+    resolution: {integrity: sha512-/2qh0lav6CmI15FzA3i/2Bzk2zCgQhGMkvhOhKNcBVQ1ldgpbfiNTVslmooUmWJcADi1f1kIeynbDRVzNlfR6Q==}
+
   parse5-htmlparser2-tree-adapter@7.1.0:
     resolution: {integrity: sha512-ruw5xyKs6lrpo9x9rCZqZZnIUntICjQAd0Wsmp396Ul9lN/h+ifgVV1x1gZHi8euej6wTfpqX8j+BFQxF0NS/g==}
 
@@ -2763,6 +2772,9 @@ packages:
 
   rehype-autolink-headings@7.1.0:
     resolution: {integrity: sha512-rItO/pSdvnvsP4QRB1pmPiNHUskikqtPojZKJPPPAVx9Hj8i8TwMBhofrrAYRhYOOBZH9tgmG5lPqDLuIWPWmw==}
+
+  rehype-mdx-import-media@1.4.0:
+    resolution: {integrity: sha512-O2Q/yFj8lj0IXK7iwfHFowYrn0c5wA4/RCoS8J30HVioMmMzr+fF82PbxV3YPf6IpmbaRrVPvRfae1LhM8hXmQ==}
 
   rehype-parse@9.0.1:
     resolution: {integrity: sha512-ksCzCD0Fgfh7trPDxr2rSylbwq9iYDkSn8TCDmEJ49ljEUBxDVCzCHv7QNzZOfODanX4+bWQ4WZqLCRWYLfhag==}
@@ -5157,6 +5169,17 @@ snapshots:
     dependencies:
       '@types/hast': 3.0.4
 
+  hast-util-properties-to-mdx-jsx-attributes@1.1.1:
+    dependencies:
+      '@types/estree': 1.0.9
+      '@types/hast': 3.0.4
+      estree-util-value-to-estree: 3.5.0
+      mdast-util-mdx-jsx: 3.2.0
+      property-information: 7.1.0
+      style-to-js: 1.1.21
+    transitivePeerDependencies:
+      - supports-color
+
   hast-util-to-estree@3.1.3:
     dependencies:
       '@types/estree': 1.0.9
@@ -5917,6 +5940,8 @@ snapshots:
 
   parse-numeric-range@1.3.0: {}
 
+  parse-srcset@1.0.2: {}
+
   parse5-htmlparser2-tree-adapter@7.1.0:
     dependencies:
       domhandler: 5.0.3
@@ -6031,6 +6056,16 @@ snapshots:
       hast-util-is-element: 3.0.0
       unified: 11.0.5
       unist-util-visit: 5.1.0
+
+  rehype-mdx-import-media@1.4.0:
+    dependencies:
+      '@types/hast': 3.0.4
+      hast-util-properties-to-mdx-jsx-attributes: 1.1.1
+      parse-srcset: 1.0.2
+      unified: 11.0.5
+      unist-util-visit: 5.1.0
+    transitivePeerDependencies:
+      - supports-color
 
   rehype-parse@9.0.1:
     dependencies:

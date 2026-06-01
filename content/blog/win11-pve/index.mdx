@@ -4,7 +4,7 @@ title: "Windows 11 on Proxmox"
 tags: ["windows", "pve"]
 category: "windows"
 cover:
-  imageFile: "win11-pve/cover.png"
+  imageFile: "./cover.png"
 ---
 
 > Update 2: Proxmox has added support for adding vTPM devices to a VM with `7.0-13`. For more details, check out their [docs](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_tpm).
@@ -29,7 +29,7 @@ If you now attempt to go through the installation as normal, you'll get through 
 
 To avoid this issue we'll have to create some registry entries in this "live" Windows environment. Therefore, exit the installer Window so that it brings you back to the initial purple screen with the two buttons - "Install" and "Repair Computer".
 
-![Repair Computer](/assets/blog/win11-pve/repair.png)
+![Repair Computer](./repair.png)
 
 Select "Repair Computer", then "Troubleshoot" and finally "Command Prompt". Now that we have access to a windows admin shell theres pretty much nothing we can't do!
 
@@ -43,12 +43,12 @@ First, open the Registry Editor by entering `regedit.exe` in the command prompt.
 
 Your `LabConfig` key should look like this.
 
-![LabConfig](/assets/blog/win11-pve/labconfig.webp)
+![LabConfig](./labconfig.webp)
 
 Now you we can exit `regedit` and return to the command prompt. If we tried to back out of the "Repair Computer" area and return to the installer, we won't be able to go back further than the light blue screen with the selection "Troubleshoot" or "Reboot". Unfortunately at this point you can't get back to the dark purple initial installer application that way. Fortunately for us, however, the installer application has an extremely easy to guess binary name which is in the `$PATH` of our command prompt!
 
 Therefore, back in our command prompt you can enter `setup.exe` and you'll launch the fullscreen Windows 11 dark purple installer again. This time, after selecting "_I don't have a product key_" and choosing your Windows 11 edition, the install wizard will continue without a word and allow you to partition your disk, etc.!
 
-![Setup](/assets/blog/win11-pve/setup.png)
+![Setup](./setup.png)
 
 And that is all that there is to it! Now how do you disable that center justified taskbar.. 🤔😂

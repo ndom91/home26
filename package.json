@@ -71,6 +71,7 @@
     "@typescript/native-preview": "7.0.0-dev.20260509.2",
     "@vitejs/plugin-react": "6.0.1",
     "jsdom": "28.1.0",
+    "rehype-mdx-import-media": "1.4.0",
     "vite": "8.0.11",
     "vitest": "4.1.5",
     "wrangler": "4.90.0"
