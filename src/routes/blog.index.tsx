@@ -54,12 +54,12 @@ function BlogIndex() {
                 params={{ slug: featuredPost.slug }}
                 className="group mb-5 grid overflow-hidden border border-blog-rule bg-blog-panel transition-colors hover:border-blog-accent hover:bg-blog-hover lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,0.85fr)]"
               >
-                <div className="flex min-h-80 flex-col justify-between p-5 sm:p-7">
+                <div className="flex min-h-80 min-w-0 flex-col justify-between p-5 sm:p-7">
                   <div>
                     <p className="font-mono mb-5 text-[9px] uppercase tracking-widest text-blog-muted">
                       LATEST ENTRY
                     </p>
-                    <h2 className="text-balance font-heading text-[clamp(2.3rem,6vw,5.8rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.04em] text-blog-text transition-colors group-hover:text-blog-accent">
+                    <h2 className="text-balance font-heading text-[clamp(1.7rem,4vw,3.75rem)] font-extrabold uppercase leading-[0.92] tracking-[-0.04em] text-blog-text transition-colors wrap-anywhere group-hover:text-blog-accent">
                       {featuredPost.title}
                     </h2>
                     <p className="mt-5 max-w-2xl font-reading text-base leading-7 text-blog-description">
@@ -102,7 +102,7 @@ function BlogIndex() {
                   ) : null}
                   <div className="flex flex-1 flex-col p-4">
                     <PostCardMeta post={post} />
-                    <h2 className="mt-4 text-balance font-mono text-base font-medium leading-snug text-blog-text transition-colors group-hover:text-blog-accent">
+                    <h2 className="mt-4 text-balance font-heading text-base font-medium leading-snug text-blog-text transition-colors group-hover:text-blog-accent">
                       {post.title}
                     </h2>
                     <p className="mt-3 font-reading text-sm leading-6 text-blog-description">
