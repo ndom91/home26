@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { SiteHeader } from '../components/SiteHeader'
 import type { BlogPost as BlogPostType } from '../lib/blog'
 import { getPublishedPost } from '../lib/blog'
+import { mdxComponents } from '../mdx-components'
 
 type PostMeta = Omit<BlogPostType, 'Component'>
 
@@ -78,8 +79,8 @@ function BlogPost() {
       </div>
 
       <div className="flex-1 px-6 py-12 sm:py-16">
-        <article className="prose mx-auto max-w-2xl prose-headings:text-balance prose-headings:font-heading prose-headings:text-blog-text prose-p:text-blog-description prose-a:text-blog-accent prose-strong:text-blog-text prose-li:text-blog-description prose-th:text-blog-text prose-td:text-blog-description prose-code:bg-blog-panel prose-code:px-1 prose-code:py-0.5 prose-code:text-blog-text prose-code:before:content-none prose-code:after:content-none prose-blockquote:border-blog-accent prose-blockquote:text-blog-description prose-hr:border-blog-rule prose-img:border prose-img:border-blog-rule prose-img:bg-blog-panel prose-img:shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-blog-accent)_12%,transparent)] lg:prose-img:-mx-16 lg:prose-img:w-[calc(100%+8rem)] lg:prose-img:max-w-none prose-pre:border prose-pre:border-blog-rule prose-pre:!bg-blog-panel">
-          <Component />
+        <article className="prose mx-auto max-w-2xl prose-headings:mt-12 prose-headings:text-balance prose-headings:font-heading prose-headings:text-blog-text prose-p:text-blog-description prose-a:text-blog-accent prose-strong:text-blog-text prose-li:text-blog-description prose-th:text-blog-text prose-td:text-blog-description prose-code:bg-blog-panel prose-code:px-1 prose-code:py-0.5 prose-code:text-blog-text prose-code:before:content-none prose-code:after:content-none prose-blockquote:border-blog-accent prose-blockquote:text-blog-description prose-hr:border-blog-rule prose-img:border prose-img:border-blog-rule prose-img:bg-blog-panel prose-img:shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-blog-accent)_12%,transparent)] lg:prose-img:-mx-16 lg:prose-img:w-[calc(100%+8rem)] lg:prose-img:max-w-none prose-pre:border prose-pre:border-blog-rule prose-pre:bg-blog-panel!">
+          <Component components={mdxComponents} />
         </article>
       </div>
 
