@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type GlobePoint = {
   lat: number
@@ -7,6 +7,10 @@ type GlobePoint = {
   y: number
   z: number
   seed: number
+}
+
+type DeviceOrientationEventConstructorWithPermission = typeof DeviceOrientationEvent & {
+  requestPermission?: () => Promise<PermissionState>
 }
 
 const CHARS = Array.from('  .,:;i!+><*#%@')
@@ -40,9 +44,64 @@ function createPoints() {
 
 const POINTS = createPoints()
 
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value))
+}
+
 export function AsciiGlobe() {
   const rootRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [tiltEnabled, setTiltEnabled] = useState(false)
+
+  useEffect(() => {
+    const DeviceOrientation = window.DeviceOrientationEvent as
+      | DeviceOrientationEventConstructorWithPermission
+      | undefined
+    if (!DeviceOrientation) return
+
+    const needsPermission = typeof DeviceOrientation?.requestPermission === 'function'
+    const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (reduceMotion) return
+
+    if (!needsPermission) {
+      setTiltEnabled(true)
+      return
+    }
+
+    if (!isCoarsePointer) return
+
+    let requested = false
+
+    function removePermissionListeners() {
+      window.removeEventListener('click', requestTiltPermission)
+      window.removeEventListener('pointerup', requestTiltPermission)
+      window.removeEventListener('touchend', requestTiltPermission)
+    }
+
+    async function requestTiltPermission() {
+      if (requested) return
+      requested = true
+      removePermissionListeners()
+
+      try {
+        const permission = await DeviceOrientation?.requestPermission?.()
+
+        if (permission === 'granted') {
+          setTiltEnabled(true)
+        }
+      } catch {
+        // Keep the globe as pointer/ambient-only when motion access is denied or unavailable.
+      }
+    }
+
+    window.addEventListener('click', requestTiltPermission, { once: true })
+    window.addEventListener('pointerup', requestTiltPermission, { once: true })
+    window.addEventListener('touchend', requestTiltPermission, { once: true, passive: true })
+
+    return removePermissionListeners
+  }, [])
 
   useEffect(() => {
     const root = rootRef.current
@@ -64,6 +123,7 @@ export function AsciiGlobe() {
     let width = 1
     let height = 1
     let previousTime = 0
+    let orientationBaseline: { beta: number; gamma: number } | null = null
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
 
     const resize = () => {
@@ -94,6 +154,22 @@ export function AsciiGlobe() {
 
       scrollSpring.vx += Math.max(-80, Math.min(80, event.deltaY)) * 0.00035
       scrollSpring.vy += Math.max(-80, Math.min(80, event.deltaX)) * 0.00025
+    }
+
+    const onDeviceOrientation = (event: DeviceOrientationEvent) => {
+      if (reduceMotion.matches || event.beta === null || event.gamma === null) {
+        return
+      }
+
+      orientationBaseline ??= { beta: event.beta, gamma: event.gamma }
+
+      const nextX = clamp((event.gamma - orientationBaseline.gamma) / 42, -0.48, 0.48)
+      const nextY = clamp((event.beta - orientationBaseline.beta) / 52, -0.48, 0.48)
+
+      pointer.vx += (nextX - pointer.tx) * 0.12
+      pointer.vy += (nextY - pointer.ty) * 0.12
+      pointer.tx = nextX
+      pointer.ty = nextY
     }
 
     const draw = (time: number) => {
@@ -175,15 +251,21 @@ export function AsciiGlobe() {
     observer.observe(root)
     window.addEventListener('pointermove', onPointerMove)
     window.addEventListener('wheel', onWheel, { passive: true })
+
+    if (tiltEnabled) {
+      window.addEventListener('deviceorientation', onDeviceOrientation)
+    }
+
     animationFrame = window.requestAnimationFrame(draw)
 
     return () => {
       window.cancelAnimationFrame(animationFrame)
       window.removeEventListener('pointermove', onPointerMove)
       window.removeEventListener('wheel', onWheel)
+      window.removeEventListener('deviceorientation', onDeviceOrientation)
       observer.disconnect()
     }
-  }, [])
+  }, [tiltEnabled])
 
   return (
     <div
