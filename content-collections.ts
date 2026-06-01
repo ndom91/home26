@@ -29,6 +29,32 @@ function slugFromPath(path: string) {
   return fileName.replace(/\.mdx$/, '')
 }
 
+function directoryFromPath(path: string) {
+  const parts = path.split('/')
+  const fileName = parts.at(-1)
+
+  if (!fileName) {
+    throw new Error(`Unable to derive directory from path: ${path}`)
+  }
+
+  if (fileName === 'index.mdx') {
+    return parts.slice(0, -1).join('/')
+  }
+
+  return parts.slice(0, -1).join('/')
+}
+
+function imageImportPath(postPath: string, imageFile: string) {
+  if (imageFile.startsWith('./')) {
+    const directory = directoryFromPath(postPath)
+    const filePath = [directory, imageFile.slice(2)].filter(Boolean).join('/')
+
+    return `#content/blog/${filePath}`
+  }
+
+  return `#content/blog/${imageFile}`
+}
+
 function descriptionFromContent(content: string) {
   const firstParagraph = content
     .split(/\n{2,}/)
@@ -68,6 +94,11 @@ const posts = defineCollection({
     date: v.optional(isoDate),
     tags: v.optional(v.array(v.string()), []),
     draft: v.optional(v.boolean(), false),
+    cover: v.optional(
+      v.object({
+        imageFile: v.string(),
+      })
+    ),
     content: v.string(),
   }),
   transform: (post) => {
@@ -84,6 +115,9 @@ const posts = defineCollection({
       tags: post.tags,
       draft: post.draft,
       slug: slugFromPath(post._meta.filePath),
+      coverImageUrl: post.cover
+        ? createDefaultImport<string>(imageImportPath(post._meta.filePath, post.cover.imageFile))
+        : null,
       Component: createDefaultImport<MDXContent>(`#content/blog/${post._meta.filePath}`),
     }
   },
