@@ -179,8 +179,10 @@
   }
 
   html {
-    scrollbar-color: color-mix(in oklab, var(--blog-accent) 58%, var(--blog-rule))
-      var(--blog-bg);
+    --scrollbar-thumb: color-mix(in oklab, var(--blog-accent) 58%, var(--blog-rule));
+    --scrollbar-thumb-hover: var(--blog-accent);
+    --scrollbar-track: var(--blog-bg);
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
     scrollbar-gutter: stable;
     scrollbar-width: thin;
   }
@@ -190,7 +192,8 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--blog-bg);
+    background: var(--scrollbar-track);
+    margin-block: 6px;
   }
 
   ::-webkit-scrollbar-thumb {
@@ -199,12 +202,12 @@
       color-mix(in oklab, var(--blog-accent) 70%, var(--blog-rule)),
       color-mix(in oklab, var(--blog-accent) 34%, var(--blog-panel))
     );
-    border: 3px solid var(--blog-bg);
+    border: 3px solid var(--scrollbar-track);
     border-radius: 999px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--blog-accent);
+    background: var(--scrollbar-thumb-hover);
   }
 
   a {

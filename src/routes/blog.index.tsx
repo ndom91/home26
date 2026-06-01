@@ -24,7 +24,7 @@ function BlogIndex() {
             ARCHIVE
           </p>
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end">
-            <h1 className="font-heading min-w-0 text-[clamp(3rem,9vw,7.5rem)] font-extrabold uppercase leading-none tracking-[-0.04em] text-blog-text">
+            <h1 className="text-balance font-heading min-w-0 text-[clamp(3rem,9vw,7.5rem)] font-extrabold uppercase leading-none tracking-[-0.04em] text-blog-text">
               WRITING
             </h1>
             <div className="border-l border-blog-rule pl-4 lg:pb-4">
@@ -59,7 +59,7 @@ function BlogIndex() {
                     <p className="font-mono mb-5 text-[9px] uppercase tracking-widest text-blog-muted">
                       LATEST ENTRY
                     </p>
-                    <h2 className="font-heading text-[clamp(2.3rem,6vw,5.8rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.04em] text-blog-text transition-colors group-hover:text-blog-accent">
+                    <h2 className="text-balance font-heading text-[clamp(2.3rem,6vw,5.8rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.04em] text-blog-text transition-colors group-hover:text-blog-accent">
                       {featuredPost.title}
                     </h2>
                     <p className="font-mono mt-5 max-w-2xl text-sm leading-relaxed text-blog-description">
@@ -102,7 +102,7 @@ function BlogIndex() {
                   ) : null}
                   <div className="flex flex-1 flex-col p-4">
                     <PostCardMeta post={post} />
-                    <h2 className="font-mono mt-4 text-base font-medium leading-snug text-blog-text transition-colors group-hover:text-blog-accent">
+                    <h2 className="mt-4 text-balance font-mono text-base font-medium leading-snug text-blog-text transition-colors group-hover:text-blog-accent">
                       {post.title}
                     </h2>
                     <p className="font-mono mt-3 text-xs leading-relaxed text-blog-description">
