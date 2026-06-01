@@ -41,7 +41,11 @@ const config = defineConfig({
         ],
       }),
     },
-    tanstackStart(),
+    tanstackStart({
+      prerender: {
+        enabled: true,
+      },
+    }),
     viteReact(),
   ],
 })

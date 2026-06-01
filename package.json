@@ -21,6 +21,8 @@
     "dev": "vite dev",
     "build": "content-collections build && vite build",
     "preview": "vite preview",
+    "deploy": "pnpm run build && wrangler deploy",
+    "cf-typegen": "wrangler types",
     "test": "vitest run",
     "typecheck": "content-collections build && tsgo --noEmit",
     "lint": "pnpm biome check",
