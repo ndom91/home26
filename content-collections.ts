@@ -1,0 +1,94 @@
+import {
+  createDefaultImport,
+  defineCollection,
+  defineConfig,
+} from '@content-collections/core'
+import type { MDXContent } from 'mdx/types.js'
+import * as v from 'valibot'
+
+const isoDate = v.pipe(v.string(), v.isoDate())
+
+function slugFromPath(path: string) {
+  const parts = path.split('/')
+  const fileName = parts.at(-1)
+
+  if (!fileName) {
+    throw new Error(`Unable to derive slug from path: ${path}`)
+  }
+
+  if (fileName === 'index.mdx') {
+    const directoryName = parts.at(-2)
+
+    if (!directoryName) {
+      throw new Error(`Unable to derive slug from path: ${path}`)
+    }
+
+    return directoryName
+  }
+
+  return fileName.replace(/\.mdx$/, '')
+}
+
+function descriptionFromContent(content: string) {
+  const firstParagraph = content
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .find(
+      (block) =>
+        block.length > 0 &&
+        !block.startsWith('import ') &&
+        !block.startsWith('#') &&
+        !block.startsWith('```') &&
+        !block.startsWith('<')
+    )
+
+  if (!firstParagraph) {
+    return 'Notes from the archive.'
+  }
+
+  return firstParagraph
+    .replace(/<([A-Z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/g, '$2')
+    .replace(/<[^>]+>/g, '')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/[`*_>#]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 180)
+}
+
+const posts = defineCollection({
+  name: 'posts',
+  directory: 'content/blog',
+  include: '**/*.mdx',
+  schema: v.object({
+    title: v.pipe(v.string(), v.nonEmpty()),
+    description: v.optional(v.string()),
+    publishedAt: v.optional(isoDate),
+    date: v.optional(isoDate),
+    tags: v.optional(v.array(v.string()), []),
+    draft: v.optional(v.boolean(), false),
+    content: v.string(),
+  }),
+  transform: (post) => {
+    const publishedAt = post.publishedAt ?? post.date
+
+    if (!publishedAt) {
+      throw new Error(`Missing publishedAt/date frontmatter for post: ${post._meta.filePath}`)
+    }
+
+    return {
+      title: post.title,
+      description: post.description ?? descriptionFromContent(post.content),
+      publishedAt,
+      tags: post.tags,
+      draft: post.draft,
+      slug: slugFromPath(post._meta.filePath),
+      Component: createDefaultImport<MDXContent>(`#content/blog/${post._meta.filePath}`),
+    }
+  },
+})
+
+export default defineConfig({
+  content: [posts],
+})

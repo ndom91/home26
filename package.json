@@ -2,7 +2,8 @@
   "name": "home26",
   "type": "module",
   "imports": {
-    "#/*": "./src/*"
+    "#/*": "./src/*",
+    "#content/*": "./content/*"
   },
   "description": "ndom91 portfolio page",
   "license": "MIT",
@@ -18,10 +19,10 @@
   ],
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "content-collections build && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "typecheck": "tsgo --noEmit",
+    "typecheck": "content-collections build && tsgo --noEmit",
     "lint": "pnpm biome check",
     "lint:fix": "pnpm run lint --write",
     "format": "biome check .",
@@ -56,10 +57,14 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.5",
+    "@content-collections/cli": "0.1.9",
+    "@content-collections/core": "0.15.1",
+    "@content-collections/vite": "0.3.0",
     "@tailwindcss/typography": "0.5.19",
     "@tanstack/devtools-vite": "0.6.0",
     "@testing-library/dom": "10.4.1",
     "@testing-library/react": "16.3.2",
+    "@types/mdx": "2.0.13",
     "@types/node": "22.19.18",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
