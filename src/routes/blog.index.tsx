@@ -15,7 +15,7 @@ function BlogIndex() {
   const [featuredPost, ...archivePosts] = posts
 
   return (
-    <div className="flex min-h-screen flex-col bg-blog-bg text-blog-text [--focus-ring-offset:var(--color-blog-bg)]">
+    <div className="flex min-h-screen flex-col bg-blog-bg text-blog-text">
       <SiteHeader />
 
       <div className="border-b border-blog-rule bg-[radial-gradient(circle_at_18%_0%,color-mix(in_oklab,var(--color-blog-accent)_22%,transparent),transparent_34%),linear-gradient(135deg,color-mix(in_oklab,var(--color-blog-accent)_12%,transparent),transparent_48%)] px-6 py-12 sm:py-16">

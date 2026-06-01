@@ -31,14 +31,14 @@ function BlogPost() {
   const { Component } = post
 
   return (
-    <div className="flex min-h-screen flex-col bg-blog-bg text-blog-text [--focus-ring-offset:var(--color-blog-bg)]">
+    <div className="flex min-h-screen flex-col bg-blog-bg text-blog-text">
       <SiteHeader />
 
       <div className="border-b border-blog-rule bg-[radial-gradient(circle_at_20%_0%,color-mix(in_oklab,var(--color-blog-accent)_18%,transparent),transparent_34%),linear-gradient(135deg,color-mix(in_oklab,var(--color-blog-accent)_14%,transparent),transparent_46%)] px-6 py-12 sm:py-16">
         <div className="mx-auto max-w-5xl">
           <Link
             to="/blog"
-            className="font-mono inline-block text-[9px] uppercase tracking-widest text-blog-muted transition-colors hover:text-blog-accent"
+            className="font-mono inline-block text-[10px] uppercase tracking-widest text-blog-muted transition-colors hover:text-blog-accent focus-visible:outline-2! focus-visible:outline-blog-accent! focus-visible:outline-offset-2!"
           >
             ← WRITING
           </Link>
