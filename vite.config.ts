@@ -26,7 +26,10 @@ const config = defineConfig({
         [
           rehypePrettyCode,
           {
-            theme: 'github-dark',
+            theme: {
+              light: 'github-light',
+              dark: 'github-dark',
+            },
           },
         ],
       ],

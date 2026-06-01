@@ -25,7 +25,6 @@
   --color-topographic: var(--topographic-ink);
   --color-blog-bg: var(--blog-bg);
   --color-blog-panel: var(--blog-panel);
-  --color-blog-code-bg: #211720;
   --color-blog-hover: var(--blog-hover);
   --color-blog-text: var(--blog-text);
   --color-blog-rule: var(--blog-rule);
@@ -218,6 +217,18 @@
   [contenteditable='true']
 ):focus-visible {
   @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-[var(--focus-ring-offset)];
+}
+
+:where([data-rehype-pretty-code-figure]) pre,
+:where([data-rehype-pretty-code-figure]) code,
+:where([data-rehype-pretty-code-figure]) span {
+  color: var(--shiki-light);
+}
+
+html[data-theme='dark'] :where([data-rehype-pretty-code-figure]) pre,
+html[data-theme='dark'] :where([data-rehype-pretty-code-figure]) code,
+html[data-theme='dark'] :where([data-rehype-pretty-code-figure]) span {
+  color: var(--shiki-dark);
 }
 
 ::view-transition-old(root),
