@@ -109,3 +109,4 @@ pnpm add -D package-name --save-exact
 - Avoid adding client-side JavaScript for static content unless it is clearly needed.
 - Keep MDX components reusable and colocated under `src/components/mdx` when they are intended for posts.
 - Do not introduce runtime filesystem reads for blog content unless the deployment target changes.
+- Never run the dev server yourself, always ask the user to start it
