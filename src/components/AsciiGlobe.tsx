@@ -188,7 +188,7 @@ export function AsciiGlobe() {
   return (
     <div
       ref={rootRef}
-      className="absolute top-[max(-19rem,-24vw)] right-[max(-18rem,-22vw)] aspect-square w-[clamp(32rem,58vw,56rem)] overflow-hidden rounded-full border border-[rgb(var(--globe-text)/0.18)] bg-[image:var(--globe-background)] opacity-[0.96] max-[820px]:top-[-13rem] max-[820px]:right-[-12rem] max-[820px]:w-[32rem]"
+      className="absolute top-[max(-19rem,-24vw)] right-[max(-18rem,-22vw)] aspect-square w-[clamp(32rem,58vw,56rem)] overflow-hidden rounded-full border border-[rgb(var(--globe-text)/0.18)] bg-[image:var(--globe-background)] opacity-[0.96] max-[820px]:top-[-7rem] max-[820px]:right-[-8rem] max-[820px]:w-[27rem] max-[520px]:top-[-5.5rem] max-[520px]:right-[-6.25rem] max-[520px]:w-[18.5rem]"
       aria-hidden="true"
     >
       <canvas ref={canvasRef} className="absolute inset-0 size-full" />

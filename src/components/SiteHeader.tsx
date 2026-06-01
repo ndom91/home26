@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 
 const homeBarClass =
-  'relative z-10 grid grid-cols-[auto_1fr] items-center border-b border-rule bg-paper text-[0.7rem] uppercase tracking-[0.16em] text-ink max-[820px]:grid-cols-1'
-const homeBarCellClass = 'px-5 py-4'
+  'relative z-10 grid grid-cols-[auto_1fr] items-center border-b border-rule bg-paper text-[0.7rem] uppercase tracking-[0.16em] text-ink max-[820px]:grid-cols-[minmax(0,1fr)_auto] max-[520px]:text-[0.62rem] max-[520px]:tracking-[0.18em]'
+const homeBarCellClass = 'px-5 py-4 max-[520px]:px-4 max-[520px]:py-3.5'
 const themeIconClass =
   'absolute top-1/2 left-1/2 size-[0.95rem] -translate-x-1/2 -translate-y-1/2 origin-center stroke-[2.2] transition-[opacity,translate,rotate,scale] duration-540 ease-spring-toggle motion-reduce:duration-[1ms]'
 const THEME_REVEAL_DELAY = 140
@@ -105,7 +105,7 @@ export function SiteHeader() {
   return (
     <header className={homeBarClass}>
       <nav
-        className={`${homeBarCellClass} flex justify-center gap-5 max-[820px]:justify-self-start`}
+        className={`${homeBarCellClass} flex min-w-0 flex-wrap justify-center gap-x-5 gap-y-2 max-[820px]:justify-start max-[520px]:gap-x-4`}
         aria-label="Primary"
       >
         <Link to="/">Home</Link>
@@ -116,7 +116,7 @@ export function SiteHeader() {
         <a href="mailto:home@ndo.dev">Contact</a>
       </nav>
       <button
-        className="me-5 cursor-pointer justify-self-end rounded-full border-0 bg-transparent p-0 text-inherit [view-transition-name:disabled]"
+        className="me-5 cursor-pointer justify-self-end rounded-full border-0 bg-transparent p-0 text-inherit [view-transition-name:disabled] max-[520px]:me-4"
         type="button"
         onClick={toggleTheme}
         aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
