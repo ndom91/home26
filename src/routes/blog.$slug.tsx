@@ -30,11 +30,11 @@ function BlogPost() {
 
   return (
     <div className="flex min-h-screen flex-col bg-blog-bg text-blog-text [--focus-ring-offset:var(--color-blog-bg)]">
-      <nav className="grid grid-cols-[auto_1fr_auto] border-b border-blog-rule">
+      <nav className="grid grid-cols-[auto_1fr_auto] border-b border-blog-rule bg-blog-panel/70">
         <div className="border-r border-blog-rule px-6 py-4">
           <Link
             to="/"
-            className="font-mono text-[11px] font-medium uppercase tracking-[0.25em] transition-colors hover:text-white"
+            className="font-mono text-[11px] font-medium uppercase tracking-[0.25em] transition-colors hover:text-blog-accent"
           >
             NDOM91
           </Link>
@@ -69,7 +69,7 @@ function BlogPost() {
         </div>
       </nav>
 
-      <div className="border-b border-blog-rule px-6 py-10">
+      <div className="border-b border-blog-rule bg-[linear-gradient(135deg,rgb(216_138_168/0.14),transparent_42%)] px-6 py-10">
         <Link
           to="/blog"
           className="font-mono mb-4 inline-block text-[9px] uppercase tracking-widest text-blog-muted transition-colors hover:text-blog-accent"
@@ -97,7 +97,7 @@ function BlogPost() {
                 {(meta.tags ?? []).map((tag) => (
                   <span
                     key={tag}
-                    className="font-mono border border-blog-rule px-2 py-0.5 text-[9px] uppercase tracking-widest text-blog-muted"
+                    className="font-mono border border-blog-rule bg-blog-panel px-2 py-0.5 text-[9px] uppercase tracking-widest text-blog-muted"
                   >
                     {tag}
                   </span>
@@ -109,7 +109,7 @@ function BlogPost() {
       </div>
 
       <div className="flex-1 px-6 py-12">
-        <article className="prose prose-invert mx-auto max-w-2xl">
+        <article className="prose prose-invert mx-auto max-w-2xl prose-headings:font-heading prose-headings:text-blog-text prose-p:text-blog-description prose-a:text-blog-accent prose-strong:text-blog-text prose-code:bg-blog-panel prose-code:px-1 prose-code:py-0.5 prose-code:text-blog-text prose-code:before:content-none prose-code:after:content-none prose-blockquote:border-blog-accent prose-blockquote:text-blog-description prose-hr:border-blog-rule prose-pre:border prose-pre:border-blog-rule prose-pre:!bg-blog-panel">
           <Component />
         </article>
       </div>

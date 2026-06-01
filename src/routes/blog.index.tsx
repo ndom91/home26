@@ -14,11 +14,11 @@ function BlogIndex() {
 
   return (
     <div className="flex min-h-screen flex-col bg-blog-bg text-blog-text [--focus-ring-offset:var(--color-blog-bg)]">
-      <nav className="grid grid-cols-[auto_1fr_auto] border-b border-blog-rule">
+      <nav className="grid grid-cols-[auto_1fr_auto] border-b border-blog-rule bg-blog-panel/70">
         <div className="border-r border-blog-rule px-6 py-4">
           <Link
             to="/"
-            className="font-mono text-[11px] font-medium uppercase tracking-[0.25em] transition-colors hover:text-white"
+            className="font-mono text-[11px] font-medium uppercase tracking-[0.25em] transition-colors hover:text-blog-accent"
           >
             NDOM91
           </Link>
@@ -53,7 +53,7 @@ function BlogIndex() {
         </div>
       </nav>
 
-      <div className="border-b border-blog-rule px-6 py-10">
+      <div className="border-b border-blog-rule bg-[linear-gradient(135deg,rgb(216_138_168/0.14),transparent_38%)] px-6 py-10">
         <p className="font-mono mb-3 text-[9px] uppercase tracking-widest text-blog-muted">
           ARCHIVE
         </p>
@@ -80,7 +80,7 @@ function BlogIndex() {
                 className="group flex items-start justify-between gap-6 px-6 py-5 transition-colors hover:bg-blog-hover"
               >
                 <div className="min-w-0 flex-1">
-                  <h2 className="font-mono text-sm font-medium leading-snug text-blog-text transition-colors group-hover:text-white">
+                  <h2 className="font-mono text-sm font-medium leading-snug text-blog-text transition-colors group-hover:text-blog-accent">
                     {post.title}
                   </h2>
                   <p className="font-mono mt-1 line-clamp-1 text-xs leading-relaxed text-blog-description">
@@ -91,7 +91,7 @@ function BlogIndex() {
                   {(post.tags ?? []).slice(0, 1).map((tag) => (
                     <span
                       key={tag}
-                      className="font-mono border border-blog-rule px-2 py-0.5 text-[9px] uppercase tracking-widest text-blog-muted transition-colors group-hover:text-blog-tag-hover"
+                      className="font-mono border border-blog-rule bg-blog-panel px-2 py-0.5 text-[9px] uppercase tracking-widest text-blog-muted transition-colors group-hover:border-blog-accent group-hover:text-blog-tag-hover"
                     >
                       {tag}
                     </span>
