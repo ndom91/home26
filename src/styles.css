@@ -178,6 +178,35 @@
     font-family: var(--font-body);
   }
 
+  html {
+    scrollbar-color: color-mix(in oklab, var(--blog-accent) 58%, var(--blog-rule))
+      var(--blog-bg);
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+  }
+
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--blog-bg);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--blog-accent) 70%, var(--blog-rule)),
+      color-mix(in oklab, var(--blog-accent) 34%, var(--blog-panel))
+    );
+    border: 3px solid var(--blog-bg);
+    border-radius: 999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--blog-accent);
+  }
+
   a {
     color: inherit;
     text-decoration: none;

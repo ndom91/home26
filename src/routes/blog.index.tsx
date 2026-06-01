@@ -23,8 +23,8 @@ function BlogIndex() {
           <p className="font-mono mb-3 text-[9px] uppercase tracking-widest text-blog-muted">
             ARCHIVE
           </p>
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
-            <h1 className="font-heading text-[clamp(3.5rem,12vw,10rem)] font-extrabold uppercase leading-none tracking-[-0.04em] text-blog-text">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end">
+            <h1 className="font-heading min-w-0 text-[clamp(3rem,9vw,7.5rem)] font-extrabold uppercase leading-none tracking-[-0.04em] text-blog-text">
               WRITING
             </h1>
             <div className="border-l border-blog-rule pl-4 lg:pb-4">
@@ -81,13 +81,13 @@ function BlogIndex() {
               </Link>
             ) : null}
 
-            <div className="columns-1 gap-5 sm:columns-2 xl:columns-3 2xl:columns-4">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {archivePosts.map((post, index) => (
                 <Link
                   key={post.slug}
                   to="/blog/$slug"
                   params={{ slug: post.slug }}
-                  className="group mb-5 block break-inside-avoid overflow-hidden border border-blog-rule bg-blog-panel transition-colors hover:border-blog-accent hover:bg-blog-hover"
+                  className="group flex h-full flex-col overflow-hidden border border-blog-rule bg-blog-panel transition-colors hover:border-blog-accent hover:bg-blog-hover"
                 >
                   {post.coverImageUrl ? (
                     <div className="overflow-hidden border-b border-blog-rule">
@@ -100,7 +100,7 @@ function BlogIndex() {
                       />
                     </div>
                   ) : null}
-                  <div className="p-4">
+                  <div className="flex flex-1 flex-col p-4">
                     <PostCardMeta post={post} />
                     <h2 className="font-mono mt-4 text-base font-medium leading-snug text-blog-text transition-colors group-hover:text-blog-accent">
                       {post.title}
@@ -108,7 +108,7 @@ function BlogIndex() {
                     <p className="font-mono mt-3 text-xs leading-relaxed text-blog-description">
                       {post.description}
                     </p>
-                    <div className="font-mono mt-5 flex items-center justify-between border-t border-blog-rule pt-3 text-[10px] uppercase tracking-widest text-blog-muted transition-colors group-hover:text-blog-accent">
+                    <div className="font-mono mt-auto flex items-center justify-between border-t border-blog-rule pt-3 text-[10px] uppercase tracking-widest text-blog-muted transition-colors group-hover:text-blog-accent">
                       <span>Read note</span>
                       <span className="transition-transform group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0">
                         →
