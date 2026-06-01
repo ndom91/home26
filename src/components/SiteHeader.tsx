@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 
 const homeBarClass =
-  'relative z-10 grid grid-cols-[auto_1fr] items-center border-y border-rule bg-paper text-[0.7rem] uppercase tracking-[0.16em] text-ink [--focus-ring-offset:var(--paper)] max-[820px]:grid-cols-1'
+  'relative z-10 grid grid-cols-[auto_1fr] items-center border-b border-rule bg-paper text-[0.7rem] uppercase tracking-[0.16em] text-ink [--focus-ring-offset:var(--paper)] max-[820px]:grid-cols-1'
 const homeBarCellClass = 'px-5 py-4'
 const themeIconClass =
-  'absolute top-1/2 left-1/2 size-[0.95rem] -translate-x-1/2 -translate-y-1/2 origin-center stroke-[2.2] transition-[opacity,translate,rotate,scale] duration-[540ms] ease-spring-toggle motion-reduce:duration-[1ms]'
+  'absolute top-1/2 left-1/2 size-[0.95rem] -translate-x-1/2 -translate-y-1/2 origin-center stroke-[2.2] transition-[opacity,translate,rotate,scale] duration-540 ease-spring-toggle motion-reduce:duration-[1ms]'
 const THEME_REVEAL_DELAY = 140
 
 type ViewTransitionDocument = Document & {
