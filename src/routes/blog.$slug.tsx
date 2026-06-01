@@ -43,7 +43,7 @@ function BlogPost() {
           </Link>
           <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_14rem] lg:items-start">
             <div className="min-w-0">
-              <h1 className="text-balance font-heading max-w-4xl text-[clamp(2.4rem,5.6vw,4.75rem)] font-extrabold uppercase leading-[0.94] tracking-[-0.04em] text-blog-text [overflow-wrap:anywhere]">
+              <h1 className="text-balance font-heading max-w-4xl text-[clamp(2.4rem,5.6vw,4.75rem)] font-extrabold uppercase leading-[0.94] tracking-[-0.04em] text-blog-text wrap-anywhere">
                 {meta.title}
               </h1>
               <p className="font-mono mt-5 max-w-2xl text-sm leading-relaxed text-blog-muted sm:text-base">

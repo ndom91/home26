@@ -193,7 +193,6 @@
 
   ::-webkit-scrollbar-track {
     background: var(--scrollbar-track);
-    margin-block: 6px;
   }
 
   ::-webkit-scrollbar-thumb {
