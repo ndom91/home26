@@ -7,7 +7,7 @@
 @theme {
   --font-body: 'IBM Plex Mono', ui-monospace, monospace;
   --font-heading: 'Syne', sans-serif;
-  --font-logo: var(--font-logo-jetbrains);
+  --font-logo: var(--font-heading);
   --font-logo-jetbrains: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
   --font-logo-red-hat: 'Red Hat Mono', 'IBM Plex Mono', ui-monospace, monospace;
   --font-mono: 'Space Mono', monospace;
@@ -23,19 +23,20 @@
   --color-accent-700: #853957;
   --color-accent-900: #5d2d46;
   --color-topographic: var(--topographic-ink);
-  --color-blog-bg: #1a1218;
-  --color-blog-panel: #211720;
-  --color-blog-hover: #261b25;
-  --color-blog-text: #e9dde3;
-  --color-blog-rule: #3d2d36;
-  --color-blog-muted: #ad9ba6;
-  --color-blog-dim: #8e7b86;
-  --color-blog-faint: #6f5a66;
-  --color-blog-empty: #8e7b86;
-  --color-blog-description: #c9b8c2;
-  --color-blog-arrow: #ad9ba6;
-  --color-blog-tag-hover: #e9dde3;
-  --color-blog-accent: #d88aa8;
+  --color-blog-bg: var(--blog-bg);
+  --color-blog-panel: var(--blog-panel);
+  --color-blog-code-bg: #211720;
+  --color-blog-hover: var(--blog-hover);
+  --color-blog-text: var(--blog-text);
+  --color-blog-rule: var(--blog-rule);
+  --color-blog-muted: var(--blog-muted);
+  --color-blog-dim: var(--blog-dim);
+  --color-blog-faint: var(--blog-faint);
+  --color-blog-empty: var(--blog-empty);
+  --color-blog-description: var(--blog-description);
+  --color-blog-arrow: var(--blog-arrow);
+  --color-blog-tag-hover: var(--blog-tag-hover);
+  --color-blog-accent: var(--blog-accent);
 
   --ease-spring-toggle: cubic-bezier(0.2, 0.9, 0.15, 1.15);
 }
@@ -60,6 +61,19 @@
     --globe-background: var(--globe-light-background);
     --grit-image: url('/blackgrit.webp');
     --grit-opacity: 0.75;
+    --blog-bg: #e9dde3;
+    --blog-panel: #f0e5eb;
+    --blog-hover: #dfd0d9;
+    --blog-text: #1b1318;
+    --blog-rule: #cdb9c4;
+    --blog-muted: #6f5d67;
+    --blog-dim: #8d7582;
+    --blog-faint: #9d8492;
+    --blog-empty: #8d7582;
+    --blog-description: #57444f;
+    --blog-arrow: #6f5d67;
+    --blog-tag-hover: #1b1318;
+    --blog-accent: #853957;
     --focus-ring-offset: var(--paper);
     color-scheme: light dark;
   }
@@ -78,6 +92,19 @@
       --globe-background: none;
       --grit-image: url('/whitegrit.png');
       --grit-opacity: 0.2;
+      --blog-bg: #1a1218;
+      --blog-panel: #211720;
+      --blog-hover: #261b25;
+      --blog-text: #e9dde3;
+      --blog-rule: #3d2d36;
+      --blog-muted: #ad9ba6;
+      --blog-dim: #8e7b86;
+      --blog-faint: #6f5a66;
+      --blog-empty: #8e7b86;
+      --blog-description: #c9b8c2;
+      --blog-arrow: #ad9ba6;
+      --blog-tag-hover: #e9dde3;
+      --blog-accent: #d88aa8;
     }
   }
 
@@ -94,6 +121,19 @@
     --globe-background: var(--globe-light-background);
     --grit-image: url('/blackgrit.webp');
     --grit-opacity: 0.5;
+    --blog-bg: #e9dde3;
+    --blog-panel: #f0e5eb;
+    --blog-hover: #dfd0d9;
+    --blog-text: #1b1318;
+    --blog-rule: #cdb9c4;
+    --blog-muted: #6f5d67;
+    --blog-dim: #8d7582;
+    --blog-faint: #9d8492;
+    --blog-empty: #8d7582;
+    --blog-description: #57444f;
+    --blog-arrow: #6f5d67;
+    --blog-tag-hover: #1b1318;
+    --blog-accent: #853957;
     color-scheme: light;
   }
 
@@ -110,6 +150,19 @@
     --globe-background: none;
     --grit-image: url('/whitegrit.png');
     --grit-opacity: 0.3;
+    --blog-bg: #1a1218;
+    --blog-panel: #211720;
+    --blog-hover: #261b25;
+    --blog-text: #e9dde3;
+    --blog-rule: #3d2d36;
+    --blog-muted: #ad9ba6;
+    --blog-dim: #8e7b86;
+    --blog-faint: #6f5a66;
+    --blog-empty: #8e7b86;
+    --blog-description: #c9b8c2;
+    --blog-arrow: #ad9ba6;
+    --blog-tag-hover: #e9dde3;
+    --blog-accent: #d88aa8;
     color-scheme: dark;
   }
 

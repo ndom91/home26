@@ -24,7 +24,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'light dark',
       },
       {
-        title: 'ndom91 — software engineer',
+        title: 'ndom91',
       },
     ],
     links: [
