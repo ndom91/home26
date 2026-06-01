@@ -47,7 +47,7 @@ function BlogPost() {
               <h1 className="text-balance font-heading max-w-4xl text-[clamp(2.4rem,5.6vw,4.75rem)] font-extrabold uppercase leading-[0.94] tracking-[-0.04em] text-blog-text wrap-anywhere">
                 {meta.title}
               </h1>
-              <p className="font-mono mt-5 max-w-2xl text-sm leading-relaxed text-blog-muted sm:text-base">
+              <p className="mt-5 max-w-2xl font-reading text-base leading-7 text-blog-description sm:text-lg sm:leading-8">
                 {meta.description}
               </p>
             </div>
@@ -79,7 +79,7 @@ function BlogPost() {
       </div>
 
       <div className="flex-1 px-6 py-12 sm:py-16">
-        <article className="prose mx-auto max-w-2xl prose-headings:mt-12 prose-headings:text-balance prose-headings:font-heading prose-headings:text-blog-text prose-p:text-blog-description prose-a:text-blog-accent prose-strong:text-blog-text prose-li:text-blog-description prose-th:text-blog-text prose-td:text-blog-description prose-code:bg-blog-panel prose-code:px-1 prose-code:py-0.5 prose-code:text-blog-text prose-code:before:content-none prose-code:after:content-none prose-blockquote:border-blog-accent prose-blockquote:text-blog-description prose-hr:border-blog-rule prose-img:border prose-img:border-blog-rule prose-img:bg-blog-panel prose-img:shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-blog-accent)_12%,transparent)] lg:prose-img:-mx-16 lg:prose-img:w-[calc(100%+8rem)] lg:prose-img:max-w-none prose-pre:border prose-pre:border-blog-rule prose-pre:bg-blog-panel!">
+        <article className="prose mx-auto max-w-2xl font-reading prose-headings:mt-12 prose-headings:text-balance prose-headings:font-heading prose-headings:text-blog-text prose-p:text-[1.05rem] prose-p:leading-8 prose-p:text-blog-description prose-a:text-blog-accent prose-strong:text-blog-text prose-li:text-[1.05rem] prose-li:leading-8 prose-li:text-blog-description prose-th:text-blog-text prose-td:text-blog-description prose-code:bg-blog-panel prose-code:px-1 prose-code:py-0.5 prose-code:font-mono prose-code:text-blog-text prose-code:before:content-none prose-code:after:content-none prose-blockquote:border-blog-accent prose-blockquote:text-blog-description prose-hr:border-blog-rule prose-img:border prose-img:border-blog-rule prose-img:bg-blog-panel prose-img:shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-blog-accent)_12%,transparent)] lg:prose-img:-mx-16 lg:prose-img:w-[calc(100%+8rem)] lg:prose-img:max-w-none prose-pre:border prose-pre:border-blog-rule prose-pre:bg-blog-panel!">
           <Component components={mdxComponents} />
         </article>
       </div>
@@ -92,7 +92,7 @@ function BlogPost() {
           {(
             [
               ['GH', 'https://github.com/ndom91'],
-              ['X', 'https://bsky.app/ndom91'],
+              ['BS', 'https://bsky.app/ndom91'],
               ['ML', 'mailto:home@ndo.dev'],
             ] as const
           ).map(([label, href]) => (

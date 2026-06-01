@@ -28,7 +28,7 @@ function BlogIndex() {
               WRITING
             </h1>
             <div className="border-l border-blog-rule pl-4 lg:pb-4">
-              <p className="font-mono text-xs leading-relaxed text-blog-description">
+              <p className="font-reading text-sm leading-6 text-blog-description">
                 Field notes, server rituals, UI experiments, and the occasional strongly held
                 opinion.
               </p>
@@ -62,7 +62,7 @@ function BlogIndex() {
                     <h2 className="text-balance font-heading text-[clamp(2.3rem,6vw,5.8rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.04em] text-blog-text transition-colors group-hover:text-blog-accent">
                       {featuredPost.title}
                     </h2>
-                    <p className="font-mono mt-5 max-w-2xl text-sm leading-relaxed text-blog-description">
+                    <p className="mt-5 max-w-2xl font-reading text-base leading-7 text-blog-description">
                       {featuredPost.description}
                     </p>
                   </div>
@@ -105,7 +105,7 @@ function BlogIndex() {
                     <h2 className="mt-4 text-balance font-mono text-base font-medium leading-snug text-blog-text transition-colors group-hover:text-blog-accent">
                       {post.title}
                     </h2>
-                    <p className="font-mono mt-3 text-xs leading-relaxed text-blog-description">
+                    <p className="mt-3 font-reading text-sm leading-6 text-blog-description">
                       {post.description}
                     </p>
                     <div className="font-mono mt-auto flex items-center justify-between border-t border-blog-rule pt-3 text-[10px] uppercase tracking-widest text-blog-muted transition-colors group-hover:text-blog-accent">
@@ -130,7 +130,7 @@ function BlogIndex() {
           {(
             [
               ['GH', 'https://github.com/ndom91'],
-              ['X', 'https://bsky.app/ndom91'],
+              ['BS', 'https://bsky.app/ndom91'],
               ['ML', 'mailto:home@ndo.dev'],
             ] as const
           ).map(([label, href]) => (
