@@ -1,4 +1,5 @@
 .DS_Store
+playground/
 
 node_modules
 .content-collections
