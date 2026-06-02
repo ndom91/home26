@@ -101,6 +101,10 @@ export function ScreenshotLink({
 
   function loadPreview() {
     setShouldLoadPreview(true)
+
+    if (previewFailed) {
+      setPreviewFailed(false)
+    }
   }
 
   return (
