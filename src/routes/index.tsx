@@ -24,8 +24,12 @@ const eyebrowBars = [
 const details = [
   { label: 'Currently', value: 'Plain', accentClass: '[--detail-accent:88_135_50]' },
   { label: 'Based In', value: 'Berlin', accentClass: '[--detail-accent:8_151_154]' },
-  { label: 'Habit', value: 'OSS', accentClass: '[--detail-accent:219_126_39]' },
-  { label: 'Online', value: '2026', accentClass: '[--detail-accent:118_76_153]' },
+  {
+    label: 'After Hours',
+    value: 'Smart Home Chaos',
+    accentClass: '[--detail-accent:219_126_39]',
+  },
+  { label: 'Source', value: 'Open', accentClass: '[--detail-accent:118_76_153]' },
 ] as const
 function Home() {
   function setDetailHoverPosition(detail: HTMLDivElement, x: number) {
