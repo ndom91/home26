@@ -22,9 +22,9 @@ const eyebrowBars = [
   'bg-accent-900',
 ]
 const details = [
-  { label: 'Currently', value: 'Plain', accentClass: '[--detail-accent:169_75_16]' },
+  { label: 'Currently', value: 'Plain', accentClass: '[--detail-accent:88_135_50]' },
   { label: 'Based In', value: 'Berlin', accentClass: '[--detail-accent:8_151_154]' },
-  { label: 'Habit', value: 'OSS', accentClass: '[--detail-accent:174_87_25]' },
+  { label: 'Habit', value: 'OSS', accentClass: '[--detail-accent:219_126_39]' },
   { label: 'Online', value: '2026', accentClass: '[--detail-accent:118_76_153]' },
 ] as const
 function Home() {
