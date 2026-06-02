@@ -1,10 +1,39 @@
-import { type ReactNode, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import { useLinkScreenshotUrl } from './link-screenshot-context'
+
+const previewImageCache = new Map<string, Promise<string>>()
+let previewLoadQueue: Promise<unknown> = Promise.resolve()
 
 function getScreenshotImage(image?: string): string | undefined {
   if (image?.startsWith('/') || image?.startsWith('http') || image?.startsWith('data:')) {
     return image
   }
+}
+
+function loadQueuedPreviewImage(imageSrc: string) {
+  const cachedPreview = previewImageCache.get(imageSrc)
+
+  if (cachedPreview) {
+    return cachedPreview
+  }
+
+  const preview = previewLoadQueue
+    .catch(() => {})
+    .then(async () => {
+      const response = await fetch(imageSrc)
+
+      if (!response.ok) {
+        throw new Error(`Unable to load link preview: ${response.status}`)
+      }
+
+      return URL.createObjectURL(await response.blob())
+    })
+
+  previewLoadQueue = preview.catch(() => {})
+  previewImageCache.set(imageSrc, preview)
+  preview.catch(() => previewImageCache.delete(imageSrc))
+
+  return preview
 }
 
 export function ScreenshotLink({
@@ -20,9 +49,42 @@ export function ScreenshotLink({
 }) {
   const label = children ?? text ?? url
   const signedScreenshotUrl = useLinkScreenshotUrl(url)
-  const imageSrc = getScreenshotImage(image) ?? signedScreenshotUrl
+  const screenshotImage = getScreenshotImage(image)
+  const imageSrc = screenshotImage ?? signedScreenshotUrl
+  const shouldQueuePreview = !screenshotImage && !!signedScreenshotUrl
   const [shouldLoadPreview, setShouldLoadPreview] = useState(false)
+  const [queuedPreviewSrc, setQueuedPreviewSrc] = useState<string>()
   const [previewFailed, setPreviewFailed] = useState(false)
+
+  useEffect(() => {
+    if (
+      !imageSrc ||
+      !shouldLoadPreview ||
+      !shouldQueuePreview ||
+      queuedPreviewSrc ||
+      previewFailed
+    ) {
+      return
+    }
+
+    let isCurrent = true
+
+    loadQueuedPreviewImage(imageSrc)
+      .then((previewSrc) => {
+        if (isCurrent) {
+          setQueuedPreviewSrc(previewSrc)
+        }
+      })
+      .catch(() => {
+        if (isCurrent) {
+          setPreviewFailed(true)
+        }
+      })
+
+    return () => {
+      isCurrent = false
+    }
+  }, [imageSrc, previewFailed, queuedPreviewSrc, shouldLoadPreview, shouldQueuePreview])
 
   if (!imageSrc) {
     return (
@@ -64,9 +126,9 @@ export function ScreenshotLink({
           <span className="flex aspect-video w-full items-center justify-center rounded-lg border border-blog-rule bg-blog-bg px-4 text-center font-mono text-[10px] uppercase tracking-widest text-blog-muted">
             Preview unavailable
           </span>
-        ) : shouldLoadPreview ? (
+        ) : shouldLoadPreview && (!shouldQueuePreview || queuedPreviewSrc) ? (
           <img
-            src={imageSrc}
+            src={queuedPreviewSrc ?? imageSrc}
             alt=""
             loading="eager"
             decoding="async"
