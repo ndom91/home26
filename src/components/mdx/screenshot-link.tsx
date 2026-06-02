@@ -2,6 +2,8 @@ import { type ReactNode, useEffect, useState } from 'react'
 import { useLinkScreenshotUrl } from './link-screenshot-context'
 
 const previewImageCache = new Map<string, Promise<string>>()
+const PREVIEW_LOAD_INTERVAL_MS = 1500
+let lastPreviewLoadStartedAt = 0
 let previewLoadQueue: Promise<unknown> = Promise.resolve()
 
 function getScreenshotImage(image?: string): string | undefined {
@@ -20,13 +22,9 @@ function loadQueuedPreviewImage(imageSrc: string) {
   const preview = previewLoadQueue
     .catch(() => {})
     .then(async () => {
-      const response = await fetch(imageSrc)
+      await waitForNextPreviewLoadSlot()
 
-      if (!response.ok) {
-        throw new Error(`Unable to load link preview: ${response.status}`)
-      }
-
-      return URL.createObjectURL(await response.blob())
+      return preloadPreviewImage(imageSrc)
     })
 
   previewLoadQueue = preview.catch(() => {})
@@ -34,6 +32,28 @@ function loadQueuedPreviewImage(imageSrc: string) {
   preview.catch(() => previewImageCache.delete(imageSrc))
 
   return preview
+}
+
+function preloadPreviewImage(imageSrc: string) {
+  return new Promise<string>((resolve, reject) => {
+    const previewImage = new Image()
+
+    previewImage.decoding = 'async'
+    previewImage.onload = () => resolve(imageSrc)
+    previewImage.onerror = () => reject(new Error('Unable to load link preview'))
+    previewImage.src = imageSrc
+  })
+}
+
+async function waitForNextPreviewLoadSlot() {
+  const now = Date.now()
+  const delay = Math.max(0, lastPreviewLoadStartedAt + PREVIEW_LOAD_INTERVAL_MS - now)
+
+  if (delay > 0) {
+    await new Promise((resolve) => setTimeout(resolve, delay))
+  }
+
+  lastPreviewLoadStartedAt = Date.now()
 }
 
 export function ScreenshotLink({

@@ -5,6 +5,7 @@ import { normalizeLinkScreenshotTarget } from '../../lib/link-screenshot'
 const SIGNATURE_PREFIX = 'v1:'
 const SCREENSHOT_CONTENT_TYPE = 'image/png'
 const SCREENSHOT_VERSION = 'v1'
+const BROWSER_RUN_INTERVAL_MS = 2500
 
 type LinkScreenshotEnv = {
   BROWSER?: unknown
@@ -18,6 +19,7 @@ type BrowserRunBinding = {
 
 const encoder = new TextEncoder()
 let browserRunQueue: Promise<void> = Promise.resolve()
+let lastBrowserRunStartedAt = 0
 
 export const Route = createFileRoute('/api/link-screenshot')({
   server: {
@@ -127,6 +129,8 @@ async function getOrCreateScreenshot({
     let screenshotResponse: Response
 
     try {
+      await waitForNextBrowserRunSlot()
+
       screenshotResponse = await browser.quickAction('screenshot', {
         url: normalizedUrl,
         viewport: {
@@ -160,6 +164,17 @@ async function getOrCreateScreenshot({
 
     return { body: screenshot, source: 'generated' as const }
   })
+}
+
+async function waitForNextBrowserRunSlot() {
+  const now = Date.now()
+  const delay = Math.max(0, lastBrowserRunStartedAt + BROWSER_RUN_INTERVAL_MS - now)
+
+  if (delay > 0) {
+    await new Promise((resolve) => setTimeout(resolve, delay))
+  }
+
+  lastBrowserRunStartedAt = Date.now()
 }
 
 async function withBrowserRunSlot<T>(task: () => Promise<T>) {
