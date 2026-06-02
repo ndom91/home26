@@ -123,7 +123,7 @@ export function SiteHeader() {
         aria-pressed={isDark}
       >
         <span
-          className="relative grid h-[1.82rem] w-[calc(1.82rem*2-0.4rem)] grid-cols-2 items-center rounded-full border border-rule bg-[linear-gradient(90deg,rgb(var(--globe-accent)/0.14),transparent_54%),var(--paper)] p-[0.2rem] transition-[border-color,background] duration-[260ms] ease-in-out before:absolute before:inset-[0.38rem] before:rounded-[inherit] before:bg-[radial-gradient(currentColor_0.7px,transparent_0.7px)] before:bg-[length:4px_4px] before:content-[''] before:opacity-[0.16] motion-reduce:duration-[1ms]"
+          className="relative grid h-[1.82rem] w-[calc(1.82rem*2-0.4rem)] grid-cols-2 items-center rounded-full border border-rule bg-[linear-gradient(90deg,rgb(var(--globe-accent)/0.14),transparent_54%),var(--paper)] p-[0.2rem] transition-[border-color,background] duration-[260ms] ease-in-out motion-reduce:duration-[1ms]"
           aria-hidden="true"
         >
           <span

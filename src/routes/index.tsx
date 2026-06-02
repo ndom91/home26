@@ -136,24 +136,24 @@ function Home() {
 
       <div className="relative z-1 grid grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.9fr)] gap-px border-b border-rule max-[820px]:grid-cols-1">
         <section
-          className="grid min-h-[72dvh] justify-end content-end overflow-hidden p-[clamp(1.5rem,4vw,4.5rem)] max-[820px]:min-h-[min(28rem,48svh)] max-[520px]:min-h-[21rem] max-[520px]:p-5"
+          className="grid min-h-[72dvh] justify-end content-end overflow-hidden p-[clamp(1.5rem,4vw,4.5rem)] max-[820px]:min-h-[min(28rem,48svh)] max-[520px]:min-h-20 max-[520px]:p-5"
           aria-labelledby="home-title"
         >
           <div>
             <div
-              className="mb-10 flex justify-self-end text-accent max-[520px]:mb-5"
+              className="mb-10 flex justify-self-end text-accent max-[520px]:mb-4"
               aria-hidden="true"
             >
               {eyebrowBars.map((barClass) => (
                 <span
                   key={barClass}
-                  className={`block h-[3.2rem] w-[2.2rem] border-2 border-r-0 border-paper max-[520px]:h-[2.15rem] max-[520px]:w-[1.55rem] ${barClass}`}
+                  className={`block h-[3.2rem] w-[2.2rem] border-2 border-r-0 border-paper max-[520px]:h-[1.85rem] max-[520px]:w-[1.35rem] ${barClass}`}
                 />
               ))}
             </div>
             <h1
               id="home-title"
-              className="m-0 max-w-[12ch] font-logo text-[clamp(3.2rem,12vw,12rem)] font-bold leading-[0.8] -tracking-widest max-[520px]:text-[clamp(3.2rem,15.5vw,4.25rem)]"
+              className="m-0 max-w-[12ch] font-logo text-[clamp(3.2rem,12vw,12rem)] font-bold leading-[0.8] -tracking-widest max-[520px]:text-[clamp(2.9rem,14vw,3.8rem)]"
             >
               .domino
             </h1>
