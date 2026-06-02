@@ -35,49 +35,87 @@ function BlogPost() {
     <div className="flex min-h-screen flex-col bg-blog-bg text-blog-text">
       <SiteHeader />
 
-      <div className="border-b border-blog-rule bg-[radial-gradient(circle_at_20%_0%,color-mix(in_oklab,var(--color-blog-accent)_18%,transparent),transparent_34%),linear-gradient(135deg,color-mix(in_oklab,var(--color-blog-accent)_14%,transparent),transparent_46%)] px-6 py-12 sm:py-16">
-        <div className="mx-auto max-w-5xl">
+      <header className="relative isolate overflow-hidden border-b border-blog-rule bg-[radial-gradient(circle_at_18%_8%,color-mix(in_oklab,var(--color-blog-accent)_20%,transparent),transparent_32%),radial-gradient(circle_at_82%_18%,color-mix(in_oklab,var(--color-blog-accent)_12%,transparent),transparent_28%),linear-gradient(135deg,color-mix(in_oklab,var(--color-blog-accent)_12%,transparent),transparent_48%)] px-5 py-8 sm:px-6 sm:py-12 lg:py-16">
+        <div
+          className="pointer-events-none absolute inset-0 bg-[image:var(--grit-image)] bg-[length:220px_220px] bg-repeat opacity-[0.05] mix-blend-overlay"
+          aria-hidden="true"
+        />
+        <div className="relative mx-auto max-w-7xl">
           <Link
             to="/blog"
             className="font-mono inline-block text-[10px] uppercase tracking-widest text-blog-muted transition-colors hover:text-blog-accent focus-visible:outline-2! focus-visible:outline-blog-accent! focus-visible:outline-offset-2!"
           >
             ← WRITING
           </Link>
-          <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_14rem] lg:items-start">
-            <div className="min-w-0">
-              <h1 className="text-balance font-heading max-w-4xl text-[clamp(2.4rem,5.6vw,4.75rem)] font-extrabold uppercase leading-[0.94] tracking-[-0.04em] text-blog-text wrap-anywhere">
+          <div
+            className={`mt-8 grid gap-7 ${
+              meta.coverImageUrl
+                ? 'lg:grid-cols-[minmax(22rem,0.95fr)_minmax(0,1.05fr)] lg:items-center lg:gap-10'
+                : 'mx-auto max-w-5xl lg:grid-cols-[minmax(0,1fr)_14rem] lg:items-start'
+            }`}
+          >
+            <div className="min-w-0 lg:pb-3">
+              <p className="font-mono mb-4 text-[9px] uppercase tracking-[0.34em] text-blog-faint">
+                Field Note / {meta.publishedAt.slice(0, 4)}
+              </p>
+              <h1 className="text-balance font-heading max-w-4xl text-[clamp(2.15rem,4.2vw,3.55rem)] font-extrabold uppercase leading-[0.94] tracking-[-0.04em] text-blog-text wrap-anywhere">
                 {meta.title}
               </h1>
               <p className="mt-5 max-w-2xl font-reading text-base leading-7 text-blog-description sm:text-lg sm:leading-8">
                 {meta.description}
               </p>
+              <div className="mt-7 border-l border-blog-rule pl-4">
+                <p className="font-mono mb-2 text-[9px] uppercase tracking-widest text-blog-faint">
+                  Published
+                </p>
+                <time
+                  dateTime={meta.publishedAt}
+                  className="font-mono text-[10px] uppercase tracking-widest text-blog-muted"
+                >
+                  {meta.publishedAt}
+                </time>
+                {(meta.tags ?? []).length > 0 && (
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {(meta.tags ?? []).map((tag) => (
+                      <span
+                        key={tag}
+                        className="font-mono border border-blog-rule bg-blog-panel px-2 py-0.5 text-[9px] uppercase tracking-widest text-blog-muted"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="border-l border-blog-rule pl-4 lg:text-right">
-              <p className="font-mono mb-2 text-[9px] uppercase tracking-widest text-blog-faint">
-                Published
-              </p>
-              <time
-                dateTime={meta.publishedAt}
-                className="font-mono text-[10px] uppercase tracking-widest text-blog-muted"
-              >
-                {meta.publishedAt}
-              </time>
-              {(meta.tags ?? []).length > 0 && (
-                <div className="mt-5 flex flex-wrap gap-2 lg:justify-end">
-                  {(meta.tags ?? []).map((tag) => (
-                    <span
-                      key={tag}
-                      className="font-mono border border-blog-rule bg-blog-panel px-2 py-0.5 text-[9px] uppercase tracking-widest text-blog-muted"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+
+            {meta.coverImageUrl ? (
+              <figure className="relative order-first -mx-5 sm:mx-0 lg:order-none lg:rotate-[-1.4deg]">
+                <div
+                  className="pointer-events-none absolute -inset-4 hidden border border-blog-rule bg-blog-panel/55 lg:block"
+                  aria-hidden="true"
+                />
+                <div className="relative overflow-hidden border-y border-blog-rule bg-blog-panel shadow-[0_1.5rem_4rem_color-mix(in_oklab,var(--color-blog-accent)_18%,transparent)] sm:border">
+                  <img
+                    src={meta.coverImageUrl}
+                    alt=""
+                    width="1448"
+                    height="1086"
+                    loading="eager"
+                    decoding="sync"
+                    fetchPriority="high"
+                    className="aspect-[4/3] w-full object-cover"
+                  />
+                  <div
+                    className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,transparent_58%,color-mix(in_oklab,var(--color-blog-accent)_22%,transparent)),linear-gradient(0deg,rgb(0_0_0/0.14),transparent_34%)] mix-blend-multiply dark:mix-blend-screen"
+                    aria-hidden="true"
+                  />
                 </div>
-              )}
-            </div>
+              </figure>
+            ) : null}
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="flex-1 px-6 py-12 sm:py-16">
         <article className="prose mx-auto max-w-2xl font-reading prose-headings:mt-12 prose-headings:text-balance prose-headings:font-heading prose-headings:text-blog-text prose-p:text-[1.05rem] prose-p:leading-8 prose-p:text-blog-description prose-a:text-blog-accent prose-strong:text-blog-text prose-li:text-[1.05rem] prose-li:leading-8 prose-li:text-blog-description prose-th:text-blog-text prose-td:text-blog-description prose-code:bg-blog-panel prose-code:px-1 prose-code:py-0.5 prose-code:font-mono prose-code:text-blog-text prose-code:before:content-none prose-code:after:content-none prose-blockquote:border-blog-accent prose-blockquote:text-blog-description prose-hr:border-blog-rule prose-img:border prose-img:border-blog-rule prose-img:bg-blog-panel prose-img:shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-blog-accent)_12%,transparent)] lg:prose-img:-mx-16 lg:prose-img:w-[calc(100%+8rem)] lg:prose-img:max-w-none prose-pre:border prose-pre:border-blog-rule prose-pre:bg-blog-panel!">
