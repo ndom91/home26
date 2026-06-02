@@ -54,15 +54,25 @@ export const Route = createFileRoute('/api/link-screenshot')({
           })
         }
 
-        const screenshotResponse = await browser.quickAction('screenshot', {
-          url: normalizedUrl,
-          viewport: {
-            width: 1280,
-            height: 720,
-          },
-        })
+        let screenshotResponse: Response
+
+        try {
+          screenshotResponse = await browser.quickAction('screenshot', {
+            url: normalizedUrl,
+            viewport: {
+              width: 1280,
+              height: 720,
+            },
+          })
+        } catch (error) {
+          logBrowserRunError(normalizedUrl, error)
+
+          return new Response('Unable to generate screenshot', { status: 502 })
+        }
 
         if (!screenshotResponse.ok) {
+          await logBrowserRunFailure(normalizedUrl, screenshotResponse)
+
           return new Response('Unable to generate screenshot', { status: 502 })
         }
 
@@ -110,6 +120,32 @@ function getBrowserRunBinding(binding: unknown): BrowserRunBinding | null {
   }
 
   return null
+}
+
+async function logBrowserRunFailure(normalizedUrl: string, response: Response) {
+  let bodySnippet = ''
+
+  try {
+    bodySnippet = (await response.text()).slice(0, 1000)
+  } catch (error) {
+    bodySnippet = `Unable to read failure body: ${String(error)}`
+  }
+
+  // biome-ignore lint/suspicious/noConsole: Emit Worker diagnostics for Browser Run failures.
+  console.warn('Link screenshot Browser Run failed', {
+    bodySnippet,
+    status: response.status,
+    statusText: response.statusText,
+    targetUrl: normalizedUrl,
+  })
+}
+
+function logBrowserRunError(normalizedUrl: string, error: unknown) {
+  // biome-ignore lint/suspicious/noConsole: Emit Worker diagnostics for Browser Run failures.
+  console.warn('Link screenshot Browser Run threw', {
+    error: error instanceof Error ? { message: error.message, name: error.name } : String(error),
+    targetUrl: normalizedUrl,
+  })
 }
 
 async function signLinkScreenshotUrl(signingKey: string, normalizedUrl: string) {
