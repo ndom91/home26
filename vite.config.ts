@@ -13,11 +13,13 @@ import remarkFrontmatter from 'remark-frontmatter'
 import remarkGfm from 'remark-gfm'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import { defineConfig } from 'vite'
+import { mermaidPlugin } from './src/lib/mermaid-vite'
 import { remarkMermaid } from './src/lib/remark-mermaid'
 
 const config = defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [
+    mermaidPlugin(),
     devtools(),
     cloudflare({ viteEnvironment: { name: 'ssr' } }),
     contentCollections({ environment: 'ssr' }),
