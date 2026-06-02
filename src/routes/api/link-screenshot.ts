@@ -17,6 +17,7 @@ type BrowserRunBinding = {
 }
 
 const encoder = new TextEncoder()
+let browserRunQueue: Promise<void> = Promise.resolve()
 
 export const Route = createFileRoute('/api/link-screenshot')({
   server: {
@@ -54,41 +55,24 @@ export const Route = createFileRoute('/api/link-screenshot')({
           })
         }
 
-        let screenshotResponse: Response
-
-        try {
-          screenshotResponse = await browser.quickAction('screenshot', {
-            url: normalizedUrl,
-            viewport: {
-              width: 1280,
-              height: 720,
-            },
-          })
-        } catch (error) {
-          logBrowserRunError(normalizedUrl, error)
-
-          return new Response('Unable to generate screenshot', { status: 502 })
-        }
-
-        if (!screenshotResponse.ok) {
-          await logBrowserRunFailure(normalizedUrl, screenshotResponse)
-
-          return new Response('Unable to generate screenshot', { status: 502 })
-        }
-
-        const screenshot = await screenshotResponse.arrayBuffer()
-
-        await workerEnv.home26_link_screenshots.put(cacheKey, screenshot, {
-          httpMetadata: {
-            contentType: SCREENSHOT_CONTENT_TYPE,
-          },
-          customMetadata: {
-            createdAt: new Date().toISOString(),
-            sourceUrl: normalizedUrl,
-          },
+        const screenshot = await getOrCreateScreenshot({
+          browser,
+          bucket: workerEnv.home26_link_screenshots,
+          cacheKey,
+          normalizedUrl,
         })
 
-        return new Response(screenshot, {
+        if (!screenshot) {
+          return new Response('Unable to generate screenshot', { status: 502 })
+        }
+
+        if (screenshot.source === 'cache') {
+          return new Response(screenshot.object.body, {
+            headers: imageHeaders(screenshot.object.httpEtag),
+          })
+        }
+
+        return new Response(screenshot.body, {
           headers: imageHeaders(),
         })
       },
@@ -120,6 +104,79 @@ function getBrowserRunBinding(binding: unknown): BrowserRunBinding | null {
   }
 
   return null
+}
+
+async function getOrCreateScreenshot({
+  browser,
+  bucket,
+  cacheKey,
+  normalizedUrl,
+}: {
+  browser: BrowserRunBinding
+  bucket: R2Bucket
+  cacheKey: string
+  normalizedUrl: string
+}) {
+  return withBrowserRunSlot(async () => {
+    const cachedScreenshot = await bucket.get(cacheKey)
+
+    if (cachedScreenshot) {
+      return { object: cachedScreenshot, source: 'cache' as const }
+    }
+
+    let screenshotResponse: Response
+
+    try {
+      screenshotResponse = await browser.quickAction('screenshot', {
+        url: normalizedUrl,
+        viewport: {
+          width: 1280,
+          height: 720,
+        },
+      })
+    } catch (error) {
+      logBrowserRunError(normalizedUrl, error)
+
+      return null
+    }
+
+    if (!screenshotResponse.ok) {
+      await logBrowserRunFailure(normalizedUrl, screenshotResponse)
+
+      return null
+    }
+
+    const screenshot = await screenshotResponse.arrayBuffer()
+
+    await bucket.put(cacheKey, screenshot, {
+      httpMetadata: {
+        contentType: SCREENSHOT_CONTENT_TYPE,
+      },
+      customMetadata: {
+        createdAt: new Date().toISOString(),
+        sourceUrl: normalizedUrl,
+      },
+    })
+
+    return { body: screenshot, source: 'generated' as const }
+  })
+}
+
+async function withBrowserRunSlot<T>(task: () => Promise<T>) {
+  const previousBrowserRun = browserRunQueue.catch(() => {})
+  let releaseBrowserRunSlot = () => {}
+
+  browserRunQueue = new Promise<void>((resolve) => {
+    releaseBrowserRunSlot = resolve
+  })
+
+  await previousBrowserRun
+
+  try {
+    return await task()
+  } finally {
+    releaseBrowserRunSlot()
+  }
 }
 
 async function logBrowserRunFailure(normalizedUrl: string, response: Response) {
