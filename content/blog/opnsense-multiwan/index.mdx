@@ -28,6 +28,9 @@ flowchart LR
     direction LR
     TS["Tailnet"] --> COLO["Colo<br/>Server"]
   end
+  subgraph wan[" "]
+    NET
+  end
   FW -->|After our change| TS
   COLO --> NET
   linkStyle 3 stroke:#22c55e,stroke-width:2px
