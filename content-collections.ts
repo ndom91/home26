@@ -94,7 +94,7 @@ const posts = defineCollection({
     date: v.optional(isoDate),
     tags: v.optional(v.array(v.string()), []),
     draft: v.optional(v.boolean(), false),
-    blueskyThreadUri: v.optional(v.pipe(v.string(), v.startsWith('at://'))),
+    atprotoUri: v.optional(v.pipe(v.string(), v.startsWith('at://'))),
     cover: v.optional(
       v.object({
         imageFile: v.string(),
@@ -115,7 +115,7 @@ const posts = defineCollection({
       publishedAt,
       tags: post.tags,
       draft: post.draft,
-      blueskyThreadUri: post.blueskyThreadUri ?? null,
+      atprotoUri: post.atprotoUri ?? null,
       slug: slugFromPath(post._meta.filePath),
       coverImageUrl: post.cover
         ? createDefaultImport<string>(imageImportPath(post._meta.filePath, post.cover.imageFile))

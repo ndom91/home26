@@ -52,7 +52,7 @@ tags:
 draft: false
 cover:
   imageFile: ./cover.png
-blueskyThreadUri: at://did:plc:example/app.bsky.feed.post/example
+atprotoUri: at://did:plc:example/app.bsky.feed.post/example
 ---
 
 # Post Body
@@ -60,7 +60,7 @@ blueskyThreadUri: at://did:plc:example/app.bsky.feed.post/example
 
 Notes:
 
-- `description`, `tags`, `draft`, `cover`, and `blueskyThreadUri` are optional.
+- `description`, `tags`, `draft`, `cover`, and `atprotoUri` are optional.
 - `publishedAt` is preferred; legacy `date` is still accepted by the transform.
 - If `description` is omitted, it is derived from the first suitable content paragraph.
 - Slugs are derived from the file path. For example, `content/blog/macbook/index.mdx` becomes `/blog/macbook`; `content/blog/hello-mdx.mdx` becomes `/blog/hello-mdx`.
