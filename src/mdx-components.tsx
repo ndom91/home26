@@ -1,6 +1,7 @@
 import type { AnchorHTMLAttributes, ComponentType } from 'react'
 import { Callout } from './components/mdx/callout'
 import { CodeBlock, CodeEditor } from './components/mdx/code-block'
+import { MermaidFigure } from './components/mdx/mermaid'
 import { ScreenshotLink } from './components/mdx/screenshot-link'
 import { normalizeLinkScreenshotTarget } from './lib/link-screenshot'
 
@@ -13,6 +14,7 @@ function getMDXComponents(components: MDXComponents): MDXComponents {
     Callout: Callout as unknown as MDXComponent,
     CodeBlock: CodeBlock as unknown as MDXComponent,
     CodeEditor: CodeEditor as unknown as MDXComponent,
+    MermaidFigure: MermaidFigure as unknown as MDXComponent,
     ScreenshotLink: ScreenshotLink as unknown as MDXComponent,
     ...components,
   }

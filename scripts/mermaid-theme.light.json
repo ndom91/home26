@@ -1,0 +1,24 @@
+{
+  "theme": "modern",
+  "themeVariables": {
+    "background": "transparent",
+    "primaryColor": "#f0e5eb",
+    "primaryTextColor": "#1b1318",
+    "primaryBorderColor": "#cdb9c4",
+    "secondaryColor": "#e9dde3",
+    "secondaryTextColor": "#1b1318",
+    "secondaryBorderColor": "#cdb9c4",
+    "tertiaryColor": "#dfd0d9",
+    "tertiaryTextColor": "#1b1318",
+    "tertiaryBorderColor": "#cdb9c4",
+    "lineColor": "#6f5d67",
+    "textColor": "#1b1318",
+    "mainBkg": "#f0e5eb",
+    "nodeBorder": "#853957",
+    "nodeTextColor": "#1b1318",
+    "clusterBkg": "#e9dde3",
+    "clusterBorder": "#cdb9c4",
+    "edgeLabelBackground": "#e9dde3",
+    "labelTextColor": "#1b1318"
+  }
+}

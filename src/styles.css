@@ -262,6 +262,48 @@ html[data-theme='dark'] :where([data-rehype-pretty-code-figure]) span {
   color: var(--shiki-dark);
 }
 
+/* Mermaid: show the theme-matched SVG. Mirrors the site's theme resolution —
+   explicit data-theme wins, system preference is the fallback when unset. */
+.mermaid-dark {
+  display: none;
+}
+
+.mermaid-light {
+  display: block;
+}
+
+.mermaid-light svg,
+.mermaid-dark svg {
+  width: 100%;
+  height: auto;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) .mermaid-light {
+    display: none;
+  }
+
+  html:not([data-theme='light']) .mermaid-dark {
+    display: block;
+  }
+}
+
+html[data-theme='light'] .mermaid-light {
+  display: block;
+}
+
+html[data-theme='light'] .mermaid-dark {
+  display: none;
+}
+
+html[data-theme='dark'] .mermaid-light {
+  display: none;
+}
+
+html[data-theme='dark'] .mermaid-dark {
+  display: block;
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 560ms;

@@ -19,6 +19,7 @@
   ],
   "scripts": {
     "dev": "vite dev",
+    "mermaid": "node scripts/render-mermaid.ts",
     "build": "content-collections build && vite build",
     "preview": "vite preview",
     "deploy": "pnpm run build && wrangler deploy",

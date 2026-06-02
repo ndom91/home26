@@ -106,6 +106,25 @@ Notes:
 - Browser Run Quick Actions require compatibility date `2026-03-24` or newer; this project uses `2026-05-14`, the newest date supported by the currently pinned Wrangler/workerd version.
 - Do not commit `remote: true` on the Browser Run or R2 bindings. It can keep local production builds open after prerendering. For local endpoint testing against real Cloudflare resources, use `wrangler dev --remote` instead.
 
+## Mermaid Diagrams
+
+` ```mermaid ` fenced code blocks in MDX render as theme-matched diagrams. Rendering happens **locally at author time**, not in CI: the build only reads committed SVGs, so no browser/playwright is ever needed in the Cloudflare build.
+
+Pipeline:
+
+- `mmdr` (the `mermaid-rs-renderer` Rust binary) renders mermaid → SVG with no browser. Install locally once: `cargo install mermaid-rs-renderer` (must be on PATH).
+- `pnpm mermaid` (`scripts/render-mermaid.ts`) scans `content/blog/**/*.mdx`, hashes each diagram, and renders a light + dark SVG per diagram into `content/.mermaid/<hash>.{light,dark}.svg`. These SVGs are **committed** and are the source of truth. The step is incremental (skips unchanged diagrams) and is intentionally **not** part of `pnpm build`.
+- `remarkMermaid` (`src/lib/remark-mermaid.ts`) runs in the remark phase (before `rehype-pretty-code`, so fences aren't syntax-highlighted), looks up the committed SVGs by hash, and replaces the fence with `<MermaidFigure>` (`src/components/mdx/mermaid.tsx`). If a diagram's SVGs are missing it throws, telling you to run `pnpm mermaid`.
+- Light/dark theming: two `themeVariables` configs (`scripts/mermaid-theme.{light,dark}.json`) mapped to the site blog palette; CSS in `src/styles.css` shows the variant matching the active theme. Hashing/cache-path helpers live in `src/lib/mermaid.ts` (shared by the script and the plugin).
+
+Authoring workflow: write a ` ```mermaid ` block → run `pnpm mermaid` → commit the post and the new `content/.mermaid/*.svg`.
+
+Notes:
+
+- mmdr layout is fixed — `--nodeSpacing`/`--rankSpacing` and `%%{init}%%` spacing are currently no-ops. Improve cramped diagrams structurally (multiline `<br/>` labels, subgraphs) rather than via spacing knobs.
+- mmdr fidelity is strongest for flowchart and sequence diagrams; exotic types may render imperfectly.
+- `linkStyle` (per-edge colors) and `subgraph ... direction` are honored. `linkStyle` indices are edge-declaration order across the whole graph — reordering edges shifts them.
+
 ## Commands
 
 Use pnpm.
