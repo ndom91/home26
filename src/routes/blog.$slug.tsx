@@ -2,17 +2,42 @@ import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { BlueskyComments } from '../components/BlueskyComments'
 import { SiteHeader } from '../components/SiteHeader'
 import type { BlogPost as BlogPostType } from '../lib/blog'
-import { getPublishedPost } from '../lib/blog'
+import { getPublishedPost, getPublishedPosts } from '../lib/blog'
 import { mdxComponents } from '../mdx-components'
 
 type PostMeta = Omit<BlogPostType, 'Component'>
+type ArticleNavPost = Pick<PostMeta, 'description' | 'publishedAt' | 'slug' | 'title'>
+type PostLoaderData = PostMeta & {
+  nextPost: ArticleNavPost | null
+  previousPost: ArticleNavPost | null
+}
+
+function toArticleNavPost(post: BlogPostType): ArticleNavPost {
+  return {
+    description: post.description,
+    publishedAt: post.publishedAt,
+    slug: post.slug,
+    title: post.title,
+  }
+}
 
 export const Route = createFileRoute('/blog/$slug')({
-  loader: ({ params }): PostMeta => {
-    const post = getPublishedPost(params.slug)
-    if (!post) throw notFound()
+  loader: ({ params }): PostLoaderData => {
+    const posts = getPublishedPosts()
+    const postIndex = posts.findIndex((post) => post.slug === params.slug)
+    const post = posts[postIndex]
+
+    if (!post) {
+      throw notFound()
+    }
+
     const { Component: _c, ...meta } = post
-    return meta
+
+    return {
+      ...meta,
+      nextPost: posts[postIndex + 1] ? toArticleNavPost(posts[postIndex + 1]) : null,
+      previousPost: posts[postIndex - 1] ? toArticleNavPost(posts[postIndex - 1]) : null,
+    }
   },
   head: ({ loaderData }) => ({
     meta: loaderData
@@ -121,6 +146,7 @@ function BlogPost() {
         <article className="prose mx-auto max-w-2xl font-reading prose-headings:mt-12 prose-headings:text-balance prose-headings:font-heading prose-headings:text-blog-text prose-p:text-[1.05rem] prose-p:leading-8 prose-p:text-blog-description prose-a:text-blog-accent prose-strong:text-blog-text prose-li:text-[1.05rem] prose-li:leading-8 prose-li:text-blog-description prose-th:text-blog-text prose-td:text-blog-description prose-code:bg-blog-panel prose-code:px-1 prose-code:py-0.5 prose-code:font-mono prose-code:text-blog-text prose-code:before:content-none prose-code:after:content-none prose-blockquote:border-blog-accent prose-blockquote:text-blog-description prose-hr:border-blog-rule prose-img:border prose-img:border-blog-rule prose-img:bg-blog-panel prose-img:shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-blog-accent)_12%,transparent)] lg:prose-img:-mx-16 lg:prose-img:w-[calc(100%+8rem)] lg:prose-img:max-w-none prose-pre:border prose-pre:border-blog-rule prose-pre:bg-blog-panel!">
           <Component components={mdxComponents} />
         </article>
+        <ArticleNavigation nextPost={meta.nextPost} previousPost={meta.previousPost} />
         {meta.atprotoUri ? <BlueskyComments atprotoUri={meta.atprotoUri} /> : null}
       </div>
 
@@ -147,5 +173,84 @@ function BlogPost() {
         </div>
       </footer>
     </div>
+  )
+}
+
+function ArticleNavigation({
+  nextPost,
+  previousPost,
+}: {
+  nextPost: ArticleNavPost | null
+  previousPost: ArticleNavPost | null
+}) {
+  if (!nextPost && !previousPost) {
+    return null
+  }
+
+  return (
+    <nav
+      aria-label="Article navigation"
+      className="mx-auto mt-14 grid max-w-5xl gap-px overflow-hidden border border-blog-rule bg-blog-rule sm:grid-cols-2"
+    >
+      {previousPost ? (
+        <ArticleNavLink direction="previous" post={previousPost} />
+      ) : (
+        <div className="hidden bg-blog-bg sm:block" aria-hidden="true" />
+      )}
+      {nextPost ? (
+        <ArticleNavLink direction="next" post={nextPost} />
+      ) : (
+        <div className="hidden bg-blog-bg sm:block" aria-hidden="true" />
+      )}
+    </nav>
+  )
+}
+
+function ArticleNavLink({
+  direction,
+  post,
+}: {
+  direction: 'next' | 'previous'
+  post: ArticleNavPost
+}) {
+  const isNext = direction === 'next'
+
+  return (
+    <Link
+      to="/blog/$slug"
+      params={{ slug: post.slug }}
+      className={`group flex min-h-48 flex-col justify-between bg-blog-panel p-5 transition-colors hover:bg-blog-hover sm:p-6 ${
+        isNext ? 'text-right' : ''
+      }`}
+    >
+      <div>
+        <p className="font-mono mb-4 text-[9px] uppercase tracking-widest text-blog-faint transition-colors group-hover:text-blog-accent">
+          {isNext ? 'Next article' : 'Prev article'}
+        </p>
+        <h2 className="text-balance font-heading text-xl font-extrabold uppercase leading-[0.95] tracking-[-0.04em] text-blog-text transition-colors group-hover:text-blog-accent sm:text-2xl">
+          {post.title}
+        </h2>
+        <p className="mt-4 line-clamp-2 font-reading text-sm leading-6 text-blog-description">
+          {post.description}
+        </p>
+      </div>
+      <div
+        className={`font-mono mt-6 flex items-center gap-3 text-[10px] uppercase tracking-widest text-blog-muted transition-colors group-hover:text-blog-accent ${
+          isNext ? 'justify-end' : ''
+        }`}
+      >
+        {!isNext ? (
+          <span className="transition-transform group-hover:-translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0">
+            ←
+          </span>
+        ) : null}
+        <time dateTime={post.publishedAt}>{post.publishedAt}</time>
+        {isNext ? (
+          <span className="transition-transform group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0">
+            →
+          </span>
+        ) : null}
+      </div>
+    </Link>
   )
 }
