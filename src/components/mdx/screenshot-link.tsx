@@ -1,17 +1,10 @@
 import type { ReactNode } from 'react'
+import { useLinkScreenshotUrl } from './link-screenshot-context'
 
-function getScreenshotImage(url: string, image?: string): string {
+function getScreenshotImage(image?: string): string | undefined {
   if (image?.startsWith('/') || image?.startsWith('http') || image?.startsWith('data:')) {
     return image
   }
-
-  const screenshotUrl = new URL('https://api.microlink.io/')
-  screenshotUrl.searchParams.set('url', url)
-  screenshotUrl.searchParams.set('screenshot', 'true')
-  screenshotUrl.searchParams.set('meta', 'false')
-  screenshotUrl.searchParams.set('embed', 'screenshot.url')
-
-  return screenshotUrl.toString()
 }
 
 export function ScreenshotLink({
@@ -26,8 +19,21 @@ export function ScreenshotLink({
   image?: string
 }) {
   const label = children ?? text ?? url
+  const signedScreenshotUrl = useLinkScreenshotUrl(url)
+  const imageSrc = getScreenshotImage(image) ?? signedScreenshotUrl
 
-  const imageSrc = getScreenshotImage(url, image)
+  if (!imageSrc) {
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noreferrer"
+        className="decoration-dotted underline-offset-4"
+      >
+        {label}
+      </a>
+    )
+  }
 
   return (
     <span className="group/screenshot relative inline-block">

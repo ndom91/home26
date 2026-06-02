@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { BlueskyComments } from '../components/BlueskyComments'
+import { LinkScreenshotProvider } from '../components/mdx/link-screenshot-context'
 import { SiteHeader } from '../components/SiteHeader'
 import type { BlogPost as BlogPostType } from '../lib/blog'
 import { getPublishedPost, getPublishedPosts } from '../lib/blog'
@@ -144,7 +145,9 @@ function BlogPost() {
 
       <div className="flex-1 px-6 py-12 sm:py-16">
         <article className="prose mx-auto max-w-2xl font-reading prose-headings:mt-12 prose-headings:text-balance prose-headings:font-heading prose-headings:text-blog-text prose-p:text-[1.05rem] prose-p:leading-8 prose-p:text-blog-description prose-a:text-blog-accent prose-strong:text-blog-text prose-li:text-[1.05rem] prose-li:leading-8 prose-li:text-blog-description prose-th:text-blog-text prose-td:text-blog-description prose-code:bg-blog-panel prose-code:px-1 prose-code:py-0.5 prose-code:font-mono prose-code:text-blog-text prose-code:before:content-none prose-code:after:content-none prose-blockquote:border-blog-accent prose-blockquote:text-blog-description prose-hr:border-blog-rule prose-img:border prose-img:border-blog-rule prose-img:bg-blog-panel prose-img:shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-blog-accent)_12%,transparent)] lg:prose-img:-mx-16 lg:prose-img:w-[calc(100%+8rem)] lg:prose-img:max-w-none prose-pre:border prose-pre:border-blog-rule prose-pre:bg-blog-panel!">
-          <Component components={mdxComponents} />
+          <LinkScreenshotProvider urls={meta.linkScreenshotUrls}>
+            <Component components={mdxComponents} />
+          </LinkScreenshotProvider>
         </article>
         <ArticleNavigation nextPost={meta.nextPost} previousPost={meta.previousPost} />
         {meta.atprotoUri ? <BlueskyComments atprotoUri={meta.atprotoUri} /> : null}

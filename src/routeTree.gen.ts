@@ -13,6 +13,7 @@ import { Route as BlogRouteImport } from './routes/blog'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as ApiLinkScreenshotRouteImport } from './routes/api/link-screenshot'
 
 const BlogRoute = BlogRouteImport.update({
   id: '/blog',
@@ -34,15 +35,22 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => BlogRoute,
 } as any)
+const ApiLinkScreenshotRoute = ApiLinkScreenshotRouteImport.update({
+  id: '/api/link-screenshot',
+  path: '/api/link-screenshot',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/blog': typeof BlogRouteWithChildren
+  '/api/link-screenshot': typeof ApiLinkScreenshotRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/': typeof BlogIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/link-screenshot': typeof ApiLinkScreenshotRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog': typeof BlogIndexRoute
 }
@@ -50,20 +58,28 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/blog': typeof BlogRouteWithChildren
+  '/api/link-screenshot': typeof ApiLinkScreenshotRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/': typeof BlogIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/blog' | '/blog/$slug' | '/blog/'
+  fullPaths: '/' | '/blog' | '/api/link-screenshot' | '/blog/$slug' | '/blog/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/blog/$slug' | '/blog'
-  id: '__root__' | '/' | '/blog' | '/blog/$slug' | '/blog/'
+  to: '/' | '/api/link-screenshot' | '/blog/$slug' | '/blog'
+  id:
+    | '__root__'
+    | '/'
+    | '/blog'
+    | '/api/link-screenshot'
+    | '/blog/$slug'
+    | '/blog/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BlogRoute: typeof BlogRouteWithChildren
+  ApiLinkScreenshotRoute: typeof ApiLinkScreenshotRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -96,6 +112,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof BlogRoute
     }
+    '/api/link-screenshot': {
+      id: '/api/link-screenshot'
+      path: '/api/link-screenshot'
+      fullPath: '/api/link-screenshot'
+      preLoaderRoute: typeof ApiLinkScreenshotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -114,6 +137,7 @@ const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BlogRoute: BlogRouteWithChildren,
+  ApiLinkScreenshotRoute: ApiLinkScreenshotRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

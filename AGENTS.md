@@ -95,6 +95,17 @@ The Cloudflare project is linked to the GitHub repository for builds on changes.
 
 TanStack Start prerendering is enabled in `vite.config.ts`. This is expected for the current static portfolio/blog shape: prerender emits initial static HTML, then React hydrates client-side interactions. Re-check prerendering if adding user-specific routes, per-request server data, or browser API access during render/loaders.
 
+## Link Screenshot Previews
+
+External MDX links can render screenshot previews through `/api/link-screenshot`, a TanStack Start server route backed by Cloudflare Browser Run and the `home26-link-screenshots` R2 bucket.
+
+Notes:
+
+- `LINK_SCREENSHOT_SIGNING_KEY` must be set in the build environment to generate signed screenshot URLs during Content Collections builds.
+- The same `LINK_SCREENSHOT_SIGNING_KEY` must be configured as a Cloudflare Worker secret at runtime so `/api/link-screenshot` can validate signatures.
+- Browser Run Quick Actions require compatibility date `2026-03-24` or newer; this project uses `2026-05-14`, the newest date supported by the currently pinned Wrangler/workerd version.
+- Do not commit `remote: true` on the Browser Run or R2 bindings. It can keep local production builds open after prerendering. For local endpoint testing against real Cloudflare resources, use `wrangler dev --remote` instead.
+
 ## Commands
 
 Use pnpm.
