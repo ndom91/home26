@@ -27,7 +27,17 @@ const config = defineConfig({
         remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm],
         rehypePlugins: [
           rehypeSlug,
-          rehypeAutolinkHeadings,
+          [
+            rehypeAutolinkHeadings,
+            {
+              behavior: 'prepend',
+              properties: {
+                className: ['heading-anchor'],
+                ariaLabel: 'Permalink to this heading',
+              },
+              content: { type: 'text', value: '#' },
+            },
+          ],
           [
             rehypePrettyCode,
             {

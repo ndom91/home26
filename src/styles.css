@@ -312,3 +312,22 @@ html[data-theme='dark'] :where([data-rehype-pretty-code-figure]) span {
     animation: none !important;
   }
 }
+
+.prose :where(h1, h2, h3, h4, h5, h6) {
+  position: relative;
+  scroll-margin-top: 1.5rem;
+}
+
+.heading-anchor {
+  position: absolute;
+  right: 100%;
+  margin-right: 0.5ch;
+  color: color-mix(in oklab, var(--color-blog-accent) 55%, transparent);
+  text-decoration: none;
+  font-weight: 400;
+}
+
+.heading-anchor:hover,
+.heading-anchor:focus-visible {
+  color: var(--color-blog-accent);
+}
