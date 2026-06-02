@@ -119,6 +119,8 @@ Pipeline:
 
 Authoring workflow: write a ` ```mermaid ` block → run `pnpm mermaid` → commit the post and the new `content/.mermaid/*.svg`.
 
+During `pnpm dev` the vite plugin auto-renders diagrams on save (no restart needed), but it only adds SVGs — it does not delete superseded ones. `pnpm mermaid` prunes orphaned cache SVGs (any not referenced by current content), so run it before committing to avoid committing stale files.
+
 Notes:
 
 - mmdr layout is fixed — `--nodeSpacing`/`--rankSpacing` and `%%{init}%%` spacing are currently no-ops. Improve cramped diagrams structurally (multiline `<br/>` labels, subgraphs) rather than via spacing knobs.

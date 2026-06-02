@@ -11,8 +11,10 @@
 import { renderAllBlog } from '../src/lib/mermaid-render.ts'
 
 renderAllBlog()
-  .then(({ rendered, skipped, unique }) => {
-    console.log(`Mermaid: ${rendered} rendered, ${skipped} cached, ${unique} unique diagram(s).`)
+  .then(({ rendered, skipped, unique, pruned }) => {
+    console.log(
+      `Mermaid: ${rendered} rendered, ${skipped} cached, ${pruned} pruned, ${unique} unique diagram(s).`
+    )
   })
   .catch((error) => {
     console.error(error instanceof Error ? error.message : error)

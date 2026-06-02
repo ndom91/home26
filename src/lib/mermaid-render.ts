@@ -8,9 +8,16 @@
  * touches the filesystem.
  */
 import { spawnSync } from 'node:child_process'
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  unlinkSync,
+  writeFileSync,
+} from 'node:fs'
 import { readdir } from 'node:fs/promises'
-import { join } from 'node:path'
+import { basename, join } from 'node:path'
 import {
   cachePaths,
   hashMermaid,
@@ -34,6 +41,32 @@ export interface RenderSummary {
   rendered: number
   skipped: number
   unique: number
+  pruned: number
+}
+
+/**
+ * Delete cached SVGs that no longer correspond to any current diagram. The dev
+ * plugin renders a fresh hash on every edit but never removes the superseded
+ * one, so orphans accumulate without this.
+ */
+function pruneOrphans(validHashes: Set<string>): number {
+  if (!existsSync(cacheDir)) return 0
+
+  const keep = new Set<string>()
+  for (const hash of validHashes) {
+    const paths = cachePaths(hash)
+    keep.add(basename(paths.light))
+    keep.add(basename(paths.dark))
+  }
+
+  let pruned = 0
+  for (const file of readdirSync(cacheDir)) {
+    if (file.endsWith('.svg') && !keep.has(file)) {
+      unlinkSync(join(cacheDir, file))
+      pruned += 1
+    }
+  }
+  return pruned
 }
 
 export async function findBlogMdxFiles(dir: string = blogDir): Promise<string[]> {
@@ -130,7 +163,9 @@ export async function renderAllBlog(): Promise<RenderSummary> {
     }
   }
 
-  return { rendered, skipped, unique: seen.size }
+  const pruned = pruneOrphans(seen)
+
+  return { rendered, skipped, unique: seen.size, pruned }
 }
 
 export function isBlogMdx(file: string): boolean {
