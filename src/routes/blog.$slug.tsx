@@ -84,7 +84,7 @@ function BlogPost() {
               <p className="font-mono mb-4 text-[9px] uppercase tracking-[0.34em] text-blog-faint">
                 Field Note / {meta.publishedAt.slice(0, 4)}
               </p>
-              <h1 className="text-balance font-heading max-w-4xl text-[clamp(2.15rem,4.2vw,3.55rem)] font-extrabold uppercase leading-[0.94] tracking-[-0.04em] text-blog-text wrap-anywhere">
+              <h1 className="text-balance font-heading max-w-4xl text-[clamp(2.15rem,4.2vw,3.55rem)] font-extrabold uppercase leading-[0.94] tracking-[-0.08em] text-blog-text wrap-anywhere">
                 {meta.title}
               </h1>
               <p className="mt-5 max-w-2xl font-reading text-base leading-7 text-blog-description sm:text-lg sm:leading-8">
