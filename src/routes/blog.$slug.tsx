@@ -1,9 +1,10 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
+import type { CSSProperties } from 'react'
 import { BlueskyComments } from '../components/BlueskyComments'
 import { LinkScreenshotProvider } from '../components/mdx/link-screenshot-context'
 import { SiteHeader } from '../components/SiteHeader'
 import type { BlogPost as BlogPostType } from '../lib/blog'
-import { getPublishedPost, getPublishedPosts } from '../lib/blog'
+import { getPublishedPost, getPublishedPosts, longestWordEm } from '../lib/blog'
 import { mdxComponents } from '../mdx-components'
 
 type PostMeta = Omit<BlogPostType, 'Component'>
@@ -80,11 +81,14 @@ function BlogPost() {
                 : 'mx-auto max-w-5xl lg:grid-cols-[minmax(0,1fr)_14rem] lg:items-start'
             }`}
           >
-            <div className="min-w-0 lg:pb-3">
+            <div className="@container min-w-0 lg:pb-3">
               <p className="font-mono mb-4 text-[9px] uppercase tracking-[0.34em] text-blog-faint">
                 Field Note / {meta.publishedAt.slice(0, 4)}
               </p>
-              <h1 className="text-balance font-heading max-w-4xl text-[clamp(2.15rem,4.2vw,3.55rem)] font-extrabold uppercase leading-[0.94] tracking-[-0.08em] text-blog-text wrap-anywhere">
+              <h1
+                className="text-balance font-heading max-w-4xl text-[min(clamp(2.15rem,4.2vw,3.55rem),calc(100cqi/var(--title-fit-em)))] font-extrabold uppercase leading-[0.94] tracking-[-0.08em] text-blog-text wrap-break-word"
+                style={{ '--title-fit-em': longestWordEm(meta.title) } as CSSProperties}
+              >
                 {meta.title}
               </h1>
               <p className="mt-5 max-w-2xl font-reading text-base leading-7 text-blog-description sm:text-lg sm:leading-8">

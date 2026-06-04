@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
+import type { CSSProperties } from 'react'
 import { SiteHeader } from '../components/SiteHeader'
 import type { BlogPost } from '../lib/blog'
-import { getPublishedPosts } from '../lib/blog'
+import { getPublishedPosts, longestWordEm } from '../lib/blog'
 
 type PostData = Omit<BlogPost, 'Component'>
 
@@ -54,12 +55,17 @@ function BlogIndex() {
                 params={{ slug: featuredPost.slug }}
                 className="blog-paper-card group mb-5 grid overflow-hidden border border-blog-rule bg-blog-panel lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,0.85fr)]"
               >
-                <div className="flex min-h-80 min-w-0 flex-col justify-between p-5 sm:p-7">
+                <div className="@container flex min-h-80 min-w-0 flex-col justify-between p-5 sm:p-7">
                   <div>
                     <p className="font-mono mb-5 text-[9px] uppercase tracking-widest text-blog-muted">
                       LATEST ENTRY
                     </p>
-                    <h2 className="text-balance font-heading text-[clamp(1.7rem,3vw,3.25rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.08em] text-blog-accent wrap-anywhere">
+                    <h2
+                      className="text-balance font-heading text-[min(clamp(1.7rem,3vw,3.25rem),calc(100cqi/var(--title-fit-em)))] font-extrabold uppercase leading-[0.9] tracking-[-0.08em] text-blog-accent wrap-break-word"
+                      style={
+                        { '--title-fit-em': longestWordEm(featuredPost.title) } as CSSProperties
+                      }
+                    >
                       {featuredPost.title}
                     </h2>
                     <p className="mt-5 max-w-2xl font-reading text-base leading-7 text-blog-description">
