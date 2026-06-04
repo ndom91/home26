@@ -122,7 +122,7 @@ function BlogPost() {
             {meta.coverImageUrl ? (
               <figure className="relative order-first -mx-5 sm:mx-0 lg:order-none lg:rotate-[-1.4deg]">
                 <div
-                  className="pointer-events-none absolute -inset-4 hidden border border-blog-rule bg-blog-panel/55 lg:block"
+                  className="pointer-events-none absolute -inset-4 hidden border border-blog-rule bg-blog-panel/55 dark:bg-ink lg:block"
                   aria-hidden="true"
                 />
                 <div className="relative overflow-hidden border-y border-blog-rule bg-blog-panel shadow-[0_1.5rem_4rem_color-mix(in_oklab,var(--color-blog-accent)_18%,transparent)] sm:border">
