@@ -53,7 +53,7 @@ function BlogIndex() {
                 key={featuredPost.slug}
                 to="/blog/$slug"
                 params={{ slug: featuredPost.slug }}
-                className="blog-paper-card group mb-5 grid overflow-hidden border border-blog-rule bg-blog-panel lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,0.85fr)]"
+                className="blog-paper-card group mb-5 grid overflow-hidden border border-blog-rule bg-blog-panel transition-[border-color,background-color,translate] duration-300 hover:-translate-y-0.5 hover:border-blog-accent hover:bg-blog-hover motion-reduce:transition-none motion-reduce:hover:translate-y-0 lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,0.85fr)]"
               >
                 <div className="@container flex min-h-80 min-w-0 flex-col justify-between p-5 sm:p-7">
                   <div>
@@ -93,7 +93,7 @@ function BlogIndex() {
                   key={post.slug}
                   to="/blog/$slug"
                   params={{ slug: post.slug }}
-                  className="blog-paper-card group flex h-full flex-col overflow-hidden border border-blog-rule bg-blog-panel"
+                  className="blog-paper-card group flex h-full flex-col overflow-hidden border border-blog-rule bg-blog-panel transition-[border-color,background-color,translate] duration-300 hover:-translate-y-0.5 hover:border-blog-accent hover:bg-blog-hover motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                 >
                   {post.coverImageUrl ? (
                     <div className="overflow-hidden border-b border-blog-rule">
@@ -114,9 +114,11 @@ function BlogIndex() {
                     <p className="mt-3 font-reading text-sm leading-6 text-blog-description">
                       {post.description}
                     </p>
-                    <div className="font-mono mt-auto flex items-center justify-between border-t border-blog-rule pt-3 text-[10px] uppercase tracking-widest text-blog-muted">
+                    <div className="font-mono mt-auto flex items-center justify-between border-t border-blog-rule pt-3 text-[10px] uppercase tracking-widest text-blog-muted transition-colors group-hover:text-blog-accent">
                       <span>Read note</span>
-                      <span>→</span>
+                      <span className="transition-transform group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0">
+                        →
+                      </span>
                     </div>
                   </div>
                 </Link>
@@ -157,14 +159,14 @@ function PostCardMeta({ post, className }: { post: PostData; className?: string 
     <div className={`flex flex-wrap items-center gap-2 ${className ?? ''}`}>
       <time
         dateTime={post.publishedAt}
-        className="font-mono text-[10px] uppercase tracking-widest text-blog-muted"
+        className="font-mono text-[10px] uppercase tracking-widest text-blog-muted transition-colors group-hover:text-blog-accent"
       >
         {post.publishedAt}
       </time>
       {(post.tags ?? []).slice(0, 2).map((tag) => (
         <span
           key={tag}
-          className="font-mono border border-blog-rule bg-blog-bg px-2 py-0.5 text-[9px] uppercase tracking-widest text-blog-muted"
+          className="font-mono border border-blog-rule bg-blog-bg px-2 py-0.5 text-[9px] uppercase tracking-widest text-blog-muted transition-colors group-hover:border-blog-accent group-hover:text-blog-tag-hover"
         >
           {tag}
         </span>

@@ -230,7 +230,7 @@
     html:not([data-theme='light']) .blog-paper-card {
       --blog-bg: #dfd0d9;
       --blog-panel: #e9dde3;
-      --blog-hover: #f0e5eb;
+      --blog-hover: #dfd0d9;
       --blog-text: #1b1318;
       --blog-rule: #3d2d36;
       --blog-muted: #6f5d67;
@@ -239,7 +239,7 @@
       --blog-accent: #853957;
       --color-blog-bg: #dfd0d9;
       --color-blog-panel: #e9dde3;
-      --color-blog-hover: #f0e5eb;
+      --color-blog-hover: #dfd0d9;
       --color-blog-text: #1b1318;
       --color-blog-rule: #3d2d36;
       --color-blog-muted: #6f5d67;
@@ -252,7 +252,7 @@
   html[data-theme='dark'] .blog-paper-card {
     --blog-bg: #dfd0d9;
     --blog-panel: #e9dde3;
-    --blog-hover: #f0e5eb;
+    --blog-hover: #dfd0d9;
     --blog-text: #1b1318;
     --blog-rule: #3d2d36;
     --blog-muted: #6f5d67;
@@ -261,7 +261,7 @@
     --blog-accent: #853957;
     --color-blog-bg: #dfd0d9;
     --color-blog-panel: #e9dde3;
-    --color-blog-hover: #f0e5eb;
+    --color-blog-hover: #dfd0d9;
     --color-blog-text: #1b1318;
     --color-blog-rule: #3d2d36;
     --color-blog-muted: #6f5d67;
