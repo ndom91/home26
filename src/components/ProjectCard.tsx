@@ -2,12 +2,11 @@ import { BookOpen, ExternalLink, Github, type LucideIcon, Star } from 'lucide-re
 import type { Project, ProjectStatus } from '../lib/projects'
 import { usePointerSweep } from '../lib/use-pointer-sweep'
 
-// Brutalist flair lifted from the home detail cards (src/routes/index.tsx):
-// an accent light-sweep (`before:`) whose angle/strength follow the pointer, and
-// a grit texture overlay (`after:`) that fades in on hover. Theming vars
-// (`--grit-image`, `--grit-opacity`, `--globe-accent`) come from src/styles.css.
 const cardFlairClass =
-  "group relative flex h-full flex-col overflow-hidden bg-paper [--detail-accent:var(--globe-accent)] [--hover-color-strength:1] [--sweep-int:calc(var(--hover-color-strength)*var(--sweep-dampen))] [--hover-tilt:2.5deg] [--hover-x:50%] before:pointer-events-none before:absolute before:inset-y-[-30%] before:left-0 before:w-[min(42rem,190%)] before:bg-[linear-gradient(90deg,transparent,rgb(var(--detail-accent)/calc(0.034*var(--sweep-int)))_10%,rgb(var(--detail-accent)/calc(0.12*var(--sweep-int)))_30%,rgb(var(--detail-accent)/calc(0.16*var(--sweep-int)))_42%,rgb(var(--detail-accent)/calc(0.16*var(--sweep-int)))_58%,rgb(var(--detail-accent)/calc(0.12*var(--sweep-int)))_70%,rgb(var(--detail-accent)/calc(0.034*var(--sweep-int)))_90%,transparent)] before:content-[''] before:opacity-0 before:blur-[8px] before:transition-opacity before:duration-500 before:translate-x-[calc(var(--hover-x)-50%)] before:rotate-[var(--hover-tilt)] after:pointer-events-none after:absolute after:inset-0 after:bg-[image:var(--grit-image)] after:bg-[length:180px_180px] after:bg-repeat after:content-[''] after:opacity-0 after:transition-opacity after:duration-500 hover:before:opacity-100 hover:before:duration-180 hover:after:opacity-[var(--grit-opacity)] hover:after:duration-180"
+  'group relative flex h-full flex-col bg-paper [--detail-accent:var(--globe-accent)] [--hover-color-strength:1] [--sweep-int:calc(var(--hover-color-strength)*var(--sweep-dampen))] [--hover-tilt:2.5deg] [--hover-x:50%]'
+
+const cardFlairOverlayClass =
+  "pointer-events-none absolute inset-0 z-0 overflow-hidden before:pointer-events-none before:absolute before:inset-y-[-30%] before:left-0 before:w-[min(42rem,190%)] before:bg-[linear-gradient(90deg,transparent,rgb(var(--detail-accent)/calc(0.034*var(--sweep-int)))_10%,rgb(var(--detail-accent)/calc(0.12*var(--sweep-int)))_30%,rgb(var(--detail-accent)/calc(0.16*var(--sweep-int)))_42%,rgb(var(--detail-accent)/calc(0.16*var(--sweep-int)))_58%,rgb(var(--detail-accent)/calc(0.12*var(--sweep-int)))_70%,rgb(var(--detail-accent)/calc(0.034*var(--sweep-int)))_90%,transparent)] before:content-[''] before:opacity-0 before:blur-[8px] before:transition-opacity before:duration-500 before:translate-x-[calc(var(--hover-x)-50%)] before:rotate-[var(--hover-tilt)] after:pointer-events-none after:absolute after:inset-0 after:bg-[image:var(--grit-image)] after:bg-[length:180px_180px] after:bg-repeat after:content-[''] after:opacity-0 after:transition-opacity after:duration-500 group-hover:before:opacity-100 group-hover:before:duration-180 group-hover:after:opacity-[var(--grit-opacity)] group-hover:after:duration-180"
 
 const statusStyles: Record<ProjectStatus, { dot: string; label: string }> = {
   live: { dot: 'bg-emerald-500', label: 'Live' },
@@ -33,6 +32,7 @@ export function ProjectCard({ project }: { project: Project }) {
 
   return (
     <div className={cardFlairClass} {...pointerSweep}>
+      <div aria-hidden="true" className={cardFlairOverlayClass} />
       {project.image ? (
         <div className="relative z-[1] overflow-hidden border-b border-rule">
           <img
