@@ -92,7 +92,7 @@
       --globe-background: none;
       --grit-image: url('/whitegrit.png');
       --grit-opacity: 0.2;
-      --sweep-dampen: 0.62;
+      --sweep-dampen: 0.4;
       --blog-bg: #1a1218;
       --blog-panel: #211720;
       --blog-hover: #261b25;
@@ -152,7 +152,7 @@
     --globe-background: none;
     --grit-image: url('/whitegrit.png');
     --grit-opacity: 0.3;
-    --sweep-dampen: 0.62;
+    --sweep-dampen: 0.4;
     --blog-bg: #1a1218;
     --blog-panel: #211720;
     --blog-hover: #261b25;
