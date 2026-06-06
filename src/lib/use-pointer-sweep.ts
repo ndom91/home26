@@ -36,6 +36,13 @@ function setHoverPosition(el: HTMLElement, x: number) {
 // that already-smoothed target.
 const VELOCITY_SMOOTHING = 0.08
 
+// Tilt response curve. Pointer velocity is mapped through an ease-in power curve
+// so slow movement stays gentle and only fast movement approaches the cap.
+// SPEED_REF: velocity (px/ms) that reaches full tilt; EXPONENT: >1 flattens the
+// low-speed end (higher = flatter/slower ramp before it kicks in).
+const TILT_SPEED_REF = 0.9
+const TILT_EXPONENT = 3.4
+
 function handlePointerEnter(event: PointerEvent<HTMLElement>) {
   if (prefersReducedMotion()) return
   const rect = event.currentTarget.getBoundingClientRect()
@@ -63,7 +70,12 @@ function handlePointerMove(event: PointerEvent<HTMLElement>) {
   el.dataset.hoverVelocity = String(velocity)
   const direction = velocity < 0 ? -1 : 1
   const movementStrength = Math.abs(velocity)
-  const tilt = direction * Math.min(12, Math.max(2, movementStrength * 42))
+  // Ease-in (power) curve instead of linear: slow movement stays near the 2deg
+  // floor and only ramps toward the 20deg cap as speed picks up, so gentle
+  // passes don't snap to a strong angle. TILT_SPEED_REF is the velocity that
+  // maps to full tilt; TILT_EXPONENT > 1 flattens the low-speed response.
+  const tiltProgress = Math.min(1, movementStrength / TILT_SPEED_REF)
+  const tilt = direction * (2 + 18 * tiltProgress ** TILT_EXPONENT)
   const colorStrength = Math.min(1.12, Math.max(0.82, 0.84 + movementStrength * 0.38))
   const currentX = Number.parseFloat(el.style.getPropertyValue('--hover-x')) || targetX
 
