@@ -9,13 +9,22 @@
  * On a fetch failure the previous committed value is kept, so a flaky network
  * or rate limit never clobbers good data with zeros.
  */
-import { writeFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { getProjects, repoSlug } from '../src/lib/projects.ts'
+import { repoSlug } from '../src/lib/repo-slug.ts'
 import { stars as existingStars } from '../src/lib/stars.generated.ts'
 
-const OUTPUT_PATH = join(dirname(fileURLToPath(import.meta.url)), '../src/lib/stars.generated.ts')
+const scriptDir = dirname(fileURLToPath(import.meta.url))
+const OUTPUT_PATH = join(scriptDir, '../src/lib/stars.generated.ts')
+// Scan project source for `repo:` URLs instead of importing projects.tsx, which
+// node cannot load (JSX).
+const PROJECTS_SOURCE_PATH = join(scriptDir, '../src/lib/projects.tsx')
+
+function repoUrlsFromSource(): string[] {
+  const source = readFileSync(PROJECTS_SOURCE_PATH, 'utf8')
+  return [...source.matchAll(/\brepo:\s*['"]([^'"]+)['"]/g)].map((match) => match[1])
+}
 
 async function fetchStarCount(slug: string): Promise<number | null> {
   const token = process.env.GITHUB_TOKEN
@@ -39,8 +48,8 @@ async function fetchStarCount(slug: string): Promise<number | null> {
 async function main() {
   const slugs = [
     ...new Set(
-      getProjects()
-        .map((project) => repoSlug(project.repo))
+      repoUrlsFromSource()
+        .map((repoUrl) => repoSlug(repoUrl))
         .filter((slug): slug is string => slug !== null)
     ),
   ]

@@ -4,9 +4,9 @@ import {
   defineConfig,
 } from '@content-collections/core'
 import type { MDXContent } from 'mdx/types.js'
-import { createHmac } from 'node:crypto'
 import * as v from 'valibot'
 import { buildLinkScreenshotUrl, normalizeLinkScreenshotTarget } from './src/lib/link-screenshot'
+import { signLinkScreenshotUrl } from './src/lib/sign-link-screenshot'
 
 const isoDate = v.pipe(v.string(), v.isoDate())
 
@@ -83,16 +83,6 @@ function descriptionFromContent(content: string) {
     .replace(/\s+/g, ' ')
     .trim()
     .slice(0, 180)
-}
-
-function signLinkScreenshotUrl(normalizedUrl: string) {
-  const signingKey = process.env.LINK_SCREENSHOT_SIGNING_KEY
-
-  if (!signingKey) {
-    return null
-  }
-
-  return createHmac('sha256', signingKey).update(`v1:${normalizedUrl}`).digest('base64url')
 }
 
 function linkScreenshotUrlsFromContent(content: string) {

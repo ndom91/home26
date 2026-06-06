@@ -1,6 +1,9 @@
 import type { ReactNode } from 'react'
-import { stars } from './stars.generated.ts'
 import { ScreenshotLink } from '../components/mdx/screenshot-link'
+import { repoSlug } from './repo-slug.ts'
+import { stars } from './stars.generated.ts'
+
+export { repoSlug }
 
 export type ProjectStatus = 'live' | 'wip' | 'archived'
 
@@ -128,13 +131,6 @@ const projects: Project[] = [
     tags: ['Pebble', 'Smartwatch'],
   },
 ]
-
-/** Extract a lowercase `owner/repo` slug from a GitHub repo URL, or null. */
-export function repoSlug(repoUrl?: string): string | null {
-  if (!repoUrl) return null
-  const match = repoUrl.match(/github\.com\/([^/]+\/[^/]+?)(?:\.git)?\/?$/i)
-  return match ? match[1].toLowerCase() : null
-}
 
 export function getProjects(): Project[] {
   return projects.map((project) => {

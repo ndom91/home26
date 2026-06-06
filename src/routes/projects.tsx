@@ -1,10 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { LinkScreenshotProvider } from '../components/mdx/link-screenshot-context'
 import { ProjectCard } from '../components/ProjectCard'
 import { SiteHeader } from '../components/SiteHeader'
+import { linkScreenshotUrls } from '../lib/link-screenshots.generated'
 import { getProjects } from '../lib/projects'
 
 export const Route = createFileRoute('/projects')({
-  loader: () => getProjects(),
   head: () => ({
     meta: [{ title: 'Projects — ndom91' }],
   }),
@@ -20,7 +21,10 @@ const eyebrowBars = [
 ]
 
 function Projects() {
-  const projects = Route.useLoaderData()
+  // Computed in-component (not via loader): blurbs may be React elements, which
+  // are not serializable as loader data. The list is static, bundled build-time
+  // data, so it is identical on server render and client hydration.
+  const projects = getProjects()
 
   return (
     <div className="flex min-h-dvh flex-col bg-paper font-body text-ink">
@@ -59,16 +63,18 @@ function Projects() {
             <p className="text-xs uppercase tracking-[0.18em] text-muted">No projects yet</p>
           </div>
         ) : (
-          <div className="mx-auto grid max-w-7xl auto-rows-fr grid-cols-1 gap-px border border-rule bg-rule sm:grid-cols-2 xl:grid-cols-3">
-            {projects.map((project) => (
-              <div
-                key={project.title}
-                className={project.featured ? 'sm:col-span-2 xl:col-span-2' : ''}
-              >
-                <ProjectCard project={project} />
-              </div>
-            ))}
-          </div>
+          <LinkScreenshotProvider urls={linkScreenshotUrls}>
+            <div className="mx-auto grid max-w-7xl auto-rows-fr grid-cols-1 gap-px border border-rule bg-rule sm:grid-cols-2 xl:grid-cols-3">
+              {projects.map((project) => (
+                <div
+                  key={project.title}
+                  className={project.featured ? 'sm:col-span-2 xl:col-span-2' : ''}
+                >
+                  <ProjectCard project={project} />
+                </div>
+              ))}
+            </div>
+          </LinkScreenshotProvider>
         )}
       </div>
 
