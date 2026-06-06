@@ -110,6 +110,7 @@ export function SiteHeader() {
       >
         <Link to="/">Home</Link>
         <Link to="/blog">Writing</Link>
+        <Link to="/projects">Projects</Link>
         <a href="https://github.com/ndom91" target="_blank" rel="noreferrer">
           GitHub
         </a>

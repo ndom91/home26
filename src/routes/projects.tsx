@@ -1,0 +1,99 @@
+import { createFileRoute } from '@tanstack/react-router'
+import { ProjectCard } from '../components/ProjectCard'
+import { SiteHeader } from '../components/SiteHeader'
+import { getProjects } from '../lib/projects'
+
+export const Route = createFileRoute('/projects')({
+  loader: () => getProjects(),
+  head: () => ({
+    meta: [{ title: 'Projects — ndom91' }],
+  }),
+  component: Projects,
+})
+
+const eyebrowBars = [
+  'bg-accent-100',
+  'bg-accent-300',
+  'bg-accent-500',
+  'bg-accent-700',
+  'bg-accent-900',
+]
+
+function Projects() {
+  const projects = Route.useLoaderData()
+
+  return (
+    <div className="flex min-h-dvh flex-col bg-paper font-body text-ink">
+      <SiteHeader />
+
+      <div className="border-b border-rule px-6 py-12 sm:py-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-8 flex text-accent" aria-hidden="true">
+            {eyebrowBars.map((barClass) => (
+              <span
+                key={barClass}
+                className={`block h-9 w-6 border-2 border-r-0 border-paper max-[520px]:h-6 max-[520px]:w-4 ${barClass}`}
+              />
+            ))}
+          </div>
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end">
+            <h1 className="font-logo min-w-0 text-[clamp(3rem,9vw,7.5rem)] font-bold uppercase leading-[0.8] -tracking-widest">
+              Builds
+            </h1>
+            <div className="border-l border-rule pl-4 lg:pb-3">
+              <p className="text-sm leading-6 text-muted">
+                Things I&apos;ve made — web tools, developer systems, and the occasional
+                over-engineered side quest.
+              </p>
+              <p className="mt-4 text-[0.66rem] uppercase tracking-[0.2em] text-muted">
+                {projects.length} {projects.length === 1 ? 'project' : 'projects'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 px-6 py-8 sm:py-10">
+        {projects.length === 0 ? (
+          <div className="mx-auto max-w-7xl py-10">
+            <p className="text-xs uppercase tracking-[0.18em] text-muted">No projects yet</p>
+          </div>
+        ) : (
+          <div className="mx-auto grid max-w-7xl auto-rows-fr grid-cols-1 gap-px border border-rule bg-rule sm:grid-cols-2 xl:grid-cols-3">
+            {projects.map((project) => (
+              <div
+                key={project.title}
+                className={project.featured ? 'sm:col-span-2 xl:col-span-2' : ''}
+              >
+                <ProjectCard project={project} />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <footer className="grid grid-cols-[1fr_auto] border-t border-rule">
+        <div className="border-r border-rule px-6 py-5">
+          <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted">NDO.DEV</p>
+        </div>
+        <div className="flex items-center gap-5 px-6 py-5">
+          {(
+            [
+              ['GH', 'https://github.com/ndom91'],
+              ['BS', 'https://bsky.app/ndom91'],
+              ['ML', 'mailto:home@ndo.dev'],
+            ] as const
+          ).map(([label, href]) => (
+            <a
+              key={label}
+              href={href}
+              className="text-[0.62rem] uppercase tracking-[0.2em] text-muted transition-colors hover:text-accent"
+            >
+              {label}
+            </a>
+          ))}
+        </div>
+      </footer>
+    </div>
+  )
+}
