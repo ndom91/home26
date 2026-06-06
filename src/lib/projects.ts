@@ -56,7 +56,7 @@ const projects: Project[] = [
   {
     title: 'tmux-ai-window-name',
     blurb:
-      "tmux plugin which leverages your local LLMs to automatically rename your windows based on what you're working on in each.",
+      "tmux plugin which leverages your local LLMs to automatically rename your tmux windows based on what you're working on in each. Never get lost jumping around tmux again.",
     repo: 'https://github.com/ndom91/tmux-ai-window-name',
     status: 'live',
     tags: ['tmux', 'LLM'],
