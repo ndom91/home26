@@ -28,17 +28,17 @@ function Projects() {
 
       <div className="border-b border-rule px-6 py-12 sm:py-16">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-8 flex text-accent" aria-hidden="true">
+          <div className="flex text-accent" aria-hidden="true">
             {eyebrowBars.map((barClass) => (
               <span
                 key={barClass}
-                className={`block h-9 w-6 border-2 border-r-0 border-paper max-[520px]:h-6 max-[520px]:w-4 ${barClass}`}
+                className={`block h-9 w-7 border-2 border-r-0 border-paper max-[520px]:h-6 max-[520px]:w-4 ${barClass}`}
               />
             ))}
           </div>
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end">
-            <h1 className="font-logo min-w-0 text-[clamp(3rem,9vw,7.5rem)] font-bold uppercase leading-[0.8] -tracking-widest">
-              Builds
+            <h1 className="font-heading min-w-0 text-[clamp(3rem,9vw,7.5rem)] font-extrabold uppercase leading-none tracking-[-0.04em] text-blog-text">
+              BUILD
             </h1>
             <div className="border-l border-rule pl-4 lg:pb-3">
               <p className="text-sm leading-6 text-muted">

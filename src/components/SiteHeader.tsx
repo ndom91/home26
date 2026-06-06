@@ -109,12 +109,11 @@ export function SiteHeader() {
         aria-label="Primary"
       >
         <Link to="/">Home</Link>
-        <Link to="/blog">Writing</Link>
-        <Link to="/projects">Projects</Link>
+        <Link to="/blog">Write</Link>
+        <Link to="/projects">Build</Link>
         <a href="https://github.com/ndom91" target="_blank" rel="noreferrer">
           GitHub
         </a>
-        <a href="mailto:home@ndo.dev">Contact</a>
       </nav>
       <button
         className="me-5 cursor-pointer justify-self-end rounded-full border-0 bg-transparent p-0 text-inherit [view-transition-name:disabled] max-[520px]:me-4"

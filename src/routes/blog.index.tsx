@@ -21,12 +21,12 @@ function BlogIndex() {
 
       <div className="border-b border-blog-rule bg-[radial-gradient(circle_at_18%_0%,color-mix(in_oklab,var(--color-blog-accent)_22%,transparent),transparent_34%),linear-gradient(135deg,color-mix(in_oklab,var(--color-blog-accent)_12%,transparent),transparent_48%)] px-6 py-12 sm:py-16">
         <div className="mx-auto max-w-7xl">
-          <p className="font-mono mb-3 text-[9px] uppercase tracking-widest text-blog-muted">
+          <p className="font-mono mb-3 text-[11px] uppercase tracking-widest text-blog-muted">
             ARCHIVE
           </p>
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end">
             <h1 className="text-balance font-heading min-w-0 text-[clamp(3rem,9vw,7.5rem)] font-extrabold uppercase leading-none tracking-[-0.04em] text-blog-text">
-              WRITING
+              WRITE
             </h1>
             <div className="border-l border-blog-rule pl-4 lg:pb-4">
               <p className="font-reading text-sm leading-6 text-blog-description">
