@@ -27,7 +27,14 @@ function setHoverPosition(el: HTMLElement, x: number) {
   el.style.setProperty('--hover-target-color-strength', '1')
   el.dataset.hoverLastX = String(x)
   el.dataset.hoverLastTime = String(performance.now())
+  el.dataset.hoverVelocity = '0'
 }
+
+// EMA blend applied to the raw pointer velocity before it drives the tilt
+// target. Lower = smoother/laggier angle response (eases direction flips through
+// zero instead of snapping). The rAF loop below then eases the live tilt toward
+// that already-smoothed target.
+const VELOCITY_SMOOTHING = 0.08
 
 function handlePointerEnter(event: PointerEvent<HTMLElement>) {
   if (prefersReducedMotion()) return
@@ -50,10 +57,13 @@ function handlePointerMove(event: PointerEvent<HTMLElement>) {
   const lastX = Number.parseFloat(el.dataset.hoverLastX || `${targetX}`)
   const lastTime = Number.parseFloat(el.dataset.hoverLastTime || `${now}`)
   const elapsed = Math.max(now - lastTime, 1)
-  const velocity = (targetX - lastX) / elapsed
+  const rawVelocity = (targetX - lastX) / elapsed
+  const previousVelocity = Number.parseFloat(el.dataset.hoverVelocity || '0')
+  const velocity = previousVelocity + (rawVelocity - previousVelocity) * VELOCITY_SMOOTHING
+  el.dataset.hoverVelocity = String(velocity)
   const direction = velocity < 0 ? -1 : 1
   const movementStrength = Math.abs(velocity)
-  const tilt = direction * Math.min(8, Math.max(2, movementStrength * 32))
+  const tilt = direction * Math.min(12, Math.max(2, movementStrength * 42))
   const colorStrength = Math.min(1.12, Math.max(0.82, 0.84 + movementStrength * 0.38))
   const currentX = Number.parseFloat(el.style.getPropertyValue('--hover-x')) || targetX
 
@@ -78,7 +88,7 @@ function handlePointerMove(event: PointerEvent<HTMLElement>) {
       Number.parseFloat(el.style.getPropertyValue('--hover-color-strength')) ||
       latestTargetColorStrength
     const nextX = latestX + (latestTargetX - latestX) * 0.11
-    const nextTilt = latestTilt + (latestTargetTilt - latestTilt) * 0.18
+    const nextTilt = latestTilt + (latestTargetTilt - latestTilt) * 0.12
     const nextColorStrength =
       latestColorStrength + (latestTargetColorStrength - latestColorStrength) * 0.12
 
@@ -111,6 +121,7 @@ function handlePointerLeave(event: PointerEvent<HTMLElement>) {
 
   delete el.dataset.hoverLastX
   delete el.dataset.hoverLastTime
+  delete el.dataset.hoverVelocity
 }
 
 /** Returns pointer handlers to spread onto an element for the accent-sweep effect. */
