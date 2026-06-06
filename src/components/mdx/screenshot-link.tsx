@@ -112,7 +112,7 @@ export function ScreenshotLink({
         href={url}
         target="_blank"
         rel="noreferrer"
-        className="decoration-dotted underline-offset-4"
+        className="underline decoration-dotted underline-offset-4"
       >
         {label}
       </a>
@@ -138,7 +138,7 @@ export function ScreenshotLink({
         href={url}
         target="_blank"
         rel="noreferrer"
-        className="decoration-dotted underline-offset-4"
+        className="underline decoration-dotted underline-offset-4"
       >
         {label}
       </a>

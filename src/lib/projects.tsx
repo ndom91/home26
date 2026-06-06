@@ -1,10 +1,12 @@
+import type { ReactNode } from 'react'
 import { stars } from './stars.generated.ts'
+import { ScreenshotLink } from '../components/mdx/screenshot-link'
 
 export type ProjectStatus = 'live' | 'wip' | 'archived'
 
 export type Project = {
   title: string
-  blurb: string
+  blurb: ReactNode
   repo?: string
   demo?: string
   docs?: string
@@ -38,8 +40,14 @@ const projects: Project[] = [
   },
   {
     title: 'Auth.js / next-auth',
-    blurb:
-      'Go-to Next.js authentication library supporting more social signin providers than you can shake a stick at, and your own database to store your users in. No longer involved after selling to better-auth.',
+    blurb: (
+      <>
+        Go-to Next.js authentication library supporting more social signin providers than you can
+        shake a stick at, and your own database to store your users in. No longer involved after
+        selling to <ScreenshotLink url="https://better-auth.com">better-auth</ScreenshotLink>.
+      </>
+    ),
+
     repo: 'https://github.com/nextauthjs/next-auth',
     docs: 'https://authjs.dev',
     status: 'archived',
@@ -52,12 +60,12 @@ const projects: Project[] = [
     repo: 'https://github.com/ndom91/ha-voice-rocm',
     status: 'live',
     featured: true,
-    tags: ['Python', 'ROCm', 'Home Assistant'],
+    tags: ['Python', 'Home Assistant'],
   },
   {
     title: 'tmux-ai-window-name',
     blurb:
-      "tmux plugin which leverages your local LLMs to automatically rename your tmux windows based on what you're working on in each. Never get lost jumping around tmux again.",
+      "tmux plugin which leverages a local LLM to automatically rename your tmux windows based on what you're working on in them. Never get lost jumping around tmux again.",
     repo: 'https://github.com/ndom91/tmux-ai-window-name',
     status: 'live',
     tags: ['tmux', 'LLM'],
