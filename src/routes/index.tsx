@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-import type { PointerEvent } from 'react'
 import { AsciiGlobe } from '../components/AsciiGlobe'
 import { SiteHeader } from '../components/SiteHeader'
 import { TopographicField } from '../components/TopographicField'
+import { usePointerSweep } from '../lib/use-pointer-sweep'
 
 export const Route = createFileRoute('/')({
   component: Home,
@@ -32,105 +32,7 @@ const details = [
   { label: 'Source', value: 'Open', accentClass: '[--detail-accent:118_76_153]' },
 ] as const
 function Home() {
-  function setDetailHoverPosition(detail: HTMLDivElement, x: number) {
-    detail.style.setProperty('--hover-x', `${x}px`)
-    detail.style.setProperty('--hover-target-x', `${x}`)
-    detail.style.setProperty('--hover-tilt', '2deg')
-    detail.style.setProperty('--hover-target-tilt', '2')
-    detail.style.setProperty('--hover-color-strength', '1')
-    detail.style.setProperty('--hover-target-color-strength', '1')
-    detail.dataset.hoverActive = 'true'
-    detail.dataset.hoverLastX = String(x)
-    detail.dataset.hoverLastTime = String(performance.now())
-  }
-
-  function handleDetailPointerEnter(event: PointerEvent<HTMLDivElement>) {
-    const rect = event.currentTarget.getBoundingClientRect()
-
-    setDetailHoverPosition(event.currentTarget, event.clientX - rect.left)
-  }
-
-  function handleDetailPointerMove(event: PointerEvent<HTMLDivElement>) {
-    const detail = event.currentTarget
-    const rect = event.currentTarget.getBoundingClientRect()
-    const targetX = event.clientX - rect.left
-    const now = performance.now()
-
-    if (!detail.dataset.hoverActive) {
-      setDetailHoverPosition(detail, targetX)
-      return
-    }
-
-    const lastX = Number.parseFloat(detail.dataset.hoverLastX || `${targetX}`)
-    const lastTime = Number.parseFloat(detail.dataset.hoverLastTime || `${now}`)
-    const elapsed = Math.max(now - lastTime, 1)
-    const velocity = (targetX - lastX) / elapsed
-    const direction = velocity < 0 ? -1 : 1
-    const movementStrength = Math.abs(velocity)
-    const tilt = direction * Math.min(8, Math.max(2, movementStrength * 32))
-    const colorStrength = Math.min(1.12, Math.max(0.82, 0.84 + movementStrength * 0.38))
-    const currentX = Number.parseFloat(detail.style.getPropertyValue('--hover-x')) || targetX
-
-    detail.style.setProperty('--hover-target-x', `${targetX}`)
-    detail.style.setProperty('--hover-target-tilt', `${tilt}`)
-    detail.style.setProperty('--hover-target-color-strength', `${colorStrength}`)
-    detail.dataset.hoverLastX = String(targetX)
-    detail.dataset.hoverLastTime = String(now)
-
-    if (detail.dataset.hoverFrame) {
-      return
-    }
-
-    function followPointer() {
-      const latestTargetX = Number.parseFloat(detail.style.getPropertyValue('--hover-target-x'))
-      const latestX = Number.parseFloat(detail.style.getPropertyValue('--hover-x')) || currentX
-      const latestTargetTilt = Number.parseFloat(
-        detail.style.getPropertyValue('--hover-target-tilt')
-      )
-      const latestTilt =
-        Number.parseFloat(detail.style.getPropertyValue('--hover-tilt')) || latestTargetTilt
-      const latestTargetColorStrength = Number.parseFloat(
-        detail.style.getPropertyValue('--hover-target-color-strength')
-      )
-      const latestColorStrength =
-        Number.parseFloat(detail.style.getPropertyValue('--hover-color-strength')) ||
-        latestTargetColorStrength
-      const nextX = latestX + (latestTargetX - latestX) * 0.11
-      const nextTilt = latestTilt + (latestTargetTilt - latestTilt) * 0.18
-      const nextColorStrength =
-        latestColorStrength + (latestTargetColorStrength - latestColorStrength) * 0.12
-
-      detail.style.setProperty('--hover-x', `${nextX}px`)
-      detail.style.setProperty('--hover-tilt', `${nextTilt}deg`)
-      detail.style.setProperty('--hover-color-strength', `${nextColorStrength}`)
-
-      if (
-        Math.abs(latestTargetX - nextX) < 0.5 &&
-        Math.abs(latestTargetTilt - nextTilt) < 0.1 &&
-        Math.abs(latestTargetColorStrength - nextColorStrength) < 0.01
-      ) {
-        delete detail.dataset.hoverFrame
-        return
-      }
-
-      detail.dataset.hoverFrame = String(requestAnimationFrame(followPointer))
-    }
-
-    detail.dataset.hoverFrame = String(requestAnimationFrame(followPointer))
-  }
-
-  function handleDetailPointerLeave(event: PointerEvent<HTMLDivElement>) {
-    const detail = event.currentTarget
-
-    if (detail.dataset.hoverFrame) {
-      cancelAnimationFrame(Number(detail.dataset.hoverFrame))
-      delete detail.dataset.hoverFrame
-    }
-
-    delete detail.dataset.hoverActive
-    delete detail.dataset.hoverLastX
-    delete detail.dataset.hoverLastTime
-  }
+  const pointerSweep = usePointerSweep()
 
   return (
     <main className="relative grid min-h-dvh grid-rows-[auto_1fr_auto] overflow-hidden bg-paper font-body text-ink">
@@ -184,9 +86,7 @@ function Home() {
               <div
                 key={detail.label}
                 className={`${detailCardClass} ${detail.accentClass} ${index < 2 ? 'border-b border-rule' : ''}`}
-                onPointerEnter={handleDetailPointerEnter}
-                onPointerMove={handleDetailPointerMove}
-                onPointerLeave={handleDetailPointerLeave}
+                {...pointerSweep}
               >
                 <strong className={detailLabelClass}>{detail.label}</strong>
                 <span className={detailValueClass}>{detail.value}</span>

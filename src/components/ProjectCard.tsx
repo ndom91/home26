@@ -1,6 +1,6 @@
-import { BookOpen, ExternalLink, Github, Star } from 'lucide-react'
-import type { PointerEvent } from 'react'
+import { BookOpen, ExternalLink, Github, type LucideIcon, Star } from 'lucide-react'
 import type { Project, ProjectStatus } from '../lib/projects'
+import { usePointerSweep } from '../lib/use-pointer-sweep'
 
 // Brutalist flair lifted from the home detail cards (src/routes/index.tsx):
 // an accent light-sweep (`before:`) whose angle/strength follow the pointer, and
@@ -15,118 +15,24 @@ const statusStyles: Record<ProjectStatus, { dot: string; label: string }> = {
   archived: { dot: 'bg-[rgb(var(--globe-accent))] opacity-50', label: 'Archived' },
 }
 
-function prefersReducedMotion() {
-  return (
-    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  )
-}
+const iconLinkClass =
+  'grid size-8 place-items-center border border-rule transition-colors hover:border-accent hover:text-accent'
 
 export function ProjectCard({ project }: { project: Project }) {
   const status = statusStyles[project.status]
   const titleHref = project.demo ?? project.repo
+  const pointerSweep = usePointerSweep()
 
-  function setHoverPosition(card: HTMLDivElement, x: number) {
-    card.style.setProperty('--hover-x', `${x}px`)
-    card.style.setProperty('--hover-target-x', `${x}`)
-    card.style.setProperty('--hover-tilt', '2deg')
-    card.style.setProperty('--hover-target-tilt', '2')
-    card.style.setProperty('--hover-color-strength', '1')
-    card.style.setProperty('--hover-target-color-strength', '1')
-    card.dataset.hoverLastX = String(x)
-    card.dataset.hoverLastTime = String(performance.now())
-  }
-
-  function handlePointerEnter(event: PointerEvent<HTMLDivElement>) {
-    if (prefersReducedMotion()) return
-    const rect = event.currentTarget.getBoundingClientRect()
-    setHoverPosition(event.currentTarget, event.clientX - rect.left)
-  }
-
-  function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
-    if (prefersReducedMotion()) return
-    const card = event.currentTarget
-    const rect = card.getBoundingClientRect()
-    const targetX = event.clientX - rect.left
-    const now = performance.now()
-
-    if (!card.dataset.hoverLastX) {
-      setHoverPosition(card, targetX)
-      return
-    }
-
-    const lastX = Number.parseFloat(card.dataset.hoverLastX || `${targetX}`)
-    const lastTime = Number.parseFloat(card.dataset.hoverLastTime || `${now}`)
-    const elapsed = Math.max(now - lastTime, 1)
-    const velocity = (targetX - lastX) / elapsed
-    const direction = velocity < 0 ? -1 : 1
-    const movementStrength = Math.abs(velocity)
-    const tilt = direction * Math.min(8, Math.max(2, movementStrength * 32))
-    const colorStrength = Math.min(1.12, Math.max(0.82, 0.84 + movementStrength * 0.38))
-    const currentX = Number.parseFloat(card.style.getPropertyValue('--hover-x')) || targetX
-
-    card.style.setProperty('--hover-target-x', `${targetX}`)
-    card.style.setProperty('--hover-target-tilt', `${tilt}`)
-    card.style.setProperty('--hover-target-color-strength', `${colorStrength}`)
-    card.dataset.hoverLastX = String(targetX)
-    card.dataset.hoverLastTime = String(now)
-
-    if (card.dataset.hoverFrame) return
-
-    function followPointer() {
-      const latestTargetX = Number.parseFloat(card.style.getPropertyValue('--hover-target-x'))
-      const latestX = Number.parseFloat(card.style.getPropertyValue('--hover-x')) || currentX
-      const latestTargetTilt = Number.parseFloat(card.style.getPropertyValue('--hover-target-tilt'))
-      const latestTilt =
-        Number.parseFloat(card.style.getPropertyValue('--hover-tilt')) || latestTargetTilt
-      const latestTargetColorStrength = Number.parseFloat(
-        card.style.getPropertyValue('--hover-target-color-strength')
-      )
-      const latestColorStrength =
-        Number.parseFloat(card.style.getPropertyValue('--hover-color-strength')) ||
-        latestTargetColorStrength
-      const nextX = latestX + (latestTargetX - latestX) * 0.11
-      const nextTilt = latestTilt + (latestTargetTilt - latestTilt) * 0.18
-      const nextColorStrength =
-        latestColorStrength + (latestTargetColorStrength - latestColorStrength) * 0.12
-
-      card.style.setProperty('--hover-x', `${nextX}px`)
-      card.style.setProperty('--hover-tilt', `${nextTilt}deg`)
-      card.style.setProperty('--hover-color-strength', `${nextColorStrength}`)
-
-      if (
-        Math.abs(latestTargetX - nextX) < 0.5 &&
-        Math.abs(latestTargetTilt - nextTilt) < 0.1 &&
-        Math.abs(latestTargetColorStrength - nextColorStrength) < 0.01
-      ) {
-        delete card.dataset.hoverFrame
-        return
-      }
-
-      card.dataset.hoverFrame = String(requestAnimationFrame(followPointer))
-    }
-
-    card.dataset.hoverFrame = String(requestAnimationFrame(followPointer))
-  }
-
-  function handlePointerLeave(event: PointerEvent<HTMLDivElement>) {
-    const card = event.currentTarget
-
-    if (card.dataset.hoverFrame) {
-      cancelAnimationFrame(Number(card.dataset.hoverFrame))
-      delete card.dataset.hoverFrame
-    }
-
-    delete card.dataset.hoverLastX
-    delete card.dataset.hoverLastTime
-  }
+  const iconLinks: { href: string; label: string; Icon: LucideIcon }[] = []
+  if (project.repo)
+    iconLinks.push({ href: project.repo, label: `${project.title} repository`, Icon: Github })
+  if (project.demo)
+    iconLinks.push({ href: project.demo, label: `${project.title} live demo`, Icon: ExternalLink })
+  if (project.docs)
+    iconLinks.push({ href: project.docs, label: `${project.title} documentation`, Icon: BookOpen })
 
   return (
-    <div
-      className={cardFlairClass}
-      onPointerEnter={handlePointerEnter}
-      onPointerMove={handlePointerMove}
-      onPointerLeave={handlePointerLeave}
-    >
+    <div className={cardFlairClass} {...pointerSweep}>
       {project.image ? (
         <div className="relative z-[1] overflow-hidden border-b border-rule">
           <img
@@ -176,39 +82,18 @@ export function ProjectCard({ project }: { project: Project }) {
         ) : null}
 
         <div className="mt-auto flex items-center gap-3 border-t border-rule pt-3 text-ink">
-          {project.repo ? (
+          {iconLinks.map(({ href, label, Icon }) => (
             <a
-              href={project.repo}
+              key={label}
+              href={href}
               target="_blank"
               rel="noreferrer"
-              aria-label={`${project.title} repository`}
-              className="grid size-8 place-items-center border border-rule transition-colors hover:border-accent hover:text-accent"
+              aria-label={label}
+              className={iconLinkClass}
             >
-              <Github className="size-4" strokeWidth={2} aria-hidden="true" />
+              <Icon className="size-4" strokeWidth={2} aria-hidden="true" />
             </a>
-          ) : null}
-          {project.demo ? (
-            <a
-              href={project.demo}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={`${project.title} live demo`}
-              className="grid size-8 place-items-center border border-rule transition-colors hover:border-accent hover:text-accent"
-            >
-              <ExternalLink className="size-4" strokeWidth={2} aria-hidden="true" />
-            </a>
-          ) : null}
-          {project.docs ? (
-            <a
-              href={project.docs}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={`${project.title} documentation`}
-              className="grid size-8 place-items-center border border-rule transition-colors hover:border-accent hover:text-accent"
-            >
-              <BookOpen className="size-4" strokeWidth={2} aria-hidden="true" />
-            </a>
-          ) : null}
+          ))}
           {project.stars !== undefined ? (
             <a
               href={project.repo}
