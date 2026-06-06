@@ -48,9 +48,10 @@ const projects: Project[] = [
   {
     title: 'ha-voice-rocm',
     blurb:
-      "AMD (ROCm) oriented local voice LLM collection. This is an ever growing collection of various TTS and STT models each of which is also wrapped in the Open Home Foundation's Wyoming API to make it easy to consume the models in Homeassistant's voice assistant pipeline.",
+      "AMD (ROCm) oriented local voice LLM collection. This is an ever growing collection of various TTS and STT models each of which is also wrapped in the Open Home Foundation's Wyoming API to make it easy to consume the models in Home Assistant's voice assistant pipeline.",
     repo: 'https://github.com/ndom91/ha-voice-rocm',
     status: 'live',
+    featured: true,
     tags: ['Python', 'ROCm', 'Home Assistant'],
   },
   {
@@ -60,6 +61,39 @@ const projects: Project[] = [
     repo: 'https://github.com/ndom91/tmux-ai-window-name',
     status: 'live',
     tags: ['tmux', 'LLM'],
+  },
+  {
+    title: 'frame-web',
+    blurb:
+      'Frontend for a custom digital frame project I built for my grandparents. The device consists of a custom wooden picture frame, display, Raspberry Pi, and some power electronics. The web app allows family members to login and manage the various deployed frames and their media.',
+    repo: 'https://github.com/ndom91/frame-web',
+    status: 'archived',
+    tags: ['Frame', 'Next.js'],
+  },
+  {
+    title: 'frame-go',
+    blurb:
+      'Golang client for a custom digital frame project I built for my grandparents. The device consists of a custom wooden picture frame, display, Raspberry Pi, and some power electronics. Syncs media from a bucket destined for the current device.',
+    repo: 'https://github.com/ndom91/frame-go',
+    status: 'archived',
+    tags: ['Frame', 'Go'],
+  },
+  {
+    title: 'jellyfin-random-macos-screensaver',
+    blurb:
+      'Play a random Jellyfin TV show or movie as a MacOS screensaver. Configurable to play with or without audio, with or without subtitles, and will begin playing at a random point in the media anywhere between 2% and 30% of the way through.',
+    repo: 'https://github.com/ndom91/jellyfin-random-macos-screensaver',
+    status: 'live',
+    featured: true,
+    tags: ['Swift', 'Jellyfin'],
+  },
+  {
+    title: 'briefkasten',
+    blurb:
+      'Self-hosted bookmarking and RSS reader application. Originally written in React, v2 was a complete rewrite with SvelteKit.',
+    repo: 'https://github.com/ndom91/briefkasten',
+    status: 'archived',
+    tags: ['Svelte'],
   },
   {
     title: 'react-timezone-select',
@@ -76,14 +110,6 @@ const projects: Project[] = [
     demo: 'https://svelte-5-infinite.vercel.app',
     status: 'live',
     tags: ['Svelte', 'Component'],
-  },
-  {
-    title: 'jellyfin-random-macos-screensaver',
-    blurb:
-      'Play a random Jellyfin TV Show or Movie as a MacOS screensaver. By default without audio, but with subtitles.',
-    repo: 'https://github.com/ndom91/jellyfin-random-macos-screensaver',
-    status: 'live',
-    tags: ['Swift', 'Jellyfin'],
   },
   {
     title: 'pebble-plain',
