@@ -4,8 +4,41 @@ import { normalizeLinkScreenshotTarget } from '../../lib/link-screenshot'
 
 const SIGNATURE_PREFIX = 'v1:'
 const SCREENSHOT_CONTENT_TYPE = 'image/png'
-const SCREENSHOT_VERSION = 'v1'
+// Bump when the capture pipeline changes (viewport, waits, injected scripts) so
+// previously cached R2 screenshots are regenerated with the new settings.
+const SCREENSHOT_VERSION = 'v2'
 const BROWSER_RUN_INTERVAL_MS = 2500
+// Wait after page load before capturing, so intro/entrance animations settle.
+const SCREENSHOT_SETTLE_MS = 500
+
+// Best-effort: injected into the page after load to dismiss cookie/consent
+// banners by clicking a visible "accept all"-style button. Pure string (no
+// backslash escapes) so it survives template-literal embedding unchanged. Runs
+// once immediately and retries once shortly after for banners that mount late.
+const COOKIE_ACCEPT_SCRIPT = `
+(() => {
+  const PHRASES = ['accept all', 'allow all', 'accept cookies', 'accept & close', 'i agree', 'agree and close', 'got it', 'accept', 'agree'];
+  const isVisible = (el) => {
+    const r = el.getBoundingClientRect();
+    return r.width > 0 && r.height > 0;
+  };
+  const clickAccept = () => {
+    const els = document.querySelectorAll('button, [role="button"], a, input[type="button"], input[type="submit"]');
+    for (const el of els) {
+      const label = (el.innerText || el.textContent || el.value || el.getAttribute('aria-label') || '').trim().toLowerCase();
+      if (!label || !isVisible(el)) continue;
+      if (PHRASES.some((p) => label === p || label.includes(p))) {
+        el.click();
+        return true;
+      }
+    }
+    return false;
+  };
+  try {
+    if (!clickAccept()) setTimeout(clickAccept, 200);
+  } catch (e) {}
+})();
+`
 
 type LinkScreenshotEnv = {
   BROWSER?: unknown
@@ -137,6 +170,8 @@ async function getOrCreateScreenshot({
           width: 1280,
           height: 720,
         },
+        addScriptTag: [{ content: COOKIE_ACCEPT_SCRIPT }],
+        waitForTimeout: SCREENSHOT_SETTLE_MS,
       })
     } catch (error) {
       logBrowserRunError(normalizedUrl, error)
