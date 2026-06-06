@@ -66,7 +66,7 @@ export function ProjectCard({ project }: { project: Project }) {
           )}
         </h2>
 
-        <p className="mt-3 text-[0.92rem] leading-6 text-muted">{project.blurb}</p>
+        <p className="mt-3 font-reading text-[0.92rem] leading-6 text-muted">{project.blurb}</p>
 
         {project.tags.length > 0 ? (
           <div className="mt-4 mb-5 flex flex-wrap gap-2">
