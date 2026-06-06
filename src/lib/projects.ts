@@ -37,7 +37,7 @@ const projects: Project[] = [
     tags: ['TanStack', 'Local LLM', 'Observability'],
   },
   {
-    title: 'Auth.js (next-auth)',
+    title: 'Auth.js / next-auth',
     blurb:
       'Go-to Next.js authentication library supporting more social signin providers than you can shake a stick at, and your own database to store your users in. No longer involved after selling to better-auth.',
     repo: 'https://github.com/nextauthjs/next-auth',
@@ -84,6 +84,14 @@ const projects: Project[] = [
     repo: 'https://github.com/ndom91/jellyfin-random-macos-screensaver',
     status: 'live',
     tags: ['Swift', 'Jellyfin'],
+  },
+  {
+    title: 'pebble-plain',
+    blurb:
+      'Plain support application for the new era of Pebble smart watches. Specifically the Pebble Time 2 and Round 2.',
+    repo: 'https://github.com/ndom91/pebble-plain',
+    status: 'live',
+    tags: ['Pebble', 'Smartwatch'],
   },
 ]
 
