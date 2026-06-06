@@ -70,6 +70,46 @@ const projects: Project[] = [
     status: 'archived',
     tags: ['Next.js', 'Authentication'],
   },
+  {
+    title: 'ha-voice-rocm',
+    blurb:
+      "AMD (ROCm) oriented local voice LLM collection. This is an ever growing collection of various TTS and STT models each of which is also wrapped in the Open Home Foundation's Wyoming API to make it easy to consume the models in Homeassistant's voice assistant pipeline.",
+    repo: 'https://github.com/ndom91/ha-voice-rocm',
+    status: 'live',
+    tags: ['Svelte', 'Component'],
+  },
+  {
+    title: 'tmux-ai-window-name',
+    blurb:
+      "tmux plugin which leverages your local LLMs to automatically rename your windows based on what you're working on in each.",
+    repo: 'https://github.com/ndom91/tmux-ai-window-name',
+    status: 'live',
+    tags: ['tmux', 'LLM'],
+  },
+  {
+    title: 'react-timezone-select',
+    blurb: 'An extremely usable and dynamic React timezone selector',
+    repo: 'https://github.com/ndom91/react-timezone-select',
+    demo: 'https://ndom91.github.io/react-timezone-select/',
+    status: 'live',
+    tags: ['React', 'Component'],
+  },
+  {
+    title: 'svelte-infinite',
+    blurb: 'Svelte 5 infinite loader and virtualized list component',
+    repo: 'https://github.com/ndom91/svelte-infinite',
+    demo: 'https://svelte-5-infinite.vercel.app',
+    status: 'live',
+    tags: ['Svelte', 'Component'],
+  },
+  {
+    title: 'jellyfin-random-macos-screensaver',
+    blurb:
+      'Play a random Jellyfin TV Show or Movie as a MacOS screensaver. By default without audio, but with subtitles.',
+    repo: 'https://github.com/ndom91/jellyfin-random-macos-screensaver',
+    status: 'live',
+    tags: ['Swift', 'Jellyfin'],
+  },
 ]
 
 /** Extract a lowercase `owner/repo` slug from a GitHub repo URL, or null. */
