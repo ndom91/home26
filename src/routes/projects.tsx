@@ -42,8 +42,8 @@ function Projects() {
             </h1>
             <div className="border-l border-rule pl-4 lg:pb-3">
               <p className="text-sm leading-6 text-muted">
-                Things I&apos;ve made — web tools, developer systems, and the occasional
-                over-engineered side quest.
+                Some experiments survived contact with production. These are those — the
+                tools, side quests, and libraries that earned a spot.
               </p>
               <p className="mt-4 text-[0.66rem] uppercase tracking-[0.2em] text-muted">
                 {projects.length} {projects.length === 1 ? 'project' : 'projects'}
