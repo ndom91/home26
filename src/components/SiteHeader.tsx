@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import type { MouseEvent } from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 
 const homeBarClass =
@@ -9,6 +9,23 @@ const homeBarCellClass = 'px-5 py-4 max-[520px]:px-4 max-[520px]:py-3.5'
 const themeIconClass =
   'absolute top-1/2 left-1/2 size-[0.95rem] -translate-x-1/2 -translate-y-1/2 origin-center stroke-[2.2] transition-[opacity,translate,rotate,scale] duration-540 ease-spring-toggle motion-reduce:duration-[1ms]'
 const THEME_REVEAL_DELAY = 140
+const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect
+
+function getCurrentTheme() {
+  const documentTheme = document.documentElement.dataset.theme
+
+  if (documentTheme === 'light' || documentTheme === 'dark') {
+    return documentTheme
+  }
+
+  const storedTheme = localStorage.getItem('theme')
+
+  if (storedTheme === 'light' || storedTheme === 'dark') {
+    return storedTheme
+  }
+
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
 
 type ViewTransitionDocument = Document & {
   startViewTransition?: (updateCallback: () => void) => {
@@ -22,18 +39,12 @@ export function SiteHeader() {
   const themeRevealTimeout = useRef<number | null>(null)
   const isDark = theme === 'dark'
 
-  useEffect(() => {
-    const storedTheme = localStorage.getItem('theme')
+  useIsomorphicLayoutEffect(() => {
+    const currentTheme = getCurrentTheme()
 
-    if (storedTheme === 'light' || storedTheme === 'dark') {
-      setTheme(storedTheme)
-      return
-    }
-
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-
-    document.documentElement.dataset.theme = systemTheme
-    setTheme(systemTheme)
+    document.documentElement.dataset.theme = currentTheme
+    document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', currentTheme)
+    setTheme(currentTheme)
   }, [])
 
   useEffect(() => {
@@ -45,7 +56,7 @@ export function SiteHeader() {
   }, [])
 
   function toggleTheme(event: MouseEvent<HTMLButtonElement>) {
-    const nextTheme = isDark ? 'light' : 'dark'
+    const nextTheme = getCurrentTheme() === 'dark' ? 'light' : 'dark'
     const meta = document.querySelector('meta[name="color-scheme"]')
     const root = document.documentElement
     const rect = event.currentTarget.getBoundingClientRect()
@@ -126,15 +137,9 @@ export function SiteHeader() {
           className="relative grid h-[1.82rem] w-[calc(1.82rem*2-0.4rem)] grid-cols-2 items-center rounded-full border border-rule bg-[linear-gradient(90deg,rgb(var(--globe-accent)/0.14),transparent_54%),var(--paper)] p-[0.2rem] transition-[border-color,background] duration-[260ms] ease-in-out motion-reduce:duration-[1ms]"
           aria-hidden="true"
         >
-          <span
-            className={`relative grid aspect-square w-full place-items-center rounded-full bg-ink text-paper transition-[background,color,translate] duration-[540ms] ease-spring-toggle motion-reduce:duration-[1ms] ${
-              isDark ? 'translate-x-full' : 'translate-x-0'
-            }`}
-          >
+          <span className="theme-toggle-thumb relative grid aspect-square w-full place-items-center rounded-full bg-ink text-paper transition-[background,color,translate] duration-[540ms] ease-spring-toggle motion-reduce:duration-[1ms]">
             <svg
-              className={`${themeIconClass} ${
-                isDark ? 'rotate-[70deg] scale-[0.55] opacity-0' : 'rotate-0 scale-100 opacity-100'
-              }`}
+              className={`${themeIconClass} theme-toggle-sun`}
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
@@ -156,9 +161,7 @@ export function SiteHeader() {
               <path d="m17.657 17.657.707.707" />
             </svg>
             <svg
-              className={`${themeIconClass} ${
-                isDark ? 'rotate-0 scale-100 opacity-100' : '-rotate-[70deg] scale-[0.55] opacity-0'
-              }`}
+              className={`${themeIconClass} theme-toggle-moon`}
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
