@@ -34,6 +34,11 @@ const SITE_ORIGIN = process.env.WARM_SITE_ORIGIN ?? 'https://ndo.dev'
 // Space generated (miss) requests to stay under the free-plan ~6 Browser Run
 // REST requests/min. Cache hits are not paced.
 const WARM_REQUEST_INTERVAL_MS = 11_000
+// Stop after this long so the run stays well inside Cloudflare's 20-min Workers
+// Builds timeout (build + wrangler deploy share that budget). Whatever is left
+// is warmed on the next deploy — warming is incremental — and this also roughly
+// matches the free-plan daily Browser Run budget.
+const WARM_MAX_MS = 9 * 60 * 1000
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
@@ -98,11 +103,17 @@ async function main() {
   const targets = collectTargets()
   console.log(`Warm: ${targets.length} target(s) against ${SITE_ORIGIN}`)
 
+  const deadline = Date.now() + WARM_MAX_MS
   let cached = 0
   let generated = 0
   let failed = 0
 
   for (const [index, normalizedUrl] of targets.entries()) {
+    if (Date.now() >= deadline) {
+      console.log(`Warm: ${WARM_MAX_MS / 60_000}min budget reached, ${targets.length - index} left for next run`)
+      break
+    }
+
     const signature = await signLinkScreenshotUrl(signingKey, normalizedUrl)
     const requestUrl = `${SITE_ORIGIN}${buildLinkScreenshotUrl(normalizedUrl, signature)}`
 
