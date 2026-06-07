@@ -10,6 +10,8 @@ const SCREENSHOT_VERSION = 'v2'
 const BROWSER_RUN_INTERVAL_MS = 2500
 // Wait after page load before capturing, so intro/entrance animations settle.
 const SCREENSHOT_SETTLE_MS = 500
+// Cap page navigation so a slow/never-idle page does not hang the request.
+const SCREENSHOT_NAV_TIMEOUT_MS = 25000
 
 // Best-effort: injected into the page after load to dismiss cookie/consent
 // banners by clicking a visible "accept all"-style button. Pure string (no
@@ -23,7 +25,7 @@ const COOKIE_ACCEPT_SCRIPT = `
     return r.width > 0 && r.height > 0;
   };
   const clickAccept = () => {
-    const els = document.querySelectorAll('button, [role="button"], a, input[type="button"], input[type="submit"]');
+    const els = document.querySelectorAll('button, [role="button"], input[type="button"], input[type="submit"]');
     for (const el of els) {
       const label = (el.innerText || el.textContent || el.value || el.getAttribute('aria-label') || '').trim().toLowerCase();
       if (!label || !isVisible(el)) continue;
@@ -172,6 +174,10 @@ async function getOrCreateScreenshot({
         },
         addScriptTag: [{ content: COOKIE_ACCEPT_SCRIPT }],
         waitForTimeout: SCREENSHOT_SETTLE_MS,
+        // Cap navigation so a slow/never-idle page fails fast instead of leaving
+        // the request pending; bestAttempt still captures what loaded by then.
+        gotoOptions: { waitUntil: 'load', timeout: SCREENSHOT_NAV_TIMEOUT_MS },
+        bestAttempt: true,
       })
     } catch (error) {
       logBrowserRunError(normalizedUrl, error)

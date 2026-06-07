@@ -3,8 +3,15 @@ import { useLinkScreenshotUrl } from './link-screenshot-context'
 
 const previewImageCache = new Map<string, Promise<string>>()
 const PREVIEW_LOAD_INTERVAL_MS = 1500
+// Hard cap per preview so one slow/hung screenshot (e.g. an uncached URL whose
+// Browser Run is still generating) cannot keep its <img> pending indefinitely.
+const PREVIEW_LOAD_TIMEOUT_MS = 20000
 let lastPreviewLoadStartedAt = 0
-let previewLoadQueue: Promise<unknown> = Promise.resolve()
+// Serializes only the *start* of each load to space requests by the interval.
+// We deliberately do NOT chain on load completion: chaining on completion lets
+// a single slow image head-of-line-block every other preview (including ones
+// already cached in R2).
+let previewStartQueue: Promise<unknown> = Promise.resolve()
 
 function getScreenshotImage(image?: string): string | undefined {
   if (image?.startsWith('/') || image?.startsWith('http') || image?.startsWith('data:')) {
@@ -19,15 +26,11 @@ function loadQueuedPreviewImage(imageSrc: string) {
     return cachedPreview
   }
 
-  const preview = previewLoadQueue
-    .catch(() => {})
-    .then(async () => {
-      await waitForNextPreviewLoadSlot()
+  const start = previewStartQueue.then(() => waitForNextPreviewLoadSlot())
+  previewStartQueue = start.catch(() => {})
 
-      return preloadPreviewImage(imageSrc)
-    })
+  const preview = start.then(() => preloadPreviewImage(imageSrc))
 
-  previewLoadQueue = preview.catch(() => {})
   previewImageCache.set(imageSrc, preview)
   preview.catch(() => previewImageCache.delete(imageSrc))
 
@@ -37,10 +40,19 @@ function loadQueuedPreviewImage(imageSrc: string) {
 function preloadPreviewImage(imageSrc: string) {
   return new Promise<string>((resolve, reject) => {
     const previewImage = new Image()
+    const timeoutId = setTimeout(() => {
+      previewImage.src = ''
+      reject(new Error('Link preview timed out'))
+    }, PREVIEW_LOAD_TIMEOUT_MS)
+
+    const settle = (finish: () => void) => {
+      clearTimeout(timeoutId)
+      finish()
+    }
 
     previewImage.decoding = 'async'
-    previewImage.onload = () => resolve(imageSrc)
-    previewImage.onerror = () => reject(new Error('Unable to load link preview'))
+    previewImage.onload = () => settle(() => resolve(imageSrc))
+    previewImage.onerror = () => settle(() => reject(new Error('Unable to load link preview')))
     previewImage.src = imageSrc
   })
 }
