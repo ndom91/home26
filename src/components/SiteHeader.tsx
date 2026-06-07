@@ -4,8 +4,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 
 const homeBarClass =
-  'relative z-10 grid grid-cols-[auto_1fr] items-center border-b border-rule bg-paper text-[0.7rem] uppercase tracking-[0.16em] text-ink max-[820px]:grid-cols-[minmax(0,1fr)_auto] max-[520px]:text-[0.62rem] max-[520px]:tracking-[0.18em]'
-const homeBarCellClass = 'px-5 py-4 max-[520px]:px-4 max-[520px]:py-3.5'
+  'relative z-10 grid grid-cols-[auto_1fr] items-center border-b border-rule bg-paper text-[0.7rem] uppercase tracking-[0.16em] text-ink max-[820px]:grid-cols-[minmax(0,1fr)_auto] max-[520px]:text-[0.72rem] max-[520px]:tracking-[0.17em]'
+const homeBarCellClass = 'px-5 py-4 max-[520px]:px-4 max-[520px]:py-5'
 const themeIconClass =
   'absolute top-1/2 left-1/2 size-[0.95rem] -translate-x-1/2 -translate-y-1/2 origin-center stroke-[2.2] transition-[opacity,translate,rotate,scale] duration-540 ease-spring-toggle motion-reduce:duration-[1ms]'
 const THEME_REVEAL_DELAY = 140
@@ -134,7 +134,7 @@ export function SiteHeader() {
         aria-pressed={isDark}
       >
         <span
-          className="relative grid h-[1.82rem] w-[calc(1.82rem*2-0.4rem)] grid-cols-2 items-center rounded-full border border-rule bg-[linear-gradient(90deg,rgb(var(--globe-accent)/0.14),transparent_54%),var(--paper)] p-[0.2rem] transition-[border-color,background] duration-[260ms] ease-in-out motion-reduce:duration-[1ms]"
+          className="relative grid h-[1.88rem] w-[calc(1.82rem*2-0.4rem)] grid-cols-2 items-center rounded-full border border-rule bg-[linear-gradient(90deg,rgb(var(--globe-accent)/0.14),transparent_54%),var(--paper)] p-[0.2rem] transition-[border-color,background] duration-[260ms] ease-in-out motion-reduce:duration-[1ms]"
           aria-hidden="true"
         >
           <span className="theme-toggle-thumb relative grid aspect-square w-full place-items-center rounded-full bg-ink text-paper transition-[background,color,translate] duration-[540ms] ease-spring-toggle motion-reduce:duration-[1ms]">
