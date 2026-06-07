@@ -172,7 +172,9 @@ export function ScreenshotLink({
             className="m-0! block aspect-video w-full! max-w-full! rounded-lg border border-blog-rule object-cover object-center"
           />
         ) : (
-          <span className="block aspect-video w-full rounded-lg border border-blog-rule bg-blog-bg" />
+          <span className="flex aspect-video w-full items-center justify-center rounded-lg border border-blog-rule bg-blog-bg px-4 text-center font-mono text-[10px] uppercase tracking-widest text-blog-muted">
+            Loading…
+          </span>
         )}
         <span className="mt-2 block truncate px-1 font-mono text-[10px] uppercase tracking-widest text-blog-muted">
           {url.replace(/^https?:\/\//, '')}

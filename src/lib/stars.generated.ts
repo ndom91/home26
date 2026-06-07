@@ -13,5 +13,5 @@ export const stars: Record<string, number> = {
   'ndom91/react-timezone-select': 240,
   'ndom91/svelte-infinite': 109,
   'ndom91/tmux-ai-window-name': 3,
-  'nextauthjs/next-auth': 28269,
+  'nextauthjs/next-auth': 28270,
 }
