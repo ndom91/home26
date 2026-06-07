@@ -19,36 +19,7 @@ const SCREENSHOT_NAV_TIMEOUT_MS = 25000
 // a failing/unscreenshotable URL (e.g. youtube's strict-CSP page) from being
 // re-attempted on every hover, which keeps Cloudflare's per-host Browser Run
 // rate limit tripped and never lets it recover.
-const SCREENSHOT_FAILURE_COOLDOWN_MS = 10 * 60 * 1000
-
-// Best-effort: injected into the page after load to dismiss cookie/consent
-// banners by clicking a visible "accept all"-style button. Pure string (no
-// backslash escapes) so it survives template-literal embedding unchanged. Runs
-// once immediately and retries once shortly after for banners that mount late.
-const COOKIE_ACCEPT_SCRIPT = `
-(() => {
-  const PHRASES = ['accept all', 'allow all', 'accept cookies', 'accept & close', 'i agree', 'agree and close', 'got it', 'accept', 'agree'];
-  const isVisible = (el) => {
-    const r = el.getBoundingClientRect();
-    return r.width > 0 && r.height > 0;
-  };
-  const clickAccept = () => {
-    const els = document.querySelectorAll('button, [role="button"], input[type="button"], input[type="submit"]');
-    for (const el of els) {
-      const label = (el.innerText || el.textContent || el.value || el.getAttribute('aria-label') || '').trim().toLowerCase();
-      if (!label || !isVisible(el)) continue;
-      if (PHRASES.some((p) => label === p || label.includes(p))) {
-        el.click();
-        return true;
-      }
-    }
-    return false;
-  };
-  try {
-    if (!clickAccept()) setTimeout(clickAccept, 200);
-  } catch (e) {}
-})();
-`
+const SCREENSHOT_FAILURE_COOLDOWN_MS = 3 * 60 * 1000
 
 type LinkScreenshotEnv = {
   BROWSER?: unknown
@@ -218,16 +189,7 @@ function generateAndCacheScreenshot({
       )
     }
 
-    // First attempt injects the cookie-dismiss script. Strict-CSP / Trusted
-    // Types pages (e.g. youtube.com) reject addScriptTag with a 422 and fail
-    // the whole capture, so retry once without the script on a 422. Other
-    // failures (429 rate limit, 5xx) are not script-related — retrying just
-    // burns more Browser Run quota, so give up rather than double the calls.
-    let screenshotResponse = await captureScreenshot(browser, normalizedUrl, true)
-
-    if (screenshotResponse?.status === 422) {
-      screenshotResponse = await captureScreenshot(browser, normalizedUrl, false)
-    }
+    const screenshotResponse = await captureScreenshot(browser, normalizedUrl)
 
     if (!screenshotResponse?.ok) {
       if (screenshotResponse) {
@@ -300,8 +262,7 @@ function coolDownFailure(cacheKey: string) {
 
 async function captureScreenshot(
   browser: BrowserRunBinding,
-  normalizedUrl: string,
-  injectCookieScript: boolean
+  normalizedUrl: string
 ): Promise<Response | null> {
   try {
     await waitForNextBrowserRunSlot()
@@ -312,9 +273,6 @@ async function captureScreenshot(
         width: 1280,
         height: 720,
       },
-      // Best-effort cookie-banner dismissal; omitted on the fallback attempt
-      // because addScriptTag is what strict-CSP pages reject.
-      ...(injectCookieScript ? { addScriptTag: [{ content: COOKIE_ACCEPT_SCRIPT }] } : {}),
       waitForTimeout: SCREENSHOT_SETTLE_MS,
       // Cap navigation so a slow/never-idle page fails fast instead of leaving
       // the request pending; bestAttempt still captures what loaded by then.
