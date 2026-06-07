@@ -185,6 +185,35 @@ function generateAndCacheScreenshot({
       return await cachedScreenshot.arrayBuffer()
     }
 
+    // youtube persistently blocks Browser Run screenshots (per-host 429),
+    // regardless of our request rate. Use the video thumbnail instead — no
+    // browser, no rate limit, and a nicer preview than youtube's consent page.
+    const thumbnailUrl = youtubeThumbnailUrl(normalizedUrl)
+
+    if (thumbnailUrl) {
+      const thumbnail = await fetchYoutubeThumbnail(thumbnailUrl)
+
+      if (thumbnail) {
+        await bucket.put(cacheKey, thumbnail, {
+          httpMetadata: {
+            contentType: SCREENSHOT_CONTENT_TYPE,
+          },
+          customMetadata: {
+            createdAt: new Date().toISOString(),
+            sourceUrl: normalizedUrl,
+          },
+        })
+
+        screenshotFailureCooldowns.delete(cacheKey)
+
+        return thumbnail
+      }
+
+      screenshotFailureCooldowns.set(cacheKey, Date.now() + SCREENSHOT_FAILURE_COOLDOWN_MS)
+
+      return null
+    }
+
     // First attempt injects the cookie-dismiss script. Strict-CSP / Trusted
     // Types pages (e.g. youtube.com) reject addScriptTag with a 422 and fail
     // the whole capture, so retry once without the script on a 422. Other
@@ -233,6 +262,74 @@ function generateAndCacheScreenshot({
   waitUntil(job)
 
   return job
+}
+
+const YOUTUBE_HOSTS = new Set([
+  'youtube.com',
+  'www.youtube.com',
+  'm.youtube.com',
+  'music.youtube.com',
+  'youtu.be',
+])
+// Path segments that precede a video id, e.g. /shorts/<id>, /embed/<id>.
+const YOUTUBE_ID_PATH_PREFIXES = new Set(['shorts', 'embed', 'live', 'v'])
+
+// Returns the youtube video id for a watch/youtu.be/shorts/embed URL, or null.
+function youtubeVideoId(normalizedUrl: string): string | null {
+  let url: URL
+
+  try {
+    url = new URL(normalizedUrl)
+  } catch {
+    return null
+  }
+
+  if (!YOUTUBE_HOSTS.has(url.hostname.toLowerCase())) {
+    return null
+  }
+
+  if (url.hostname.toLowerCase() === 'youtu.be') {
+    return url.pathname.split('/').filter(Boolean)[0] ?? null
+  }
+
+  const watchId = url.searchParams.get('v')
+
+  if (watchId) {
+    return watchId
+  }
+
+  const segments = url.pathname.split('/').filter(Boolean)
+
+  if (segments.length >= 2 && YOUTUBE_ID_PATH_PREFIXES.has(segments[0])) {
+    return segments[1]
+  }
+
+  return null
+}
+
+function youtubeThumbnailUrl(normalizedUrl: string): string | null {
+  const videoId = youtubeVideoId(normalizedUrl)
+
+  // Guard the id charset so it can only ever form an img.youtube.com path.
+  if (!videoId || !/^[\w-]{6,20}$/.test(videoId)) {
+    return null
+  }
+
+  return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+}
+
+async function fetchYoutubeThumbnail(thumbnailUrl: string): Promise<ArrayBuffer | null> {
+  try {
+    const response = await fetch(thumbnailUrl)
+
+    if (!response.ok) {
+      return null
+    }
+
+    return await response.arrayBuffer()
+  } catch {
+    return null
+  }
 }
 
 async function captureScreenshot(
