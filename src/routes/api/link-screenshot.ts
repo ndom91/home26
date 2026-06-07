@@ -165,32 +165,19 @@ function generateAndCacheScreenshot({
       return await cachedScreenshot.arrayBuffer()
     }
 
-    let screenshotResponse: Response
+    // First attempt injects the cookie-dismiss script. Strict-CSP / Trusted
+    // Types pages (e.g. youtube.com) reject addScriptTag and fail the whole
+    // capture, so fall back to one script-free attempt before giving up.
+    let screenshotResponse = await captureScreenshot(browser, normalizedUrl, true)
 
-    try {
-      await waitForNextBrowserRunSlot()
-
-      screenshotResponse = await browser.quickAction('screenshot', {
-        url: normalizedUrl,
-        viewport: {
-          width: 1280,
-          height: 720,
-        },
-        addScriptTag: [{ content: COOKIE_ACCEPT_SCRIPT }],
-        waitForTimeout: SCREENSHOT_SETTLE_MS,
-        // Cap navigation so a slow/never-idle page fails fast instead of leaving
-        // the request pending; bestAttempt still captures what loaded by then.
-        gotoOptions: { waitUntil: 'load', timeout: SCREENSHOT_NAV_TIMEOUT_MS },
-        bestAttempt: true,
-      })
-    } catch (error) {
-      logBrowserRunError(normalizedUrl, error)
-
-      return null
+    if (!screenshotResponse?.ok) {
+      screenshotResponse = await captureScreenshot(browser, normalizedUrl, false)
     }
 
-    if (!screenshotResponse.ok) {
-      await logBrowserRunFailure(normalizedUrl, screenshotResponse)
+    if (!screenshotResponse?.ok) {
+      if (screenshotResponse) {
+        await logBrowserRunFailure(normalizedUrl, screenshotResponse)
+      }
 
       return null
     }
@@ -219,6 +206,36 @@ function generateAndCacheScreenshot({
   waitUntil(job)
 
   return job
+}
+
+async function captureScreenshot(
+  browser: BrowserRunBinding,
+  normalizedUrl: string,
+  injectCookieScript: boolean
+): Promise<Response | null> {
+  try {
+    await waitForNextBrowserRunSlot()
+
+    return await browser.quickAction('screenshot', {
+      url: normalizedUrl,
+      viewport: {
+        width: 1280,
+        height: 720,
+      },
+      // Best-effort cookie-banner dismissal; omitted on the fallback attempt
+      // because addScriptTag is what strict-CSP pages reject.
+      ...(injectCookieScript ? { addScriptTag: [{ content: COOKIE_ACCEPT_SCRIPT }] } : {}),
+      waitForTimeout: SCREENSHOT_SETTLE_MS,
+      // Cap navigation so a slow/never-idle page fails fast instead of leaving
+      // the request pending; bestAttempt still captures what loaded by then.
+      gotoOptions: { waitUntil: 'load', timeout: SCREENSHOT_NAV_TIMEOUT_MS },
+      bestAttempt: true,
+    })
+  } catch (error) {
+    logBrowserRunError(normalizedUrl, error)
+
+    return null
+  }
 }
 
 async function waitForNextBrowserRunSlot() {
