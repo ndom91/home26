@@ -5,7 +5,7 @@ const previewImageCache = new Map<string, Promise<string>>()
 const PREVIEW_LOAD_INTERVAL_MS = 1500
 // Hard cap per preview so one slow/hung screenshot (e.g. an uncached URL whose
 // Browser Run is still generating) cannot keep its <img> pending indefinitely.
-const PREVIEW_LOAD_TIMEOUT_MS = 20000
+const PREVIEW_LOAD_TIMEOUT_MS = 30000
 let lastPreviewLoadStartedAt = 0
 // Serializes only the *start* of each load to space requests by the interval.
 // We deliberately do NOT chain on load completion: chaining on completion lets

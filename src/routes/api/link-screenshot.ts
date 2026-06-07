@@ -1,4 +1,4 @@
-import { env } from 'cloudflare:workers'
+import { env, waitUntil } from 'cloudflare:workers'
 import { createFileRoute } from '@tanstack/react-router'
 import { normalizeLinkScreenshotTarget } from '../../lib/link-screenshot'
 
@@ -55,6 +55,10 @@ type BrowserRunBinding = {
 const encoder = new TextEncoder()
 let browserRunQueue: Promise<void> = Promise.resolve()
 let lastBrowserRunStartedAt = 0
+// De-dupes concurrent hovers of the same URL and holds the generation job so it
+// can be registered with waitUntil (survives client cancel) and awaited for the
+// response. Keyed by R2 cache key.
+const inflightScreenshots = new Map<string, Promise<ArrayBuffer | null>>()
 
 export const Route = createFileRoute('/api/link-screenshot')({
   server: {
@@ -92,7 +96,7 @@ export const Route = createFileRoute('/api/link-screenshot')({
           })
         }
 
-        const screenshot = await getOrCreateScreenshot({
+        const screenshot = await generateAndCacheScreenshot({
           browser,
           bucket: workerEnv.home26_link_screenshots,
           cacheKey,
@@ -103,13 +107,7 @@ export const Route = createFileRoute('/api/link-screenshot')({
           return new Response('Unable to generate screenshot', { status: 502 })
         }
 
-        if (screenshot.source === 'cache') {
-          return new Response(screenshot.object.body, {
-            headers: imageHeaders(screenshot.object.httpEtag),
-          })
-        }
-
-        return new Response(screenshot.body, {
+        return new Response(screenshot, {
           headers: imageHeaders(),
         })
       },
@@ -143,7 +141,7 @@ function getBrowserRunBinding(binding: unknown): BrowserRunBinding | null {
   return null
 }
 
-async function getOrCreateScreenshot({
+function generateAndCacheScreenshot({
   browser,
   bucket,
   cacheKey,
@@ -154,11 +152,17 @@ async function getOrCreateScreenshot({
   cacheKey: string
   normalizedUrl: string
 }) {
-  return withBrowserRunSlot(async () => {
+  const existing = inflightScreenshots.get(cacheKey)
+
+  if (existing) {
+    return existing
+  }
+
+  const job = withBrowserRunSlot(async () => {
     const cachedScreenshot = await bucket.get(cacheKey)
 
     if (cachedScreenshot) {
-      return { object: cachedScreenshot, source: 'cache' as const }
+      return await cachedScreenshot.arrayBuffer()
     }
 
     let screenshotResponse: Response
@@ -203,8 +207,18 @@ async function getOrCreateScreenshot({
       },
     })
 
-    return { body: screenshot, source: 'generated' as const }
+    return screenshot
+  }).finally(() => {
+    inflightScreenshots.delete(cacheKey)
   })
+
+  inflightScreenshots.set(cacheKey, job)
+  // Keep the worker alive until generation + R2 put finish even if the client
+  // cancels the request (e.g. its <img> preview times out). Without this the
+  // cancel kills the put, so the URL never caches and re-triggers forever.
+  waitUntil(job)
+
+  return job
 }
 
 async function waitForNextBrowserRunSlot() {
