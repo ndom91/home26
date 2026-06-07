@@ -12,6 +12,11 @@ const BROWSER_RUN_INTERVAL_MS = 2500
 const SCREENSHOT_SETTLE_MS = 500
 // Cap page navigation so a slow/never-idle page does not hang the request.
 const SCREENSHOT_NAV_TIMEOUT_MS = 25000
+// After a generation failure, skip Browser Run for this URL for a while. Stops
+// a failing/unscreenshotable URL (e.g. youtube's strict-CSP page) from being
+// re-attempted on every hover, which keeps Cloudflare's per-host Browser Run
+// rate limit tripped and never lets it recover.
+const SCREENSHOT_FAILURE_COOLDOWN_MS = 10 * 60 * 1000
 
 // Best-effort: injected into the page after load to dismiss cookie/consent
 // banners by clicking a visible "accept all"-style button. Pure string (no
@@ -59,6 +64,9 @@ let lastBrowserRunStartedAt = 0
 // can be registered with waitUntil (survives client cancel) and awaited for the
 // response. Keyed by R2 cache key.
 const inflightScreenshots = new Map<string, Promise<ArrayBuffer | null>>()
+// Negative cache: cacheKey -> epoch ms when the URL may be retried after a
+// recent generation failure. See SCREENSHOT_FAILURE_COOLDOWN_MS.
+const screenshotFailureCooldowns = new Map<string, number>()
 
 export const Route = createFileRoute('/api/link-screenshot')({
   server: {
@@ -158,6 +166,18 @@ function generateAndCacheScreenshot({
     return existing
   }
 
+  // Negative-cache short-circuit: skip Browser Run entirely (do not even queue a
+  // slot) while this URL is cooling down from a recent failure.
+  const retryAt = screenshotFailureCooldowns.get(cacheKey)
+
+  if (retryAt !== undefined) {
+    if (Date.now() < retryAt) {
+      return Promise.resolve(null)
+    }
+
+    screenshotFailureCooldowns.delete(cacheKey)
+  }
+
   const job = withBrowserRunSlot(async () => {
     const cachedScreenshot = await bucket.get(cacheKey)
 
@@ -166,11 +186,13 @@ function generateAndCacheScreenshot({
     }
 
     // First attempt injects the cookie-dismiss script. Strict-CSP / Trusted
-    // Types pages (e.g. youtube.com) reject addScriptTag and fail the whole
-    // capture, so fall back to one script-free attempt before giving up.
+    // Types pages (e.g. youtube.com) reject addScriptTag with a 422 and fail
+    // the whole capture, so retry once without the script on a 422. Other
+    // failures (429 rate limit, 5xx) are not script-related — retrying just
+    // burns more Browser Run quota, so give up rather than double the calls.
     let screenshotResponse = await captureScreenshot(browser, normalizedUrl, true)
 
-    if (!screenshotResponse?.ok) {
+    if (screenshotResponse?.status === 422) {
       screenshotResponse = await captureScreenshot(browser, normalizedUrl, false)
     }
 
@@ -178,6 +200,9 @@ function generateAndCacheScreenshot({
       if (screenshotResponse) {
         await logBrowserRunFailure(normalizedUrl, screenshotResponse)
       }
+
+      // Cool the URL down so we stop hammering Browser Run on every hover.
+      screenshotFailureCooldowns.set(cacheKey, Date.now() + SCREENSHOT_FAILURE_COOLDOWN_MS)
 
       return null
     }
@@ -193,6 +218,8 @@ function generateAndCacheScreenshot({
         sourceUrl: normalizedUrl,
       },
     })
+
+    screenshotFailureCooldowns.delete(cacheKey)
 
     return screenshot
   }).finally(() => {
