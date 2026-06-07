@@ -70,7 +70,7 @@ export const Route = createFileRoute('/api/link-screenshot')({
           return new Response(cachedScreenshot.body, {
             headers: imageHeaders(
               cachedScreenshot.httpMetadata?.contentType ?? SCREENSHOT_CONTENT_TYPE,
-              cachedScreenshot.httpEtag
+              { cacheStatus: 'hit', etag: cachedScreenshot.httpEtag }
             ),
           })
         }
@@ -87,17 +87,23 @@ export const Route = createFileRoute('/api/link-screenshot')({
         }
 
         return new Response(screenshot.body, {
-          headers: imageHeaders(screenshot.contentType),
+          headers: imageHeaders(screenshot.contentType, { cacheStatus: 'miss' }),
         })
       },
     },
   },
 })
 
-function imageHeaders(contentType: string, etag?: string) {
+function imageHeaders(
+  contentType: string,
+  { cacheStatus, etag }: { cacheStatus: 'hit' | 'miss'; etag?: string }
+) {
   const headers = new Headers({
     'Cache-Control': 'public, max-age=31536000, immutable',
     'Content-Type': contentType,
+    // Lets the warm script (and debugging) tell a served-from-R2 hit from a
+    // freshly generated miss without timing heuristics.
+    'X-Screenshot-Cache': cacheStatus,
   })
 
   if (etag) {

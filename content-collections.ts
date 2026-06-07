@@ -5,7 +5,7 @@ import {
 } from '@content-collections/core'
 import type { MDXContent } from 'mdx/types.js'
 import * as v from 'valibot'
-import { normalizeLinkScreenshotTarget } from './src/lib/link-screenshot'
+import { collectBlogLinkTargets } from './src/lib/link-screenshot-targets'
 import { signLinkScreenshotUrls } from './src/lib/sign-link-screenshot'
 
 const isoDate = v.pipe(v.string(), v.isoDate())
@@ -86,18 +86,7 @@ function descriptionFromContent(content: string) {
 }
 
 function linkScreenshotUrlsFromContent(content: string) {
-  const contentWithoutCodeBlocks = content.replace(/```[\s\S]*?```/g, '')
-  const urls = new Set<string>()
-
-  for (const match of contentWithoutCodeBlocks.matchAll(/https?:\/\/[^\s<>'"`)\]}]+/g)) {
-    const normalizedUrl = normalizeLinkScreenshotTarget(match[0])
-
-    if (normalizedUrl) {
-      urls.add(normalizedUrl)
-    }
-  }
-
-  return signLinkScreenshotUrls([...urls])
+  return signLinkScreenshotUrls(collectBlogLinkTargets(content))
 }
 
 const posts = defineCollection({

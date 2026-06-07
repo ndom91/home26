@@ -15,32 +15,16 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { normalizeLinkScreenshotTarget } from '../src/lib/link-screenshot.ts'
+import { collectProjectLinkTargets } from '../src/lib/link-screenshot-targets.ts'
 import { signLinkScreenshotUrls } from '../src/lib/sign-link-screenshot.ts'
 
 const scriptDir = dirname(fileURLToPath(import.meta.url))
 const SOURCE_PATH = join(scriptDir, '../src/lib/projects.tsx')
 const OUTPUT_PATH = join(scriptDir, '../src/lib/link-screenshots.generated.ts')
 
-// Matches `url="..."` or `url={'...'}` / `url={"..."}` on a ScreenshotLink tag.
-const SCREENSHOT_LINK_URL = /<ScreenshotLink[^>]*?\burl=\{?["']([^"']+)["']\}?/g
-
-function collectUrls(source: string): string[] {
-  const urls = new Set<string>()
-
-  for (const match of source.matchAll(SCREENSHOT_LINK_URL)) {
-    const normalized = normalizeLinkScreenshotTarget(match[1])
-    if (normalized) {
-      urls.add(normalized)
-    }
-  }
-
-  return [...urls]
-}
-
 async function main() {
   const source = readFileSync(SOURCE_PATH, 'utf8')
-  const urls = collectUrls(source)
+  const urls = collectProjectLinkTargets(source)
 
   const entries = await signLinkScreenshotUrls(urls)
 
