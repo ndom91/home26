@@ -1,12 +1,15 @@
 import { env, waitUntil } from 'cloudflare:workers'
 import { createFileRoute } from '@tanstack/react-router'
 import { normalizeLinkScreenshotTarget } from '../../lib/link-screenshot'
+import {
+  getCacheKey,
+  signLinkScreenshotUrl,
+  timingSafeEqual,
+} from '../../lib/link-screenshot-crypto'
+import { fetchYoutubeThumbnail, youtubeThumbnailUrl } from '../../lib/youtube-thumbnail'
 
-const SIGNATURE_PREFIX = 'v1:'
 const SCREENSHOT_CONTENT_TYPE = 'image/png'
-// Bump when the capture pipeline changes (viewport, waits, injected scripts) so
-// previously cached R2 screenshots are regenerated with the new settings.
-const SCREENSHOT_VERSION = 'v2'
+const YOUTUBE_THUMBNAIL_CONTENT_TYPE = 'image/jpeg'
 const BROWSER_RUN_INTERVAL_MS = 2500
 // Wait after page load before capturing, so intro/entrance animations settle.
 const SCREENSHOT_SETTLE_MS = 500
@@ -57,13 +60,14 @@ type BrowserRunBinding = {
   quickAction(action: 'screenshot', options: unknown): Promise<Response>
 }
 
-const encoder = new TextEncoder()
 let browserRunQueue: Promise<void> = Promise.resolve()
 let lastBrowserRunStartedAt = 0
+type ScreenshotResult = { body: ArrayBuffer; contentType: string }
+
 // De-dupes concurrent hovers of the same URL and holds the generation job so it
 // can be registered with waitUntil (survives client cancel) and awaited for the
 // response. Keyed by R2 cache key.
-const inflightScreenshots = new Map<string, Promise<ArrayBuffer | null>>()
+const inflightScreenshots = new Map<string, Promise<ScreenshotResult | null>>()
 // Negative cache: cacheKey -> epoch ms when the URL may be retried after a
 // recent generation failure. See SCREENSHOT_FAILURE_COOLDOWN_MS.
 const screenshotFailureCooldowns = new Map<string, number>()
@@ -100,7 +104,10 @@ export const Route = createFileRoute('/api/link-screenshot')({
 
         if (cachedScreenshot) {
           return new Response(cachedScreenshot.body, {
-            headers: imageHeaders(cachedScreenshot.httpEtag),
+            headers: imageHeaders(
+              cachedScreenshot.httpMetadata?.contentType ?? SCREENSHOT_CONTENT_TYPE,
+              cachedScreenshot.httpEtag
+            ),
           })
         }
 
@@ -115,18 +122,18 @@ export const Route = createFileRoute('/api/link-screenshot')({
           return new Response('Unable to generate screenshot', { status: 502 })
         }
 
-        return new Response(screenshot, {
-          headers: imageHeaders(),
+        return new Response(screenshot.body, {
+          headers: imageHeaders(screenshot.contentType),
         })
       },
     },
   },
 })
 
-function imageHeaders(etag?: string) {
+function imageHeaders(contentType: string, etag?: string) {
   const headers = new Headers({
     'Cache-Control': 'public, max-age=31536000, immutable',
-    'Content-Type': SCREENSHOT_CONTENT_TYPE,
+    'Content-Type': contentType,
   })
 
   if (etag) {
@@ -178,11 +185,14 @@ function generateAndCacheScreenshot({
     screenshotFailureCooldowns.delete(cacheKey)
   }
 
-  const job = withBrowserRunSlot(async () => {
+  const job = withBrowserRunSlot(async (): Promise<ScreenshotResult | null> => {
     const cachedScreenshot = await bucket.get(cacheKey)
 
     if (cachedScreenshot) {
-      return await cachedScreenshot.arrayBuffer()
+      return {
+        body: await cachedScreenshot.arrayBuffer(),
+        contentType: cachedScreenshot.httpMetadata?.contentType ?? SCREENSHOT_CONTENT_TYPE,
+      }
     }
 
     // youtube persistently blocks Browser Run screenshots (per-host 429),
@@ -193,25 +203,19 @@ function generateAndCacheScreenshot({
     if (thumbnailUrl) {
       const thumbnail = await fetchYoutubeThumbnail(thumbnailUrl)
 
-      if (thumbnail) {
-        await bucket.put(cacheKey, thumbnail, {
-          httpMetadata: {
-            contentType: SCREENSHOT_CONTENT_TYPE,
-          },
-          customMetadata: {
-            createdAt: new Date().toISOString(),
-            sourceUrl: normalizedUrl,
-          },
-        })
+      if (!thumbnail) {
+        coolDownFailure(cacheKey)
 
-        screenshotFailureCooldowns.delete(cacheKey)
-
-        return thumbnail
+        return null
       }
 
-      screenshotFailureCooldowns.set(cacheKey, Date.now() + SCREENSHOT_FAILURE_COOLDOWN_MS)
-
-      return null
+      return await cacheScreenshot(
+        bucket,
+        cacheKey,
+        thumbnail,
+        YOUTUBE_THUMBNAIL_CONTENT_TYPE,
+        normalizedUrl
+      )
     }
 
     // First attempt injects the cookie-dismiss script. Strict-CSP / Trusted
@@ -230,27 +234,20 @@ function generateAndCacheScreenshot({
         await logBrowserRunFailure(normalizedUrl, screenshotResponse)
       }
 
-      // Cool the URL down so we stop hammering Browser Run on every hover.
-      screenshotFailureCooldowns.set(cacheKey, Date.now() + SCREENSHOT_FAILURE_COOLDOWN_MS)
+      coolDownFailure(cacheKey)
 
       return null
     }
 
     const screenshot = await screenshotResponse.arrayBuffer()
 
-    await bucket.put(cacheKey, screenshot, {
-      httpMetadata: {
-        contentType: SCREENSHOT_CONTENT_TYPE,
-      },
-      customMetadata: {
-        createdAt: new Date().toISOString(),
-        sourceUrl: normalizedUrl,
-      },
-    })
-
-    screenshotFailureCooldowns.delete(cacheKey)
-
-    return screenshot
+    return await cacheScreenshot(
+      bucket,
+      cacheKey,
+      screenshot,
+      SCREENSHOT_CONTENT_TYPE,
+      normalizedUrl
+    )
   }).finally(() => {
     inflightScreenshots.delete(cacheKey)
   })
@@ -264,72 +261,41 @@ function generateAndCacheScreenshot({
   return job
 }
 
-const YOUTUBE_HOSTS = new Set([
-  'youtube.com',
-  'www.youtube.com',
-  'm.youtube.com',
-  'music.youtube.com',
-  'youtu.be',
-])
-// Path segments that precede a video id, e.g. /shorts/<id>, /embed/<id>.
-const YOUTUBE_ID_PATH_PREFIXES = new Set(['shorts', 'embed', 'live', 'v'])
+async function cacheScreenshot(
+  bucket: R2Bucket,
+  cacheKey: string,
+  body: ArrayBuffer,
+  contentType: string,
+  normalizedUrl: string
+): Promise<ScreenshotResult> {
+  await bucket.put(cacheKey, body, {
+    httpMetadata: {
+      contentType,
+    },
+    customMetadata: {
+      createdAt: new Date().toISOString(),
+      sourceUrl: normalizedUrl,
+    },
+  })
 
-// Returns the youtube video id for a watch/youtu.be/shorts/embed URL, or null.
-function youtubeVideoId(normalizedUrl: string): string | null {
-  let url: URL
+  screenshotFailureCooldowns.delete(cacheKey)
 
-  try {
-    url = new URL(normalizedUrl)
-  } catch {
-    return null
-  }
-
-  if (!YOUTUBE_HOSTS.has(url.hostname.toLowerCase())) {
-    return null
-  }
-
-  if (url.hostname.toLowerCase() === 'youtu.be') {
-    return url.pathname.split('/').filter(Boolean)[0] ?? null
-  }
-
-  const watchId = url.searchParams.get('v')
-
-  if (watchId) {
-    return watchId
-  }
-
-  const segments = url.pathname.split('/').filter(Boolean)
-
-  if (segments.length >= 2 && YOUTUBE_ID_PATH_PREFIXES.has(segments[0])) {
-    return segments[1]
-  }
-
-  return null
+  return { body, contentType }
 }
 
-function youtubeThumbnailUrl(normalizedUrl: string): string | null {
-  const videoId = youtubeVideoId(normalizedUrl)
+// Cool a URL down after a failure so we stop hammering Browser Run on every
+// hover. Prunes already-expired entries first so the map can't grow unbounded
+// in a long-lived isolate.
+function coolDownFailure(cacheKey: string) {
+  const now = Date.now()
 
-  // Guard the id charset so it can only ever form an img.youtube.com path.
-  if (!videoId || !/^[\w-]{6,20}$/.test(videoId)) {
-    return null
-  }
-
-  return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
-}
-
-async function fetchYoutubeThumbnail(thumbnailUrl: string): Promise<ArrayBuffer | null> {
-  try {
-    const response = await fetch(thumbnailUrl)
-
-    if (!response.ok) {
-      return null
+  for (const [key, retryAt] of screenshotFailureCooldowns) {
+    if (now >= retryAt) {
+      screenshotFailureCooldowns.delete(key)
     }
-
-    return await response.arrayBuffer()
-  } catch {
-    return null
   }
+
+  screenshotFailureCooldowns.set(cacheKey, now + SCREENSHOT_FAILURE_COOLDOWN_MS)
 }
 
 async function captureScreenshot(
@@ -414,51 +380,4 @@ function logBrowserRunError(normalizedUrl: string, error: unknown) {
     error: error instanceof Error ? { message: error.message, name: error.name } : String(error),
     targetUrl: normalizedUrl,
   })
-}
-
-async function signLinkScreenshotUrl(signingKey: string, normalizedUrl: string) {
-  const key = await crypto.subtle.importKey(
-    'raw',
-    encoder.encode(signingKey),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign']
-  )
-  const signature = await crypto.subtle.sign(
-    'HMAC',
-    key,
-    encoder.encode(`${SIGNATURE_PREFIX}${normalizedUrl}`)
-  )
-
-  return base64UrlEncode(new Uint8Array(signature))
-}
-
-async function getCacheKey(normalizedUrl: string) {
-  const hash = await crypto.subtle.digest('SHA-256', encoder.encode(normalizedUrl))
-
-  return `link-screenshots/${SCREENSHOT_VERSION}/${base64UrlEncode(new Uint8Array(hash))}.png`
-}
-
-function base64UrlEncode(bytes: Uint8Array) {
-  let binary = ''
-
-  for (const byte of bytes) {
-    binary += String.fromCharCode(byte)
-  }
-
-  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
-}
-
-function timingSafeEqual(left: string, right: string) {
-  if (left.length !== right.length) {
-    return false
-  }
-
-  let difference = 0
-
-  for (let index = 0; index < left.length; index += 1) {
-    difference |= left.charCodeAt(index) ^ right.charCodeAt(index)
-  }
-
-  return difference === 0
 }

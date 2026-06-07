@@ -1,22 +1,34 @@
-import { createHmac } from 'node:crypto'
+import { buildLinkScreenshotUrl } from './link-screenshot.ts'
+import { signLinkScreenshotUrl } from './link-screenshot-crypto.ts'
 
 /**
- * Build-time HMAC signer for link-screenshot URLs. Shared by the blog content
- * pipeline (`content-collections.ts`) and the project-card scanner
+ * Build-time map-builder for link-screenshot previews. Shared by the blog
+ * content pipeline (`content-collections.ts`) and the project-card scanner
  * (`scripts/sign-link-screenshots.ts`).
  *
- * Must stay in sync with the runtime validator in
- * `src/routes/api/link-screenshot.ts` (`v1:` prefix, HMAC-SHA256, base64url).
+ * Takes already-normalized target URLs (see `normalizeLinkScreenshotTarget`),
+ * signs each with the shared Web Crypto signer in `link-screenshot-crypto.ts`
+ * (the same function the runtime validator uses, so signatures can't drift),
+ * and returns a `{ normalizedUrl: signedEndpointUrl }` map.
  *
- * Returns null when `LINK_SCREENSHOT_SIGNING_KEY` is unset so callers degrade
- * gracefully to plain links.
+ * Returns an empty map when `LINK_SCREENSHOT_SIGNING_KEY` is unset so callers
+ * degrade gracefully to plain links.
  */
-export function signLinkScreenshotUrl(normalizedUrl: string): string | null {
+export async function signLinkScreenshotUrls(
+  normalizedUrls: string[]
+): Promise<Record<string, string>> {
   const signingKey = process.env.LINK_SCREENSHOT_SIGNING_KEY
 
   if (!signingKey) {
-    return null
+    return {}
   }
 
-  return createHmac('sha256', signingKey).update(`v1:${normalizedUrl}`).digest('base64url')
+  const entries: Record<string, string> = {}
+
+  for (const normalizedUrl of normalizedUrls) {
+    const signature = await signLinkScreenshotUrl(signingKey, normalizedUrl)
+    entries[normalizedUrl] = buildLinkScreenshotUrl(normalizedUrl, signature)
+  }
+
+  return entries
 }

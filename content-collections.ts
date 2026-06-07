@@ -5,8 +5,8 @@ import {
 } from '@content-collections/core'
 import type { MDXContent } from 'mdx/types.js'
 import * as v from 'valibot'
-import { buildLinkScreenshotUrl, normalizeLinkScreenshotTarget } from './src/lib/link-screenshot'
-import { signLinkScreenshotUrl } from './src/lib/sign-link-screenshot'
+import { normalizeLinkScreenshotTarget } from './src/lib/link-screenshot'
+import { signLinkScreenshotUrls } from './src/lib/sign-link-screenshot'
 
 const isoDate = v.pipe(v.string(), v.isoDate())
 
@@ -97,13 +97,7 @@ function linkScreenshotUrlsFromContent(content: string) {
     }
   }
 
-  return Object.fromEntries(
-    [...urls].flatMap((normalizedUrl) => {
-      const signature = signLinkScreenshotUrl(normalizedUrl)
-
-      return signature ? [[normalizedUrl, buildLinkScreenshotUrl(normalizedUrl, signature)]] : []
-    })
-  )
+  return signLinkScreenshotUrls([...urls])
 }
 
 const posts = defineCollection({
@@ -125,7 +119,7 @@ const posts = defineCollection({
     ),
     content: v.string(),
   }),
-  transform: (post) => {
+  transform: async (post) => {
     const publishedAt = post.publishedAt ?? post.date
 
     if (!publishedAt) {
@@ -140,7 +134,7 @@ const posts = defineCollection({
       draft: post.draft,
       atprotoUri: post.atprotoUri ?? null,
       slug: slugFromPath(post._meta.filePath),
-      linkScreenshotUrls: linkScreenshotUrlsFromContent(post.content),
+      linkScreenshotUrls: await linkScreenshotUrlsFromContent(post.content),
       coverImageUrl: post.cover
         ? createDefaultImport<string>(imageImportPath(post._meta.filePath, post.cover.imageFile))
         : null,

@@ -15,8 +15,8 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { buildLinkScreenshotUrl, normalizeLinkScreenshotTarget } from '../src/lib/link-screenshot.ts'
-import { signLinkScreenshotUrl } from '../src/lib/sign-link-screenshot.ts'
+import { normalizeLinkScreenshotTarget } from '../src/lib/link-screenshot.ts'
+import { signLinkScreenshotUrls } from '../src/lib/sign-link-screenshot.ts'
 
 const scriptDir = dirname(fileURLToPath(import.meta.url))
 const SOURCE_PATH = join(scriptDir, '../src/lib/projects.tsx')
@@ -38,18 +38,11 @@ function collectUrls(source: string): string[] {
   return [...urls]
 }
 
-function main() {
+async function main() {
   const source = readFileSync(SOURCE_PATH, 'utf8')
   const urls = collectUrls(source)
 
-  const entries: Record<string, string> = {}
-
-  for (const normalizedUrl of urls) {
-    const signature = signLinkScreenshotUrl(normalizedUrl)
-    if (signature) {
-      entries[normalizedUrl] = buildLinkScreenshotUrl(normalizedUrl, signature)
-    }
-  }
+  const entries = await signLinkScreenshotUrls(urls)
 
   const sorted = Object.keys(entries)
     .sort()
@@ -74,4 +67,7 @@ export const linkScreenshotUrls: Record<string, string> = {${sorted ? `\n${sorte
   }
 }
 
-main()
+main().catch((error) => {
+  console.error(error instanceof Error ? error.message : error)
+  process.exit(1)
+})
