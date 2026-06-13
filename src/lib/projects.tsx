@@ -46,8 +46,8 @@ const projects: Project[] = [
     blurb: (
       <>
         Go-to Next.js authentication library supporting more social signin providers than you can
-        shake a stick at, and your own database to store your users in. No longer involved after
-        selling to <ScreenshotLink url="https://better-auth.com">better-auth</ScreenshotLink>.
+        shake a stick at, and your own database to store your users in. Inactive after transfering
+        the project to <ScreenshotLink url="https://better-auth.com">better-auth</ScreenshotLink>.
       </>
     ),
 
