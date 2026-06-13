@@ -23,7 +23,6 @@
   --color-accent-500: #b85d7f;
   --color-accent-700: #853957;
   --color-accent-900: #5d2d46;
-  --color-topographic: var(--topographic-ink);
   --color-blog-bg: var(--blog-bg);
   --color-blog-panel: var(--blog-panel);
   --color-blog-hover: var(--blog-hover);
@@ -48,7 +47,6 @@
     --muted: #6f5d67;
     --rule: #cdb9c4;
     --accent: #853957;
-    --topographic-ink: rgb(27 19 24 / 0.048);
     --globe-shade: rgb(27 19 24 / 0.31);
     --globe-text: 201 185 195;
     --globe-accent: 184 93 127;
@@ -85,7 +83,6 @@
       --muted: #ad9ba6;
       --rule: #3d2d36;
       --accent: #d88aa8;
-      --topographic-ink: rgb(233 221 227 / 0.04);
       --globe-shade: transparent;
       --globe-text: 61 45 55;
       --globe-accent: 216 138 168;
@@ -115,7 +112,6 @@
     --muted: #6f5d67;
     --rule: #cdb9c4;
     --accent: #853957;
-    --topographic-ink: rgb(27 19 24 / 0.048);
     --globe-shade: rgb(27 19 24 / 0.31);
     --globe-text: 201 185 195;
     --globe-accent: 184 93 127;
@@ -145,7 +141,6 @@
     --muted: #ad9ba6;
     --rule: #3d2d36;
     --accent: #d88aa8;
-    --topographic-ink: rgb(233 221 227 / 0.026);
     --globe-shade: transparent;
     --globe-text: 61 45 55;
     --globe-accent: 216 138 168;

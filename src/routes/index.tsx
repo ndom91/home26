@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { AsciiGlobe } from '../components/AsciiGlobe'
+import { LifeField } from '../components/LifeField'
 import { SiteHeader } from '../components/SiteHeader'
-import { TopographicField } from '../components/TopographicField'
 import { usePointerSweep } from '../lib/use-pointer-sweep'
 
 export const Route = createFileRoute('/')({
@@ -36,7 +36,7 @@ function Home() {
 
   return (
     <main className="relative grid min-h-dvh grid-rows-[auto_1fr_auto] overflow-hidden bg-paper font-body text-ink">
-      <TopographicField />
+      <LifeField />
 
       <SiteHeader />
 
