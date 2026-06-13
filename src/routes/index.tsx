@@ -96,9 +96,9 @@ function Home() {
         </aside>
       </div>
 
-      <footer className="relative z-10 grid grid-cols-[auto_1fr] items-center border-b border-rule bg-paper text-[0.7rem] uppercase tracking-[0.16em] max-[820px]:grid-cols-1 max-[520px]:text-[0.62rem] max-[520px]:tracking-[0.18em]">
+      <footer className="relative z-10 grid grid-cols-[auto_1fr] items-center border-b border-rule bg-paper text-[0.7rem] uppercase tracking-[0.16em] max-[820px]:grid-cols-1 max-[520px]:text-[0.7rem] max-[520px]:tracking-widest">
         <span
-          className={`${homeBarCellClass} overflow-hidden text-ellipsis whitespace-nowrap max-[820px]:whitespace-normal max-[520px]:px-5 max-[520px]:py-4`}
+          className={`${homeBarCellClass} overflow-hidden text-ellipsis whitespace-nowrap max-[520px]:px-4 max-[520px]:py-4`}
         >
           Software Engineer · Open Source · Linux · Woodworking · Electronics
         </span>
