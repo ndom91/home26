@@ -470,6 +470,15 @@ html[data-theme='dark'] .mermaid-dark {
   letter-spacing: -0.04em;
 }
 
+.prose blockquote {
+  font-style: normal;
+}
+
+.prose blockquote p:first-of-type::before,
+.prose blockquote p:last-of-type::after {
+  content: none;
+}
+
 .heading-anchor {
   position: absolute;
   right: 100%;
