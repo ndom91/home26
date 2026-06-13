@@ -365,6 +365,14 @@
   color: var(--shiki-light);
 }
 
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) :where([data-rehype-pretty-code-figure]) pre,
+  html:not([data-theme='light']) :where([data-rehype-pretty-code-figure]) code,
+  html:not([data-theme='light']) :where([data-rehype-pretty-code-figure]) span {
+    color: var(--shiki-dark);
+  }
+}
+
 :where([data-rehype-pretty-code-figure]) pre {
   scrollbar-color: color-mix(in oklab, var(--blog-accent) 62%, var(--blog-rule)) transparent;
   scrollbar-width: thin;
