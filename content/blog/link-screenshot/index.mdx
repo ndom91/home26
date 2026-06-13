@@ -46,9 +46,7 @@ Now that we have all of the workarounds and dependencies out of the way, we can 
 
 Create a new API route in our non-standard directory, for example `/api/image.ts`. Here we will import our two dependencies and setup the API route boilerplate.
 
-<CodeEditor title="/api/image.ts">
-
-```js
+```js filename="/api/image.ts"
 import type { NextApiRequest, NextApiResponse } from "next"
 import chromium from "chrome-aws-lambda"
 import playwright from "playwright-core"
@@ -65,15 +63,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   })
 ```
 
-</CodeEditor>
-
 As you can see we're initializing `playwright` and its headless version of Chromium. We've also got a conditional set of flags there - that is just to allow local execution of this API route. If your local Chromium binary is not found at `/usr/bin/chromium` you'll want to change that path in the code above.
 
 Next we'll use `playwright` to visit the url we passed to the route as an argument and take a screenshot of it.
 
-<CodeEditor title="/api/image.ts">
-
-```js
+```js filename="/api/image.ts"
   // Create a page with the recommended Open Graph image size
   const page = await browser.newPage({
     viewport: {
@@ -94,23 +88,17 @@ Next we'll use `playwright` to visit the url we passed to the route as an argume
   await browser.close()
 ```
 
-</CodeEditor>
-
 As you can see, we're grabbing the URL query parameter via `req.query.path` and passing it to `page.goto()`. Finally, towards the bottom here we're taking the screenshot via `page.screenshot()`. And thats really the meat of it! Everything else is plumbing to get the arguments and image data around, etc.
 
 The final part of this API route is returning the image data and setting some cache headers. You can also add similar `max-age` headers to your `vercel.json` config file to enable caching at the client (browser) level.
 
-<CodeEditor title="/api/image.ts">
-
-```js
+```js filename="/api/image.ts"
   // Set the `s-maxage` property to cache at the CDN layer
   res.setHeader("Cache-Control", "s-maxage=31536000, public")
   res.setHeader("Content-Type", "image/png")
   res.end(data)
 }
 ```
-
-</CodeEditor>
 
 Here you can see we're setting some cache headers, `s-maxage` to allow CDN's and proxies (i.e. Vercel Edge) to cache the image, as well as `max-age` for the client's browser cache to also cache the image. Finally we're also appending `stale-while-revalidate` so that if the cache has an image, it will be served, but in the background a fresh copy will still be generated. Who knows how often these URL's we will be linking to are updated and I'd prefer to have both an aggressive caching strategy in addition to fresh content.
 
@@ -134,9 +122,7 @@ Now that the request has been served, we can continue on to receiving and displa
 <details>
 <summary className="hover:cursor-pointer font-light italic">Click for full <code>/api/image.ts</code> file.</summary>
 <br />
-<CodeEditor title="/api/image.ts">
-
-```js
+```js filename="/api/image.ts"
 import type { NextApiRequest, NextApiResponse } from "next"
 import chromium from "chrome-aws-lambda"
 import playwright from "playwright-core"
@@ -187,17 +173,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 }
 ```
 
-</CodeEditor>
-
 </details>
 
 ### /src/components/screenshot-link.tsx
 
 This component will be responsible only for fetching and displaying these images above a link, so it will consist of two parts, the text to be displayed, and an image that needs to be animated or transitioned into view.
 
-<CodeEditor title="/src/components/ScreenshotLink.tsx">
-
-```js
+```js filename="/src/components/ScreenshotLink.tsx"
 import { useState } from "react"
 import Image from "next/image"
 
@@ -230,8 +212,6 @@ const ScreenshotLink = ({ url, text }: Props) => {
   }
 ```
 
-</CodeEditor>
-
 Lets begin with the logic of the component. Here we're defining two props, `url` and `text`, which will be as you can probably guess.. the URL and text of the link we're going to render! We also have two state variables, the `linkScreenshot` and the boolean `isHovering`.
 
 Then we have an asynchronous function named `fetchImage` which takes the URL to be screenshotted as an argument. We also read the current status of our page's light/dark status here shortly before calling our API route, and finally we append both of these variables as query parameters to end of our fetch call and await the result. We then need to run the result through fetch's `.blob()` response helper function which will give us the image blog we can create a URL out of. We can use `URL.createObjectUrl()` to create a local `blob:...` URL for our image, which we can happily pass to the new `next/image` component via our `linkScreenshot` state variable! Once we have the image blob URL, we can set our `isHovering` boolean to true as well.
@@ -247,9 +227,7 @@ So to summarize briefly,
 
 So with the logic out of the way, let's look at the markup of this LinkScreenshot component.
 
-<CodeEditor title="/src/components/ScreenshotLink.tsx">
-
-```js
+```js filename="/src/components/ScreenshotLink.tsx"
   return (
     <div
       className="relative inline-block"
@@ -282,8 +260,6 @@ So with the logic out of the way, let's look at the markup of this LinkScreensho
 
 export default ScreenshotLink
 ```
-
-</CodeEditor>
 
 This part is relatively straight forward, the most important part is the `onMouseOver` event handler on the container `div` of the whole component. This will execute the fetching of the image and all the subsequent events whenever a user hovers our link text.
 
@@ -308,9 +284,7 @@ The image container `div` also has a custom class named `animate-fade_in_up` whi
 <details>
 <summary className="hover:cursor-pointer font-light italic">Click for full <code>/src/components/ScreenshotLink.ts</code> file.</summary>
 <br />
-<CodeEditor title="/src/components/ScreenshotLink.ts">
-
-```js
+```js filename="/src/components/ScreenshotLink.ts"
 import { useState } from "react"
 import Image from "next/image"
 
@@ -375,8 +349,6 @@ const ScreenshotLink = ({ url, text }: Props) => {
 export default ScreenshotLink
 ```
 
-</CodeEditor>
-
 </details>
 
 ## Summary
@@ -395,9 +367,7 @@ I also used this API route to dynamically generate `og:image`'s which are screen
 
 For example, I have a `Meta.tsx` component I import into my global Layout component where I like to group all the og, favicon, twitter properties, etc.
 
-<CodeEditor title="/src/components/Meta.tsx">
-
-```jsx
+```jsx filename="/src/components/Meta.tsx"
 import Head from "next/head"
 import { useRouter } from "next/router"
 
@@ -417,5 +387,3 @@ const Meta = () => {
 
 export default Meta
 ```
-
-</CodeEditor>

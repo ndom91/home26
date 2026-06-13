@@ -365,6 +365,36 @@
   color: var(--shiki-light);
 }
 
+:where([data-rehype-pretty-code-figure]) pre {
+  scrollbar-color: color-mix(in oklab, var(--blog-accent) 62%, var(--blog-rule)) transparent;
+  scrollbar-width: thin;
+}
+
+:where([data-rehype-pretty-code-figure]) pre::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+:where([data-rehype-pretty-code-figure]) pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+:where([data-rehype-pretty-code-figure]) pre::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--blog-accent) 62%, var(--blog-rule));
+  background-clip: content-box;
+}
+
+:where([data-rehype-pretty-code-figure]) pre::-webkit-scrollbar-thumb:hover {
+  background: var(--blog-accent);
+  background-clip: content-box;
+}
+
+.code-block-body > :where([data-rehype-pretty-code-figure]) {
+  padding-inline: 0.25rem;
+}
+
 html[data-theme='dark'] :where([data-rehype-pretty-code-figure]) pre,
 html[data-theme='dark'] :where([data-rehype-pretty-code-figure]) code,
 html[data-theme='dark'] :where([data-rehype-pretty-code-figure]) span {

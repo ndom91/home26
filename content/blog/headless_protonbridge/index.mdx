@@ -136,9 +136,7 @@ $ sudo vim /etc/systemd/system/proton-bridge.service
 
 And enter something like the following:
 
-<CodeEditor title="/etc/systemd/system/proton-bridge.service">
-
-```bash
+```bash filename="/etc/systemd/system/proton-bridge.service"
 [Unit]
 Description=ProtonMail Bridge
 After=network.target
@@ -152,8 +150,6 @@ StandardError=append:/var/log/proton-bridge/error.log
 [Install]
 WantedBy=multi-user.target
 ```
-
-</CodeEditor>
 
 Remember to potentially adjust a few things here.
 

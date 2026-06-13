@@ -76,7 +76,7 @@ Aforementioned tutorial: [bentasker.co.uk](https://www.bentasker.co.uk/documenta
 
 If you only want to test it inside a browser then Firefox has you covered with an `about:config` flag. Search for `trr` and change the following settings:
 
-```
+```ini
 trr.bootstrapAddress:(empty)
 trr.mode: 3
 trr.uri: https://dns.ndo.dev/dns-query
@@ -96,7 +96,7 @@ To use DNS over HTTPS on an OS level, you will have to install a client, such as
 
 After installing the client service, open up `/etc/dns-over-https/doh-client.conf` in your favorite text editor and add another upstream resolver like such:
 
-```
+```toml
 [[upstream.upstream_ietf]]
   url = "https://dns.ndo.dev/dns-query"
   weight = 50

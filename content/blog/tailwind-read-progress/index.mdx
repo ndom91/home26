@@ -23,9 +23,7 @@ Lets just take a look at the markup and Tailwind classes first.
 
 The important stuff is happening on the first line here. You'll see that all I'm defining is the `bg-gradient-to-r` in order to set the `background-image` to a linear-gradient, and two ring colors. The rest of the classes generate the line itself and keep it fixed to the top of the viewport.
 
-<CodeEditor title="src/components/ProgressBar.tsx">
-
-```jsx
+```jsx filename="src/components/ProgressBar.tsx"
 const ProgressBar = () => {
   return (
     <div
@@ -42,15 +40,11 @@ const ProgressBar = () => {
 export default ProgressBar
 ```
 
-</CodeEditor>
-
 Now lets dig into some of the logic.. I'm using [`react-use`](https://github.com/streamich/react-use) for their wonderful set of hooks, in this case we're using `useWindowScroll` to get the current scroll position. I'm also calculating the page height, we'll need this for our calculation later on.
 
 Finally, theres a `useEffect` which has only the `y` window scroll position and `pageHeight` as dependencies. We use these two values to calculate the current `percentScrolled` value to determine how far the user is **down** the page, and therefore how far **across** the progress bar should be!
 
-<CodeEditor title="src/components/ProgressBar.tsx">
-
-```jsx
+```jsx filename="src/components/ProgressBar.tsx"
 import { useWindowScroll } from "react-use"
 import { useEffect } from "react"
 
@@ -63,8 +57,6 @@ const ProgressBar = () => {
     const el = document.getElementById("scroll-progress")
   }, [y, pageHeight])
 ```
-
-</CodeEditor>
 
 Now we come to the interesting part!
 
@@ -92,9 +84,7 @@ background-image: linear-gradient(
 
 Thanks to `useEffect` and the `percentScrolled` string interpolation this percentage scrolled value is updated constantly as the user scrolls, generating our desired progress bar along the top of the screen!
 
-<CodeEditor title="src/components/ProgressBar.tsx">
-
-```jsx
+```jsx filename="src/components/ProgressBar.tsx"
 import { useWindowScroll } from "react-use"
 import { useEffect } from "react"
 
@@ -125,8 +115,6 @@ const ProgressBar = () => {
 
 export default ProgressBar
 ```
-
-</CodeEditor>
 
 Finally, some of you may be wondering if I'd ever mention those `ring-color`s again, while others have probably figured it out already. The ring colors simply provided an easy Tailwind custom property to hijack in order to be able to define different colors for the bar via Tailwind classes as well. This makes it easy to dynamically adjust the bar's color based on the prefered light/dark theme. We can also fine tune the style of the bar with any of the other ring classes. In this case, I've adjusted the opacity of the bar with the `ring-opacity-75` class.
 

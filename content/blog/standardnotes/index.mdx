@@ -19,13 +19,13 @@ I'm going to continue on with the "baremetal" variant here.
 
 1. Get the files
 
-```
+```bash
  git clone https://github.com/standardnotes/syncing-server.git
 ```
 
 2.  Create the config files
 
-```
+```bash
 cd docker/environments/
 cp .env.app.production.template .env.app.production
 cp .env.db.production.template .env.db.production
@@ -33,7 +33,7 @@ cp .env.db.production.template .env.db.production
 
 3. `.env.app.production`
 
-```
+```dotenv
  cat .env.app.production
 RAILS_ENV=production
 SECRET_KEY_BASE=use "bundle exec rake secret"
@@ -48,13 +48,13 @@ DB_PASSWORD=
 
 4. `.env.db.production`
 
-```
+```dotenv
 MYSQL_ROOT_PASSWORD=
 ```
 
 5. Install Ruby + Ruby Dependencies
 
-```
+```bash
 gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
 curl -sSL https://get.rvm.io | bash -s stable
 source ~/.rvm/scripts/rvm
@@ -65,14 +65,14 @@ gem install bundler
 
 6. If you don't already have a MySQL instance running and available, you can install that now as well:
 
-```
+```bash
 sudo apt install mariadb-client mariadb-server
 sudo mysql_secure_installation
 ```
 
 7. Then create the database:
 
-```
+```bash
 mysql -u root -p
 > create database standard_notes;
 > quit;
@@ -80,7 +80,7 @@ mysql -u root -p
 
 8. Install some Rubygems dependencies:
 
-```
+```bash
 gem install rubygems-update
 update_rubygems
 gem install passenger
@@ -88,7 +88,7 @@ gem install passenger
 
 9. Setup passenger / nginx
 
-```
+```bash
 sudo apt install libcurl4-openssl-dev
 passenger-install-nginx-module
 passenger-config validate-install
@@ -100,7 +100,7 @@ This will install a second copy of nginx for passenger / ruby applications. In o
 
 `cd` back into the folder where you have the server repo cloned and run the following:
 
-```
+```bash
 bundle install
 rails assets:precompile
 ```
@@ -109,7 +109,7 @@ rails assets:precompile
 
 And paste in the following template:
 
-```
+```dotenv
 RAILS_ENV=production
 SECRET_KEY_BASE=use "bundle exec rake secret"
 
@@ -122,13 +122,13 @@ DB_PASSWORD=
 
 12. Setup the database
 
-```
+```bash
 rails db:migrate
 ```
 
 14. Start nginx
 
-```
+```bash
 /opt/nginx/sbin/nginx
 ```
 

@@ -52,7 +52,7 @@ In addition to the ZBT-1 Nabu Casa adapter and the Espressif dev board, Thread B
 
 Since my Homeassistant instance is running in a VM on my Proxmox box, I ensured there are a few Linux kernel networking settings set as well. First, in the Proxmox instance's firewall settings, even if the firewall is disabled, ensure you've enabled the `accept_ra` option. Then, in the Homeassistant VM I set the following sysctl parameters:
 
-```
+```bash
 net.ipv4.ip_forward = 1
 net.ipv6.conf.all.forwarding = 1
 net.ipv6.conf.all.accept_ra = 2
@@ -154,7 +154,7 @@ Some other notes that I didn't know where to put here, but that I found helpful 
 - Homeassistant will run its own mDNS daemon, so I disabled the `avahi-daemon` systemd service on the host to avoid interference there and disabled mDNS in the `systemd-resolved` config as well.
 - There are many IPv6 multicast addresses that you can ping to get a response from certain device types which can be useful for debugging to see if devices can see one another. Some of the useful ones include:
 
-  ```
+  ```text
   ff02::1			          all nodes
   ff02::2			          all routers
   ff02::f			          UPNP (Universal Plug and Play) devices

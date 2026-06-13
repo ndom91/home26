@@ -23,7 +23,7 @@ The default network is `172.17.0.0/24`, however if you have multiple containers 
 
 Finally, once you've confirmed the network your container is on, add these rules to iptables:
 
-```
+```bash
 iptables -t nat -I PREROUTING -i docker0 -d 172.17.0.1 -p tcp --dport 3306 -j DNAT --to 127.0.0.1:3306
 iptables -t filter -I INPUT -i docker0 -d 127.0.0.1 -p tcp --dport 3306 -j ACCEPT
 ```
@@ -34,13 +34,13 @@ At this point, we should be able to route on our local machine on port `3306`. T
 
 For example, with wide open privileges, allowing the user `username` to connect from any host:
 
-```
+```sql
 CREATE USER 'username'@'%' IDENTIFIED BY 'password';
 ```
 
 Alternatively, you can lock it down a bit more and only allow `username` to connect from the Docker subnet:
 
-```
+```sql
 CREATE USER 'username'@'172.17.0.%' IDENTIFIED BY 'password';
 ```
 

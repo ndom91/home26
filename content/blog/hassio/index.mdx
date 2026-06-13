@@ -19,14 +19,14 @@ Quick wrap up of how to install HomeAssistant on a fresh RaspberryPi OS (32-bit)
 
 First, setup your OS and run an update:
 
-```
+```bash
 sudo apt update
 sudo apt upgrade -y
 ```
 
 Once everything is up to date, we can begin installing prerequisites.
 
-```
+```bash
 add-apt-repository universe
 apt-get install -y apparmor-utils apt-transport-https avahi-daemon ca-certificates curl dbus jq network-manager socat software-properties-common
 curl -sSL https://get.docker.com | sh
@@ -34,14 +34,14 @@ curl -sSL https://get.docker.com | sh
 
 Then we have to disable ModemManager
 
-```
+```bash
 systemctl disable ModemManager
 apt-get purge modemmanager
 ```
 
 And finally, we can run the HomeAssistant provided install script for the Docker based supervisord installation:
 
-```
+```bash
 curl -sL https://gist.githubusercontent.com/ndom91/0b285844bbe0ed2fff2eb1c8f0c80dd7/raw/48335557bdb71feea110579c86e3148d99f0000a/hassio-supervisor-installer.sh | bash -s
 ```
 
@@ -55,7 +55,7 @@ You can watch the progress by running, `sudo docker logs -f hassio_supervisor`.
 
 Once all of the following containers are up and running, you can open `http://[ip]:8123` to reach the web interface.
 
-```
+```text
 CONTAINER ID        IMAGE                                                  COMMAND                  CREATED              STATUS              PORTS               NAMES
 8a45e312f9e6        homeassistant/raspberrypi4-homeassistant:landingpage   /init                  About a minute ago   Up About a minute                       homeassistant
 b39de794b980        homeassistant/armv7-hassio-multicast:2                 /init                  3 minutes ago        Up 3 minutes                            hassio_multicast

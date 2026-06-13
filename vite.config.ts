@@ -16,6 +16,14 @@ import { defineConfig } from 'vite'
 import { mermaidPlugin } from './src/lib/mermaid-vite'
 import { remarkMermaid } from './src/lib/remark-mermaid'
 
+function useFilenameAsCodeTitle(meta: string) {
+  if (/\btitle=/.test(meta)) {
+    return meta
+  }
+
+  return meta.replace(/\bfilename=(['"])(.*?)\1/, 'title="$2"')
+}
+
 const config = defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [
@@ -48,6 +56,7 @@ const config = defineConfig({
                 light: 'github-light',
                 dark: 'github-dark',
               },
+              filterMetaString: useFilenameAsCodeTitle,
             },
           ],
           rehypeMdxImportMedia,

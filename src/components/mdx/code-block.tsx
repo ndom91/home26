@@ -1,5 +1,7 @@
-import type { ReactNode } from 'react'
-import { isValidElement, useState } from 'react'
+import type { ComponentPropsWithoutRef, ReactNode } from 'react'
+import { createContext, isValidElement, useContext, useState } from 'react'
+
+const CodeBlockContext = createContext(false)
 
 function getNodeText(node: ReactNode): string {
   if (node === null || node === undefined || typeof node === 'boolean') {
@@ -56,8 +58,8 @@ export function CodeBlock({ children, title }: { children?: ReactNode; title?: s
           {copyState === 'copied' ? 'Copied' : copyState === 'failed' ? 'Failed' : 'Copy'}
         </button>
       </figcaption>
-      <div className="[&_pre]:m-0! [&_pre]:rounded-none! [&_pre]:border-0! [&_pre]:shadow-none! [&_figure]:my-0!">
-        {children}
+      <div className="code-block-body [&_pre]:m-0! [&_pre]:rounded-none! [&_pre]:border-0! [&_pre]:shadow-none! [&_figure]:my-0!">
+        <CodeBlockContext.Provider value={true}>{children}</CodeBlockContext.Provider>
       </div>
     </figure>
   )
@@ -65,4 +67,79 @@ export function CodeBlock({ children, title }: { children?: ReactNode; title?: s
 
 export function CodeEditor(props: { children?: ReactNode; title?: string }) {
   return <CodeBlock {...props} />
+}
+
+function getNodeLanguage(node: ReactNode): string | undefined {
+  if (Array.isArray(node)) {
+    for (const child of node) {
+      const language = getNodeLanguage(child)
+      if (language) {
+        return language
+      }
+    }
+
+    return undefined
+  }
+
+  if (!isValidElement<Record<string, unknown>>(node)) {
+    return undefined
+  }
+
+  const language = node.props['data-language']
+  if (typeof language === 'string' && language) {
+    return language
+  }
+
+  return getNodeLanguage(node.props.children as ReactNode)
+}
+
+function isPrettyCodeTitleNode(node: ReactNode) {
+  return (
+    isValidElement<Record<string, unknown>>(node) &&
+    Object.hasOwn(node.props, 'data-rehype-pretty-code-title')
+  )
+}
+
+function getPrettyCodeTitle(node: ReactNode): string | undefined {
+  if (Array.isArray(node)) {
+    for (const child of node) {
+      const title = getPrettyCodeTitle(child)
+      if (title) {
+        return title
+      }
+    }
+
+    return undefined
+  }
+
+  if (isPrettyCodeTitleNode(node)) {
+    return getNodeText(node).trim()
+  }
+
+  return undefined
+}
+
+function withoutPrettyCodeTitle(node: ReactNode): ReactNode {
+  if (Array.isArray(node)) {
+    return node.filter((child) => !isPrettyCodeTitleNode(child))
+  }
+
+  return isPrettyCodeTitleNode(node) ? null : node
+}
+
+export function CodeFigure({ children, ...props }: ComponentPropsWithoutRef<'figure'>) {
+  const isInsideCodeBlock = useContext(CodeBlockContext)
+  const isPrettyCodeFigure = Object.hasOwn(props, 'data-rehype-pretty-code-figure')
+
+  if (!isPrettyCodeFigure || isInsideCodeBlock) {
+    return <figure {...props}>{children}</figure>
+  }
+
+  const title = getPrettyCodeTitle(children) ?? getNodeLanguage(children)
+
+  return (
+    <CodeBlock title={title}>
+      <figure {...props}>{withoutPrettyCodeTitle(children)}</figure>
+    </CodeBlock>
+  )
 }
