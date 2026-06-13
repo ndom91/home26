@@ -118,6 +118,7 @@ export function AsciiGlobe() {
     }
 
     const pointer = { x: 0, y: 0, tx: 0, ty: 0, vx: 0, vy: 0 }
+    const orientation = { x: 0, y: 0, tx: 0, ty: 0, vx: 0, vy: 0 }
     const scrollSpring = { x: 0, y: 0, vx: 0, vy: 0 }
     let animationFrame = 0
     let width = 1
@@ -166,10 +167,10 @@ export function AsciiGlobe() {
       const nextX = clamp((event.gamma - orientationBaseline.gamma) / 42, -0.48, 0.48)
       const nextY = clamp((event.beta - orientationBaseline.beta) / 52, -0.48, 0.48)
 
-      pointer.vx += (nextX - pointer.tx) * 0.12
-      pointer.vy += (nextY - pointer.ty) * 0.12
-      pointer.tx = nextX
-      pointer.ty = nextY
+      orientation.vx += (nextX - orientation.tx) * 0.12
+      orientation.vy += (nextY - orientation.ty) * 0.12
+      orientation.tx = nextX
+      orientation.ty = nextY
     }
 
     const draw = (time: number) => {
@@ -178,6 +179,8 @@ export function AsciiGlobe() {
       previousTime = time
       pointer.x += (pointer.tx - pointer.x) * 0.045
       pointer.y += (pointer.ty - pointer.y) * 0.045
+      orientation.x += (orientation.tx - orientation.x) * 0.045
+      orientation.y += (orientation.ty - orientation.y) * 0.045
       scrollSpring.vx += -scrollSpring.x * 0.018 * delta
       scrollSpring.vy += -scrollSpring.y * 0.018 * delta
       scrollSpring.vx *= 1 - Math.min(0.18, 0.06 * delta)
@@ -186,11 +189,12 @@ export function AsciiGlobe() {
       scrollSpring.y += scrollSpring.vy * delta
 
       const rotY =
-        (reduceMotion.matches ? 0.25 : t * 0.105) +
-        pointer.x * 0.24 +
-        pointer.vx * 0.08 +
+        0.25 +
+        (reduceMotion.matches ? 0 : t * 0.035) +
+        orientation.x * 0.24 +
+        orientation.vx * 0.08 +
         scrollSpring.x
-      const rotX = pointer.y * -0.18 + pointer.vy * -0.05 + scrollSpring.y
+      const rotX = orientation.y * -0.18 + orientation.vy * -0.05 + scrollSpring.y
       const cosY = Math.cos(rotY)
       const sinY = Math.sin(rotY)
       const cosX = Math.cos(rotX)
@@ -218,7 +222,7 @@ export function AsciiGlobe() {
         const z2 = point.y * sinX + z1 * cosX
         const distance = Math.hypot(x1 - pointer.x * 1.05, y1 + pointer.y * 1.05)
         const influence = Math.max(0, 1 - distance / 0.86)
-        const warp = 1 + influence * 0.08 + Math.sin(t * 1.2 + point.seed) * 0.006
+        const warp = 1 + influence * 0.08 + Math.sin(point.seed) * 0.006
         const perspective = 1.34 / (1.95 - z2 * 0.55)
         const sx = centerX + x1 * scale * perspective * warp
         const sy = centerY + y1 * scale * perspective * warp
@@ -243,6 +247,8 @@ export function AsciiGlobe() {
 
       pointer.vx *= 0.86
       pointer.vy *= 0.86
+      orientation.vx *= 0.86
+      orientation.vy *= 0.86
       animationFrame = window.requestAnimationFrame(draw)
     }
 
