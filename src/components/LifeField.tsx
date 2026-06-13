@@ -142,6 +142,7 @@ export function LifeField() {
     let width = 1
     let height = 1
     let running = false
+    let initialized = false
     let grid = new Uint8Array(1)
     let next = new Uint8Array(1)
     let heat = new Float32Array(1)
@@ -236,30 +237,63 @@ export function LifeField() {
     const resize = () => {
       const rect = root.getBoundingClientRect()
       const ratio = Math.min(window.devicePixelRatio || 1, 2)
+      const nextWidth = Math.max(1, Math.floor(rect.width))
+      const nextHeight = Math.max(1, Math.floor(rect.height))
+      const nextCols = Math.max(1, Math.ceil(nextWidth / CELL_SIZE))
+      const nextRows = Math.max(1, Math.ceil(nextHeight / CELL_SIZE))
 
-      width = Math.max(1, Math.floor(rect.width))
-      height = Math.max(1, Math.floor(rect.height))
-      cols = Math.max(1, Math.ceil(width / CELL_SIZE))
-      rows = Math.max(1, Math.ceil(height / CELL_SIZE))
+      width = nextWidth
+      height = nextHeight
       canvas.width = Math.floor(width * ratio)
       canvas.height = Math.floor(height * ratio)
       context.setTransform(ratio, 0, 0, ratio, 0, 0)
 
-      grid = new Uint8Array(cols * rows)
-      next = new Uint8Array(cols * rows)
-      heat = new Float32Array(cols * rows)
-      seedGrid(grid, cols, rows, seed)
+      if (!initialized) {
+        cols = nextCols
+        rows = nextRows
+        grid = new Uint8Array(cols * rows)
+        next = new Uint8Array(cols * rows)
+        heat = new Float32Array(cols * rows)
+        seedGrid(grid, cols, rows, seed)
 
-      for (let generation = 0; generation < WARMUP_GENERATIONS; generation += 1) {
-        stepGrid(grid, next, cols, rows)
+        for (let generation = 0; generation < WARMUP_GENERATIONS; generation += 1) {
+          stepGrid(grid, next, cols, rows)
 
-        const previous = grid
-        grid = next
-        next = previous
+          const previous = grid
+          grid = next
+          next = previous
+        }
+
+        for (let index = 0; index < grid.length; index += 1) {
+          heat[index] = grid[index]
+        }
+
+        initialized = true
+        draw()
+        return
       }
 
-      for (let index = 0; index < grid.length; index += 1) {
-        heat[index] = grid[index]
+      if (nextCols !== cols || nextRows !== rows) {
+        const previousGrid = grid
+        const previousHeat = heat
+        const previousCols = cols
+        const previousRows = rows
+        const copyCols = Math.min(previousCols, nextCols)
+        const copyRows = Math.min(previousRows, nextRows)
+
+        cols = nextCols
+        rows = nextRows
+        grid = new Uint8Array(cols * rows)
+        next = new Uint8Array(cols * rows)
+        heat = new Float32Array(cols * rows)
+
+        for (let y = 0; y < copyRows; y += 1) {
+          const previousOffset = y * previousCols
+          const nextOffset = y * cols
+
+          grid.set(previousGrid.subarray(previousOffset, previousOffset + copyCols), nextOffset)
+          heat.set(previousHeat.subarray(previousOffset, previousOffset + copyCols), nextOffset)
+        }
       }
 
       draw()
