@@ -16,6 +16,7 @@ type DeviceOrientationEventConstructorWithPermission = typeof DeviceOrientationE
 const CHARS = Array.from('  .,:;i!+><*#%@')
 const ROWS = 54
 const COLS = 104
+const FRAME_INTERVAL = 1000 / 30
 
 function createPoints() {
   const points: GlobePoint[] = []
@@ -120,10 +121,11 @@ export function AsciiGlobe() {
     const pointer = { x: 0, y: 0, tx: 0, ty: 0, vx: 0, vy: 0 }
     const orientation = { x: 0, y: 0, tx: 0, ty: 0, vx: 0, vy: 0 }
     const scrollSpring = { x: 0, y: 0, vx: 0, vy: 0 }
-    let animationFrame = 0
+    let animationTimer = 0
     let width = 1
     let height = 1
     let previousTime = 0
+    let running = false
     let orientationBaseline: { beta: number; gamma: number } | null = null
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
 
@@ -249,7 +251,44 @@ export function AsciiGlobe() {
       pointer.vy *= 0.86
       orientation.vx *= 0.86
       orientation.vy *= 0.86
-      animationFrame = window.requestAnimationFrame(draw)
+    }
+
+    const stop = () => {
+      running = false
+      window.clearTimeout(animationTimer)
+    }
+
+    const tick = () => {
+      if (!running) return
+
+      draw(performance.now())
+      animationTimer = window.setTimeout(tick, FRAME_INTERVAL)
+    }
+
+    const start = () => {
+      if (document.visibilityState === 'hidden') return
+
+      if (reduceMotion.matches) {
+        stop()
+        draw(performance.now())
+        return
+      }
+
+      if (running) return
+
+      running = true
+      previousTime = 0
+      draw(performance.now())
+      animationTimer = window.setTimeout(tick, FRAME_INTERVAL)
+    }
+
+    const syncRuntime = () => {
+      if (document.visibilityState === 'hidden') {
+        stop()
+        return
+      }
+
+      start()
     }
 
     resize()
@@ -257,18 +296,22 @@ export function AsciiGlobe() {
     observer.observe(root)
     window.addEventListener('pointermove', onPointerMove)
     window.addEventListener('wheel', onWheel, { passive: true })
+    document.addEventListener('visibilitychange', syncRuntime)
+    reduceMotion.addEventListener('change', syncRuntime)
 
     if (tiltEnabled) {
       window.addEventListener('deviceorientation', onDeviceOrientation)
     }
 
-    animationFrame = window.requestAnimationFrame(draw)
+    start()
 
     return () => {
-      window.cancelAnimationFrame(animationFrame)
+      stop()
       window.removeEventListener('pointermove', onPointerMove)
       window.removeEventListener('wheel', onWheel)
       window.removeEventListener('deviceorientation', onDeviceOrientation)
+      document.removeEventListener('visibilitychange', syncRuntime)
+      reduceMotion.removeEventListener('change', syncRuntime)
       observer.disconnect()
     }
   }, [tiltEnabled])
