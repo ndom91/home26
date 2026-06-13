@@ -42,7 +42,7 @@ const projects: Project[] = [
     tags: ['TanStack', 'Local LLM', 'Observability'],
   },
   {
-    title: 'Auth.js / next-auth',
+    title: 'next-auth (Auth.js)',
     blurb: (
       <>
         Go-to Next.js authentication library supporting more social signin providers than you can
