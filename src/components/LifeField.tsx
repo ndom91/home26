@@ -1,8 +1,7 @@
 import { useEffect, useRef } from 'react'
 
-const CELL_SIZE = 10
-const FRAME_INTERVAL = 420
-const MAX_GENERATIONS = 36
+const CELL_SIZE = 8
+const FRAME_INTERVAL = 620
 const GLIDER = [
   [1, 0],
   [2, 1],
@@ -62,17 +61,17 @@ function stampPattern(
   }
 }
 
-function seedGrid(grid: Uint8Array, cols: number, rows: number) {
+function seedGrid(grid: Uint8Array, cols: number, rows: number, seed: number) {
   grid.fill(0)
 
-  const random = createRandom((cols * 73856093) ^ (rows * 19349663) ^ 0x9e3779b9)
-  const activeCols = Math.max(1, Math.floor(cols * 0.64))
+  const random = createRandom(seed ^ (cols * 73856093) ^ (rows * 19349663))
+  const activeCols = Math.max(1, Math.floor(cols * 0.68))
 
   for (let y = 0; y < rows; y += 1) {
     for (let x = 0; x < activeCols; x += 1) {
       const drift = Math.sin(x * 0.23 + y * 0.17) + Math.cos(x * 0.11 - y * 0.19)
-      const edgeFade = 1 - Math.max(0, x / activeCols - 0.72) * 2.4
-      const threshold = Math.max(0, 0.036 + Math.max(0, drift) * 0.016) * edgeFade
+      const edgeFade = 1 - Math.max(0, x / activeCols - 0.78) * 2.8
+      const threshold = Math.max(0, 0.12 + Math.max(0, drift) * 0.028) * edgeFade
 
       if (random() < threshold) {
         setCell(grid, cols, rows, x, y)
@@ -135,13 +134,13 @@ export function LifeField() {
     if (!context) return
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const seed = window.crypto.getRandomValues(new Uint32Array(1))[0]
     let animationFrame = 0
     let cols = 1
     let rows = 1
     let width = 1
     let height = 1
     let lastStep = 0
-    let generation = 0
     let running = false
     let grid = new Uint8Array(1)
     let next = new Uint8Array(1)
@@ -174,8 +173,14 @@ export function LifeField() {
           const size = Math.max(1.4, CELL_SIZE * (alive ? 0.3 : 0.22) * glow)
           const inset = (CELL_SIZE - size) / 2
 
-          context.fillStyle = (x + y) % 11 === 0 ? accent : ink
-          context.globalAlpha = alive ? 0.12 + glow * 0.12 : glow * 0.052
+          const accentCell = alive && (x * 7 + y * 13) % 9 < 3
+
+          context.fillStyle = accentCell ? accent : ink
+          context.globalAlpha = alive
+            ? accentCell
+              ? 0.16 + glow * 0.16
+              : 0.11 + glow * 0.1
+            : glow * 0.048
           context.fillRect(x * CELL_SIZE + inset, y * CELL_SIZE + inset, size, size)
         }
       }
@@ -200,14 +205,8 @@ export function LifeField() {
 
       if (time - lastStep >= FRAME_INTERVAL) {
         step()
-        generation += 1
         draw()
         lastStep = time
-
-        if (generation >= MAX_GENERATIONS) {
-          stop()
-          return
-        }
       }
 
       animationFrame = window.requestAnimationFrame(tick)
@@ -219,12 +218,7 @@ export function LifeField() {
     }
 
     const start = () => {
-      if (
-        running ||
-        generation >= MAX_GENERATIONS ||
-        reduceMotion.matches ||
-        document.visibilityState === 'hidden'
-      ) {
+      if (running || reduceMotion.matches || document.visibilityState === 'hidden') {
         return
       }
 
@@ -258,8 +252,7 @@ export function LifeField() {
       grid = new Uint8Array(cols * rows)
       next = new Uint8Array(cols * rows)
       heat = new Float32Array(cols * rows)
-      generation = 0
-      seedGrid(grid, cols, rows)
+      seedGrid(grid, cols, rows, seed)
 
       for (let index = 0; index < grid.length; index += 1) {
         heat[index] = grid[index]
