@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 
 const CELL_SIZE = 8
-const FRAME_INTERVAL = 620
+const FRAME_INTERVAL = 1750
 const WARMUP_GENERATIONS = 3
 const GLIDER = [
   [1, 0],
@@ -179,9 +179,9 @@ export function LifeField() {
           context.fillStyle = accentCell ? accent : ink
           context.globalAlpha = alive
             ? accentCell
-              ? 0.16 + glow * 0.16
-              : 0.11 + glow * 0.1
-            : glow * 0.048
+              ? 0.11 + glow * 0.7
+              : 0.075 + glow * 0.075
+            : glow * 0.03
           context.fillRect(x * CELL_SIZE + inset, y * CELL_SIZE + inset, size, size)
         }
       }
@@ -295,7 +295,7 @@ export function LifeField() {
   return (
     <div
       ref={rootRef}
-      className="pointer-events-none absolute inset-0 z-0 size-full [mask-image:linear-gradient(90deg,#000_0_62%,transparent_82%)] [-webkit-mask-image:linear-gradient(90deg,#000_0_62%,transparent_82%)]"
+      className="pointer-events-none absolute inset-0 z-0 size-full"
       aria-hidden="true"
     >
       <canvas className="absolute inset-0 size-full" ref={canvasRef} />
