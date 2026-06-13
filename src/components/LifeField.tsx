@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 
 const CELL_SIZE = 8
-const FRAME_INTERVAL = 1750
+const FRAME_INTERVAL = 1250
 const WARMUP_GENERATIONS = 3
 const GLIDER = [
   [1, 0],
