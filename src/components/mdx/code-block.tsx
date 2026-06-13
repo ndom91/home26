@@ -65,10 +65,6 @@ export function CodeBlock({ children, title }: { children?: ReactNode; title?: s
   )
 }
 
-export function CodeEditor(props: { children?: ReactNode; title?: string }) {
-  return <CodeBlock {...props} />
-}
-
 function getNodeLanguage(node: ReactNode): string | undefined {
   if (Array.isArray(node)) {
     for (const child of node) {
