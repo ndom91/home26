@@ -11,10 +11,9 @@ So you’ve got your system up and running the way you like it, but your wonderi
 
 Lynis to the rescue!
 
-Lynis is an open-source auditing tool that will run through a ton a of vulnerability checks and general best practice type checks and give you a thorough summary of your system at the end.
-The best part is, its super easy to run and even automate with a cronjob 1/week or 1/month.
+Lynis is an open-source auditing tool that will run through a suite of common vulnerability checks and general best practices and give you a summary of your system's status and a list of recommendations.
 
-So lets get started!
+You're interested? Lets get started
 
 I like to run it out of /opt, so we’ll cd there.
 
@@ -22,9 +21,11 @@ I like to run it out of /opt, so we’ll cd there.
 cd /opt
 ```
 
-Then we’ll download the tool. Please check the [lynis download page](https://cisofy.com/downloads/lynis/) for the newest version
+Next, download the tool by checking the [lynis download page](https://cisofy.com/downloads/lynis/) for the newest version. In my case `2.6.2`.
 
+```bash
 sudo wget https://cisofy.com/files/lynis-2.6.2.tar.gz
+```
 
 and extract it
 
@@ -33,28 +34,24 @@ and extract it
  cd lynis
 ```
 
-And that was actually all there is to it!
+And that was all there is to it!
 
-You can run ./lynis now to run a scan.
+You can execute `./lynis` now to run a scan.
 
-Now of course this isn’t the end of your journey. I want to run this as a cronjob and email me the output.
+This isn’t the end of the journey, what if I want to run this as a cronjob and email me the output?
 
-So to run lynis as a cron job we’ll define the lynis command with the following options:
+To run lynis as a cron job we’ll define the lynis command with the following options:
 
 ```bash
 ./lynis audit system --cronjob
 ```
 
-Unfortunately that will only run lynis and dump a report file on our system. In order to have it email us the results we’ll have to write a little script.
+Unfortunately that will only run lynis and dump a report file on our local file system. In order to have it email us the results we’ll have to write a little script.
 
-I whipped up the following:
+I've whipped up the following:
 
 ```bash
-#!/bin/bash
-
-###################
-\# VARIABLES
-###################
+#!/usr/bin/env bash
 
 CURDATE=$(date '+%d-%m-%Y %H:%M')
 FILEDATE=$(date '+%d%m%Y')
@@ -73,15 +70,13 @@ Subject: Lynis Scan - $CURDATE
 $MAILCONTENT" | /usr/sbin/sendmail [to Address]
 ```
 
-This gets saved in, for example, lynis_mail.sh
-
-Don’t forget to mark this as executable:
+Save this script as `lynis_mail.sh` and don’t forget to mark it as executable:
 
 ```bash
 sudo chmod +x /path/to/your/script/lynis_mail.sh
 ```
 
-And finally, set your cronjob like this for example to run every Monday morning at 5:30 so you can browse it on your commute to work in the train 😉
+Finally, setup your cronjob to run, for example, every Monday morning at 5:30 so it's ready for you to browse on your commute to work 😂
 
 ```bash
 sudo crontab -e

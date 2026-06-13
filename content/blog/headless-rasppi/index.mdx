@@ -7,11 +7,13 @@ cover:
   imageFile: "./cover.png"
 ---
 
-When setting up a Raspberry Pi, you first need to write an OS onto an SD Card so your device has something to boot from.
+This is a quick run down of the steps I like to take to initialize a fresh Raspberry Pi. Mostly so I can find it again later, but maybe you'll find it useful too.
+
+The first step is downloading and writing an OS onto an SD Card so your device has something to boot from.
 
 ## Operating System
 
-To get your Pi up and running, first download an OS. For beginners I suggest Raspbian. Its a Debian based OS maintained by the Raspberry Pi Foundation.
+First, download an OS - for beginners I suggest Raspbian. Its a Debian based OS maintained by the Raspberry Pi Foundation.
 
 - [Download Overview Page](https://www.raspberrypi.org/downloads/raspbian/)
 
@@ -65,7 +67,7 @@ sudo dd if=2021-05-07-raspios-buster-arm64.img of=/dev/sdb status=progress
 
 - `if` = input file
 - `of` = output file
-- `status=progress` = required for showing output status as it writes the image
+- `status=progress` = show the write progress
 
 > `dd` is colloquially known as 'disk destroyer' because if you're not careful you can write over your entire active disk destroying your system.. So be careful what you enter on the command line with `dd`!
 
@@ -82,7 +84,7 @@ You can now add two small files to enable the SSH Server on boot, and connect to
 Create an empty file named `ssh` **without an extension** in the root of the <code>BOOT</code> partition
 
 ```bash
-cd /mnt/tmp
+cd /mnt/rpi-boot
 sudo touch ssh
 ```
 
@@ -93,7 +95,7 @@ Also in the root of the `BOOT` partition:
 Create a file named `wpa_supplicant.conf`.
 
 ```bash
-cd /mnt/tmp
+cd /mnt/rpi-boot
 sudo vim wpa_supplicant.conf
 ```
 
@@ -144,14 +146,14 @@ To add a new user, you can use `adduser`.
 sudo adduser [new username]
 ```
 
-This will open a step-by-step wizard type of process which begins by asking for the new password. Then it asks for Fullname, City, State, etc. these fields I always leave empty.
+This will open a multi-step wizard which begins by asking for the new password. Then it asks for Fullname, City, State, etc. these fields I always leave empty.
 
-You may also want to add your new user to the `suders` file in order to be able to use `sudo ..` commands.
+You may also want to give your new user sudo permissions to be able to run 'sudo ..' commands.
 
-With your preexisting `pi` user, run:
+Change to root with `su` and then execute:
 
 ```bash
-sudo usermod -aG sudo [new username]
+usermod -aG sudo [new username]
 ```
 
 Now your new user will be able to run `sudo ..` commands with their new password.
@@ -168,7 +170,7 @@ And adjust the lines for `127.0.0.1` and `127.0.1.1` to append your new hostname
 
 ### SSH Key
 
-To copy our SSH key to your new raspberry pi, you can use `ssh-copy-id`. You can specify which key to install on the new device with the `-i` flag.
+To copy our SSH key to your new raspberry pi, you can use `ssh-copy-id`. You can specify which key to install on the new device with the `-i` flag. From your main host (i.e. not the raspberry pi) run:
 
 ```bash
 ssh-copy-id -i ~/.ssh/id_ndo.pub pi@192.168.0.100
@@ -178,7 +180,7 @@ That's all there is to it!
 
 ### Static IP
 
-The latest version of RaspiOS is based upon Debian 10 Buster. To set a static IP there, we'll want to use `dhcpcd`. This systemd service and config is started by default in Buster, we'll just have to adjust some config files.
+The latest version of Raspbian is based upon Debian 10 Buster. To set a static IP there, we'll want to use `dhcpcd`. This systemd service and config is started by default in Buster, we'll just have to adjust some config files.
 
 ```bash
 sudo vim /etc/dhcpcd.conf
@@ -216,7 +218,7 @@ It may hang for a minute, but should come right back up because it will have ret
 >   user pi
 >   port 22
 >   PubKeyAuthentication yes
->   IdentityFile /home/ndo/.ssh/id_ndo4
+>   IdentityFile /home/ndo/.ssh/id_rsa
 > ```
 >
 > Now you can SSH onto your pi via `ssh ndo-docker`, for example!

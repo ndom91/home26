@@ -11,7 +11,7 @@ cover:
 
 So I've had some experience with the whole "serverless" thing over the past few months. A few cloudflare workers, a netlify function here or there to spice up a static site. But a full-on serverless function based project was not something I'd had experience with, until now.
 
-I recently took part in the German government's [#wirvsvirus](https://wirvsvirushackathon.org) Covid-19 hackathon. My team and I brainstormed for a while, and decided to create an API to provide data to other projects. Of course there were other APIs serving Covid-19 data already, but we wanted to make ours easy to use, with a flashy homepage and easy to digest examples. We even got 500 USD credit from Amazon from the hackathon organisers.
+I recently took part in the German government's [#wirvsvirus](https://wirvsvirushackathon.org) Covid-19 hackathon. My team and I brainstormed for a while, and decided to create an API to provide data to other projects. Of course there were other APIs serving Covid-19 data already, but we wanted to make ours easy to use, with a flashy homepage and easy to digest examples.
 
 ## Coffee #1
 
@@ -67,13 +67,13 @@ After the initial query, all Netlify and Lambda requests were served from the sa
 
 ![Performance screenshot](./performance.png)
 
-The Netlify functions, as you can see in the screenshot above, were often taking over 2! While the EC2 and classic Lambda versions were way more competitive around 200-500ms.
+The Netlify functions, as you can see in the screenshot above, were often taking over 2s! While the EC2 and classic Lambda versions were way more competitive around 200-500ms.
 
 I now had a conundrum - Netlify offered a great developer experience, but the end result had lackluster performance. AWS Lambda had great performance, but was a pain in the ass to develop on.
 
 ## Coffee #4
 
-Another coffee and a think weren't going to fix this one..
+Another coffee and a think weren't going to fix this.
 
 I decided to do some research and sleep on this one. The next morning I found a few different services built around making developing with AWS Lambda functions more palatable. One of which was [serverless](https://serverless.com). It was a bit of a pain to initially setup as it required an additional Cloudformation / Ansible like document to orchestrate the whole thing. But after that was setup and my AWS Account and Github were linked, `serverless` made the whole experience a breeze.
 
@@ -81,7 +81,7 @@ Unfortunately there was no nice local development tool like Netlify Dev that I c
 
 ## Summary
 
-It is obviously still fairly new and the ecosystem is still very fluid, with new services / frameworks / tools coming out constantly. Working with AWS directly is a pain in the ass, but performance is great. Therefore, if you're thinking about whether or not to try your next project as a serverless functions only project, I highly recommend you find a nice framework / tooling solution that wraps AWS, like `serverless` provides, and you're golden!
+Serverless is obviously still fairly new and the ecosystem is still maturing, with new services / frameworks / tools coming out constantly. Working with AWS directly is a pain in the ass, but performance is currently unbeatable. Therefore, if you're thinking about whether or not to try your next project as a serverless function-only project, I recommend you find a nice framework / tooling solution that wraps AWS, like `serverless` provides.
 
 ## Update (03.04.2020):
 
