@@ -12,6 +12,8 @@ cover:
 
 With all the hype surrounding DNS-over-HTTPS (DoH), I wanted to try it out for myself and see what it was all about.
 
+> Update: This is no longer live
+
 #### TL;DR
 
 I've setup another public DoH Server with the following conditions:
@@ -46,35 +48,27 @@ I only have access to one public IP, and this is being used by the host, Proxmox
 
 In general, the architecture ended up looking like this:
 
-```bash
-
-                                                        +-------------------------+
-                                                        |          DNS VM         |
-                                                        +-------------------------+
-
-                                                        +-------------------------+
-+--------------+                                        |  Unbound (DNS Resolver) |
-| PROXMOX HOST |                                        |      127.0.0.1:5083     |
-+-------+------+                                        +------------+------------+
-                                                                     |
-                                                         +-----------+------------+
-+-------+-------+                                        |        localhost       |
-|     NGINX     |                                        |      8083 -> 5083      |
-| listening 443 |                                        +-----------+------------+
-+-------+-------+                                                    |
-        |         +-----------------------------------+  +-----------+--------------+
-+-------+------+  |       Internal Proxmox Network    |  |   dns-over-https server  |
-|  dns.ndo.dev +--+ 127.0.0.1:443 -> 192.168.1.2:8083 +--+    listening on 8083     |
-+--------------+  +-----------------------------------+  +--------------------------+
+```mermaid
+flowchart LR
+  Client["Client"]
+  subgraph host["Proxmox Host · public IP"]
+    NGINX["NGINX<br/>dns.ndo.dev<br/>:443 · TLS terminate"]
+  end
+  subgraph vm["DNS VM · 192.168.1.2"]
+    direction TB
+    DOH["dns-over-https<br/>:8083"]
+    UNBOUND["Unbound resolver<br/>127.0.0.1:5083"]
+  end
+  Client -->|"HTTPS /dns-query"| NGINX
+  NGINX -->|"proxy → :8083"| DOH
+  DOH -->|":8083 → :5083"| UNBOUND
 ```
 
 nginx is running on the Proxmox host listening on ports 80 and 443, so when one visits the HTTPS URL at the path `/dns-query` nginx on the proxmox host first terminates the SSL connection and then proxies the request downstream to the VM. The VM is doing the actual work, running the `dns-over-https` server software as well as unbound, a classic DNS server.
 
 The request first goes to the DoH server which translates the request to an ordinary DNS request. This gets passed onto unbound which resolves it and passes it back up the chain and out the client who made the original request!
 
-🙏 Aforementioned tutorial: [bentasker.co.uk](https://www.bentasker.co.uk/documentation/linux/407-building-and-running-your-own-dns-over-https-server)
-
-#### I am reasonably commited to maintaining this public resolver unless the cost of maintenance becomes too high or people begin abusing it.
+Aforementioned tutorial: [bentasker.co.uk](https://www.bentasker.co.uk/documentation/linux/407-building-and-running-your-own-dns-over-https-server)
 
 ## Client
 
