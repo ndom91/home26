@@ -55,9 +55,11 @@ export function AsciiGlobe() {
   const [tiltEnabled, setTiltEnabled] = useState(false)
 
   useEffect(() => {
+    const root = rootRef.current
     const DeviceOrientation = window.DeviceOrientationEvent as
       | DeviceOrientationEventConstructorWithPermission
       | undefined
+    if (!root) return
     if (!DeviceOrientation) return
 
     const needsPermission = typeof DeviceOrientation?.requestPermission === 'function'
@@ -76,9 +78,9 @@ export function AsciiGlobe() {
     let requested = false
 
     function removePermissionListeners() {
-      window.removeEventListener('click', requestTiltPermission)
-      window.removeEventListener('pointerup', requestTiltPermission)
-      window.removeEventListener('touchend', requestTiltPermission)
+      root?.removeEventListener('click', requestTiltPermission)
+      root?.removeEventListener('pointerup', requestTiltPermission)
+      root?.removeEventListener('touchend', requestTiltPermission)
     }
 
     async function requestTiltPermission() {
@@ -97,9 +99,9 @@ export function AsciiGlobe() {
       }
     }
 
-    window.addEventListener('click', requestTiltPermission, { once: true })
-    window.addEventListener('pointerup', requestTiltPermission, { once: true })
-    window.addEventListener('touchend', requestTiltPermission, { once: true, passive: true })
+    root.addEventListener('click', requestTiltPermission, { once: true })
+    root.addEventListener('pointerup', requestTiltPermission, { once: true })
+    root.addEventListener('touchend', requestTiltPermission, { once: true, passive: true })
 
     return removePermissionListeners
   }, [])
