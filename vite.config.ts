@@ -21,7 +21,11 @@ function useFilenameAsCodeTitle(meta: string) {
     return meta
   }
 
-  return meta.replace(/\bfilename=(['"])(.*?)\1/, 'title="$2"')
+  return meta.replace(
+    /\bfilename=(?:"([^"]*)"|'([^']*)'|(\S+))/,
+    (_match, doubleQuoted?: string, singleQuoted?: string, unquoted?: string) =>
+      `title="${doubleQuoted ?? singleQuoted ?? unquoted ?? ''}"`
+  )
 }
 
 const config = defineConfig({
