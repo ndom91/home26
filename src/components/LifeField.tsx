@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 
 const CELL_SIZE = 8
 const FRAME_INTERVAL = 620
+const WARMUP_GENERATIONS = 3
 const GLIDER = [
   [1, 0],
   [2, 1],
@@ -253,6 +254,14 @@ export function LifeField() {
       next = new Uint8Array(cols * rows)
       heat = new Float32Array(cols * rows)
       seedGrid(grid, cols, rows, seed)
+
+      for (let generation = 0; generation < WARMUP_GENERATIONS; generation += 1) {
+        stepGrid(grid, next, cols, rows)
+
+        const previous = grid
+        grid = next
+        next = previous
+      }
 
       for (let index = 0; index < grid.length; index += 1) {
         heat[index] = grid[index]
