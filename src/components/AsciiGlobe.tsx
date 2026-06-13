@@ -55,11 +55,10 @@ export function AsciiGlobe() {
   const [tiltEnabled, setTiltEnabled] = useState(false)
 
   useEffect(() => {
-    const root = rootRef.current
     const DeviceOrientation = window.DeviceOrientationEvent as
       | DeviceOrientationEventConstructorWithPermission
       | undefined
-    if (!root) return
+    if (!rootRef.current) return
     if (!DeviceOrientation) return
 
     const needsPermission = typeof DeviceOrientation?.requestPermission === 'function'
@@ -67,43 +66,10 @@ export function AsciiGlobe() {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     if (reduceMotion) return
-
-    if (!needsPermission) {
-      setTiltEnabled(true)
-      return
-    }
-
+    if (needsPermission) return
     if (!isCoarsePointer) return
 
-    let requested = false
-
-    function removePermissionListeners() {
-      root?.removeEventListener('click', requestTiltPermission)
-      root?.removeEventListener('pointerup', requestTiltPermission)
-      root?.removeEventListener('touchend', requestTiltPermission)
-    }
-
-    async function requestTiltPermission() {
-      if (requested) return
-      requested = true
-      removePermissionListeners()
-
-      try {
-        const permission = await DeviceOrientation?.requestPermission?.()
-
-        if (permission === 'granted') {
-          setTiltEnabled(true)
-        }
-      } catch {
-        // Keep the globe as pointer/ambient-only when motion access is denied or unavailable.
-      }
-    }
-
-    root.addEventListener('click', requestTiltPermission, { once: true })
-    root.addEventListener('pointerup', requestTiltPermission, { once: true })
-    root.addEventListener('touchend', requestTiltPermission, { once: true, passive: true })
-
-    return removePermissionListeners
+    setTiltEnabled(true)
   }, [])
 
   useEffect(() => {
