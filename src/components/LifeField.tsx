@@ -136,12 +136,11 @@ export function LifeField() {
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
     const seed = window.crypto.getRandomValues(new Uint32Array(1))[0]
-    let animationFrame = 0
+    let generationTimer = 0
     let cols = 1
     let rows = 1
     let width = 1
     let height = 1
-    let lastStep = 0
     let running = false
     let grid = new Uint8Array(1)
     let next = new Uint8Array(1)
@@ -201,21 +200,18 @@ export function LifeField() {
       }
     }
 
-    const tick = (time: number) => {
+    const tick = () => {
       if (!running) return
 
-      if (time - lastStep >= FRAME_INTERVAL) {
-        step()
-        draw()
-        lastStep = time
-      }
+      step()
+      draw()
 
-      animationFrame = window.requestAnimationFrame(tick)
+      generationTimer = window.setTimeout(tick, FRAME_INTERVAL)
     }
 
     const stop = () => {
       running = false
-      window.cancelAnimationFrame(animationFrame)
+      window.clearTimeout(generationTimer)
     }
 
     const start = () => {
@@ -224,8 +220,7 @@ export function LifeField() {
       }
 
       running = true
-      lastStep = 0
-      animationFrame = window.requestAnimationFrame(tick)
+      generationTimer = window.setTimeout(tick, FRAME_INTERVAL)
     }
 
     const syncRuntime = () => {
