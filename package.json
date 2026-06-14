@@ -32,7 +32,7 @@
     "deploy": "wrangler deploy && (pnpm run warm || true)",
     "cf:typegen": "wrangler types",
     "cf:logs": "pnpm wrangler tail home26",
-    "test": "vitest run",
+    "test": "vitest run --config vitest.config.ts",
     "typecheck": "content-collections build && tsgo --noEmit",
     "lint": "pnpm biome check",
     "lint:fix": "pnpm run lint --write",

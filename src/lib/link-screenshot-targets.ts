@@ -13,12 +13,16 @@ import { normalizeLinkScreenshotTarget } from './link-screenshot.ts'
 // Matches `url="..."` / `url={'...'}` / `url={"..."}` on a <ScreenshotLink> tag.
 const SCREENSHOT_LINK_URL = /<ScreenshotLink[^>]*?\burl=\{?["']([^"']+)["']\}?/g
 
+function trimTrailingUrlPunctuation(url: string) {
+  return url.replace(/[.,;:!?]+$/, '')
+}
+
 export function collectBlogLinkTargets(content: string): string[] {
   const contentWithoutCodeBlocks = content.replace(/```[\s\S]*?```/g, '')
   const urls = new Set<string>()
 
   for (const match of contentWithoutCodeBlocks.matchAll(/https?:\/\/[^\s<>'"`)\]}]+/g)) {
-    const normalizedUrl = normalizeLinkScreenshotTarget(match[0])
+    const normalizedUrl = normalizeLinkScreenshotTarget(trimTrailingUrlPunctuation(match[0]))
 
     if (normalizedUrl) {
       urls.add(normalizedUrl)
