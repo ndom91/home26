@@ -86,7 +86,7 @@ function BlogPost() {
                 Field Note / {meta.publishedAt.slice(0, 4)}
               </p>
               <h1
-                className="text-balance font-heading max-w-4xl text-[min(clamp(2.15rem,4.2vw,3.55rem),calc(100cqi/var(--title-fit-em)))] font-extrabold uppercase leading-[0.94] tracking-[-0.08em] text-blog-text wrap-break-word"
+                className="text-balance font-heading max-w-4xl text-[min(clamp(2.15rem,4.2vw,3.55rem),calc(100cqi/var(--title-fit-em)))] font-extrabold uppercase leading-[0.94] tracking-normal text-blog-text wrap-break-word"
                 style={{ '--title-fit-em': longestWordEm(meta.title) } as CSSProperties}
               >
                 {meta.title}
@@ -234,7 +234,7 @@ function ArticleNavLink({
         <p className="font-mono mb-4 text-[9px] uppercase tracking-widest text-blog-faint transition-colors group-hover:text-blog-accent">
           {isNext ? 'Next article' : 'Prev article'}
         </p>
-        <h2 className="text-balance font-heading text-xl font-extrabold uppercase leading-[0.95] tracking-[-0.04em] text-blog-text transition-colors group-hover:text-blog-accent sm:text-2xl">
+        <h2 className="text-balance font-heading text-xl font-extrabold uppercase leading-[0.95] text-blog-text transition-colors group-hover:text-blog-accent sm:text-4xl">
           {post.title}
         </h2>
         <p className="mt-4 line-clamp-2 font-reading text-sm leading-6 text-blog-description">

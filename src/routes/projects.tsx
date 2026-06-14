@@ -41,11 +41,11 @@ function Projects() {
             ))}
           </div>
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end">
-            <h1 className="font-heading min-w-0 text-[clamp(3rem,9vw,7.5rem)] font-extrabold uppercase leading-none tracking-[-0.04em] text-blog-text">
+            <h1 className="font-heading min-w-0 text-[clamp(4rem,10vw,12rem)] font-extrabold uppercase leading-none tracking-normal text-blog-text">
               BUILD
             </h1>
             <div className="border-l border-rule pl-4 lg:pb-3">
-              <p className="text-sm leading-6 text-muted">
+              <p className="font-reading text-sm leading-6 text-muted">
                 Some experiments survived contact with production. These are those — the tools, side
                 quests, and libraries that earned a spot.
               </p>

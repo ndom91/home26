@@ -25,7 +25,7 @@ function BlogIndex() {
             ARCHIVE
           </p>
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end">
-            <h1 className="text-balance font-heading min-w-0 text-[clamp(3rem,9vw,7.5rem)] font-extrabold uppercase leading-none tracking-[-0.04em] text-blog-text">
+            <h1 className="text-balance font-heading min-w-0 text-[clamp(4rem,10vw,12rem)] font-extrabold uppercase leading-none tracking-normal text-blog-text">
               WRITE
             </h1>
             <div className="border-l border-blog-rule pl-4 lg:pb-4">
@@ -61,7 +61,7 @@ function BlogIndex() {
                       LATEST ENTRY
                     </p>
                     <h2
-                      className="text-balance font-heading text-[min(clamp(1.7rem,3vw,3.25rem),calc(100cqi/var(--title-fit-em)))] font-extrabold uppercase leading-[0.9] tracking-[-0.08em] text-blog-accent wrap-break-word"
+                      className="text-balance font-heading text-[min(clamp(1.7rem,3vw,3.25rem),calc(100cqi/var(--title-fit-em)))] font-extrabold uppercase leading-[0.9] tracking-normal text-blog-accent wrap-break-word"
                       style={
                         { '--title-fit-em': longestWordEm(featuredPost.title) } as CSSProperties
                       }
@@ -108,7 +108,7 @@ function BlogIndex() {
                   ) : null}
                   <div className="flex flex-1 flex-col p-4">
                     <PostCardMeta post={post} />
-                    <h2 className="mt-4 text-balance font-heading text-base font-medium leading-snug text-blog-accent">
+                    <h2 className="mt-4 text-balance font-heading-thin font-bold text-[2.2rem] uppercase text-blog-accent">
                       {post.title}
                     </h2>
                     <p className="mt-3 font-reading text-sm leading-6 text-blog-description">

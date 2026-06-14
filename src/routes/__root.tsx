@@ -36,6 +36,13 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
       { rel: 'preconnect', href: 'https://fonts.gstatic.com' },
       {
+        rel: 'preload',
+        href: '/manuka-bold.ttf',
+        as: 'font',
+        type: 'font/ttf',
+        crossOrigin: 'anonymous',
+      },
+      {
         rel: 'stylesheet',
         href: appCss,
       },

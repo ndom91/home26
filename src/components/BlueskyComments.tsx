@@ -96,7 +96,7 @@ export function BlueskyComments({ atprotoUri }: { atprotoUri: string }) {
           </p>
           <h2
             id="bluesky-comments-heading"
-            className="text-balance font-heading text-2xl font-extrabold uppercase tracking-[-0.03em] text-blog-text"
+            className="text-balance font-heading text-4xl font-extrabold uppercase tracking-normal text-blog-text"
           >
             On the Atmosphere
           </h2>
