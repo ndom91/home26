@@ -517,6 +517,18 @@ html[data-theme='dark'] .mermaid-dark {
   content: none;
 }
 
+/* Plain <details>/<summary> — Tailwind Typography doesn't theme summary.
+   Callout summaries keep their accent via the higher-specificity .callout-title. */
+.prose summary {
+  color: var(--color-blog-text);
+  cursor: pointer;
+}
+
+/* List markers (ul bullets + ol numbers) — Tailwind Typography's default is off-theme. */
+.prose li::marker {
+  color: var(--color-blog-accent);
+}
+
 /* Callouts (rehype-callouts, github theme markup) */
 .prose .callout {
   --callout-accent: var(--color-blog-accent);
