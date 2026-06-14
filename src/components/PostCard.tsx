@@ -25,7 +25,7 @@ export function PostCard({ post, eager = false }: { post: PostListItem; eager?: 
         <h2 className="mt-4 text-pretty font-heading font-bold text-[2.2rem] leading-[0.95] text-blog-accent">
           {post.title}
         </h2>
-        <p className="mt-3 font-reading text-sm leading-6 text-blog-description">
+        <p className="mt-3 mb-5 font-reading text-sm leading-6 text-blog-description">
           {post.description}
         </p>
         <div className="font-mono mt-auto flex items-center justify-between border-t border-blog-rule pt-3 text-[10px] uppercase tracking-widest text-blog-muted transition-colors group-hover:text-blog-accent">
