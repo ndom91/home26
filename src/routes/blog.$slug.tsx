@@ -86,12 +86,12 @@ function BlogPost() {
                 Field Note / {meta.publishedAt.slice(0, 4)}
               </p>
               <h1
-                className="text-balance font-heading max-w-4xl text-[min(clamp(2.15rem,4.2vw,3.55rem),calc(100cqi/var(--title-fit-em)))] font-extrabold uppercase leading-[0.94] tracking-normal text-blog-text wrap-break-word"
+                className="text-balance font-heading max-w-4xl text-[min(clamp(2.15rem,5.5vw,6.55rem),calc(100cqi/var(--title-fit-em)))] font-extrabold uppercase leading-[0.94] tracking-normal text-blog-text wrap-break-word"
                 style={{ '--title-fit-em': longestWordEm(meta.title) } as CSSProperties}
               >
                 {meta.title}
               </h1>
-              <p className="mt-5 max-w-2xl font-reading text-base leading-7 text-blog-description sm:text-lg sm:leading-8">
+              <p className="mt-5 max-w-xl font-reading text-base leading-7 text-blog-description sm:text-md sm:leading-8">
                 {meta.description}
               </p>
               <div className="mt-7 border-l border-blog-rule pl-4">

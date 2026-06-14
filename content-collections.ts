@@ -74,7 +74,7 @@ function descriptionFromContent(content: string) {
     return 'Notes from the archive.'
   }
 
-  return firstParagraph
+  const description = firstParagraph
     .replace(/<([A-Z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/g, '$2')
     .replace(/<[^>]+>/g, '')
     .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
@@ -82,7 +82,42 @@ function descriptionFromContent(content: string) {
     .replace(/[`*_>#]/g, '')
     .replace(/\s+/g, ' ')
     .trim()
-    .slice(0, 180)
+
+  return excerptCompleteSentences(description)
+}
+
+function excerptCompleteSentences(text: string, targetLength = 180) {
+  if (text.length <= targetLength) {
+    return text
+  }
+
+  const sentenceEnd = /[.!?](?:["')\]]+)?(?=\s|$)/g
+  let lastEndBeforeTarget = 0
+  let firstEnd = 0
+
+  for (const match of text.matchAll(sentenceEnd)) {
+    const end = match.index + match[0].length
+
+    if (isDottedAbbreviation(text.slice(0, end))) {
+      continue
+    }
+
+    firstEnd ||= end
+
+    if (end > targetLength) {
+      break
+    }
+
+    lastEndBeforeTarget = end
+  }
+
+  const end = lastEndBeforeTarget || firstEnd
+
+  return end ? text.slice(0, end).trim() : text
+}
+
+function isDottedAbbreviation(textBeforeBoundary: string) {
+  return /(?:^|\s)(?:e\.g|i\.e|vs|mr|mrs|ms|dr|prof|sr|jr)\.$/i.test(textBeforeBoundary)
 }
 
 function linkScreenshotUrlsFromContent(content: string) {
