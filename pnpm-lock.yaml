@@ -11,9 +11,6 @@ importers:
       '@cloudflare/vite-plugin':
         specifier: 1.36.3
         version: 1.36.3(vite@8.0.11(@types/node@22.19.18)(esbuild@0.27.3)(jiti@2.7.0)(yaml@2.8.4))(workerd@1.20260507.1)(wrangler@4.90.0)
-      '@mdx-js/react':
-        specifier: 3.1.1
-        version: 3.1.1(@types/react@19.2.14)(react@19.2.6)
       '@mdx-js/rollup':
         specifier: 3.1.1
         version: 3.1.1(rollup@4.60.3)
@@ -44,9 +41,6 @@ importers:
       '@tanstack/router-plugin':
         specifier: 1.167.35
         version: 1.167.35(@tanstack/react-router@1.169.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(vite@8.0.11(@types/node@22.19.18)(esbuild@0.27.3)(jiti@2.7.0)(yaml@2.8.4))
-      gray-matter:
-        specifier: 4.0.3
-        version: 4.0.3
       lucide-react:
         specifier: 0.545.0
         version: 0.545.0(react@19.2.6)
@@ -955,12 +949,6 @@ packages:
 
   '@mdx-js/mdx@3.1.1':
     resolution: {integrity: sha512-f6ZO2ifpwAQIpzGWaBQT2TXxPv6z3RBzQKpVftEWN78Vl/YweF1uwussDx8ECAXVtr3Rs89fKyG9YlzUs9DyGQ==}
-
-  '@mdx-js/react@3.1.1':
-    resolution: {integrity: sha512-f++rKLQgUVYDAtECQ6fn/is15GkEH9+nZPM3MS0RcxVqoTfawHvDlSCH7JbMhAM6uJ32v3eXLvLmLvjGu7PTQw==}
-    peerDependencies:
-      '@types/react': '>=16'
-      react: '>=16'
 
   '@mdx-js/rollup@3.1.1':
     resolution: {integrity: sha512-v8satFmBB+DqDzYohnm1u2JOvxx6Hl3pUvqzJvfs2Zk/ngZ1aRUhsWpXvwPkNeGN9c2NCm/38H29ZqXQUjf8dw==}
@@ -3908,12 +3896,6 @@ snapshots:
       vfile: 6.0.3
     transitivePeerDependencies:
       - supports-color
-
-  '@mdx-js/react@3.1.1(@types/react@19.2.14)(react@19.2.6)':
-    dependencies:
-      '@types/mdx': 2.0.13
-      '@types/react': 19.2.14
-      react: 19.2.6
 
   '@mdx-js/rollup@3.1.1(rollup@4.60.3)':
     dependencies:
