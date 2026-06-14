@@ -579,15 +579,16 @@ html[data-theme='dark'] .mermaid-dark {
   color: var(--callout-accent);
 }
 
+/* Render every callout type indicator as a plain accent-colored dot. */
 .prose .callout-title-icon {
-  display: inline-flex;
-  color: var(--callout-accent);
+  width: 0.7em;
+  height: 0.7em;
+  border-radius: 50%;
+  background: var(--callout-accent);
 }
 
 .prose .callout-title-icon svg {
-  width: 1em;
-  height: 1em;
-  fill: currentColor;
+  display: none;
 }
 
 .prose .callout-content {
