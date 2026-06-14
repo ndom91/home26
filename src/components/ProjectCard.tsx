@@ -34,24 +34,24 @@ export function ProjectCard({ project }: { project: Project }) {
     <div className={cardFlairClass} {...pointerSweep}>
       <div aria-hidden="true" className={cardFlairOverlayClass} />
       {project.image ? (
-        <div className="relative z-[1] overflow-hidden border-b border-rule">
+        <div className="relative z-1 overflow-hidden border-b border-rule">
           <img
             src={project.image}
             alt=""
-            className="aspect-[16/10] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+            className="aspect-16/10 w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             loading="lazy"
             decoding="async"
           />
         </div>
       ) : null}
 
-      <div className="relative z-[1] flex flex-1 flex-col p-[1.15rem] max-[520px]:p-4">
+      <div className="relative z-1 flex flex-1 flex-col p-[1.15rem] max-[520px]:p-4">
         <div className="mb-3 flex items-center gap-2 text-[0.66rem] uppercase tracking-[0.18em] text-muted">
           <span className={`size-2 rounded-full ${status.dot}`} aria-hidden="true" />
           <span>{status.label}</span>
         </div>
 
-        <h2 className="font-logo text-[clamp(3rem,3vw,3rem)] font-bold uppercase tracking-wide leading-[0.92]">
+        <h2 className="font-heading text-[clamp(3rem,3vw,3rem)] font-bold uppercase tracking-wide leading-[0.92]">
           {titleHref ? (
             <a
               href={titleHref}
