@@ -35,6 +35,8 @@ function setHoverPosition(el: HTMLElement, x: number) {
 // zero instead of snapping). The rAF loop below then eases the live tilt toward
 // that already-smoothed target.
 const VELOCITY_SMOOTHING = 0.08
+const BASE_TILT = 2
+const DEFAULT_MAX_TILT = 20
 
 // Tilt response curve. Pointer velocity is mapped through an ease-in power curve
 // so slow movement stays gentle and only fast movement approaches the cap.
@@ -42,6 +44,12 @@ const VELOCITY_SMOOTHING = 0.08
 // low-speed end (higher = flatter/slower ramp before it kicks in).
 const TILT_SPEED_REF = 0.9
 const TILT_EXPONENT = 3.4
+
+function getMaxTilt(el: HTMLElement) {
+  const value = Number.parseFloat(getComputedStyle(el).getPropertyValue('--hover-max-tilt'))
+
+  return Number.isFinite(value) && value >= BASE_TILT ? value : DEFAULT_MAX_TILT
+}
 
 function handlePointerEnter(event: PointerEvent<HTMLElement>) {
   if (prefersReducedMotion()) return
@@ -70,12 +78,14 @@ function handlePointerMove(event: PointerEvent<HTMLElement>) {
   el.dataset.hoverVelocity = String(velocity)
   const direction = velocity < 0 ? -1 : 1
   const movementStrength = Math.abs(velocity)
-  // Ease-in (power) curve instead of linear: slow movement stays near the 2deg
-  // floor and only ramps toward the 20deg cap as speed picks up, so gentle
-  // passes don't snap to a strong angle. TILT_SPEED_REF is the velocity that
-  // maps to full tilt; TILT_EXPONENT > 1 flattens the low-speed response.
+  // Ease-in (power) curve instead of linear: slow movement stays near the
+  // BASE_TILT floor and only ramps toward the per-element cap as speed picks
+  // up, so gentle passes don't snap to a strong angle. TILT_SPEED_REF is the
+  // velocity that maps to full tilt; TILT_EXPONENT > 1 flattens the low-speed
+  // response.
   const tiltProgress = Math.min(1, movementStrength / TILT_SPEED_REF)
-  const tilt = direction * (2 + 18 * tiltProgress ** TILT_EXPONENT)
+  const maxTilt = getMaxTilt(el)
+  const tilt = direction * (BASE_TILT + (maxTilt - BASE_TILT) * tiltProgress ** TILT_EXPONENT)
   const colorStrength = Math.min(1.12, Math.max(0.82, 0.84 + movementStrength * 0.38))
   const currentX = Number.parseFloat(el.style.getPropertyValue('--hover-x')) || targetX
 
