@@ -21,6 +21,15 @@ const OUTPUT_PATH = join(scriptDir, '../src/lib/stars.generated.ts')
 // node cannot load (JSX).
 const PROJECTS_SOURCE_PATH = join(scriptDir, '../src/lib/projects.tsx')
 
+function writeFileIfChanged(path: string, content: string) {
+  if (readFileSync(path, 'utf8') === content) {
+    return false
+  }
+
+  writeFileSync(path, content)
+  return true
+}
+
 function repoUrlsFromSource(): string[] {
   const source = readFileSync(PROJECTS_SOURCE_PATH, 'utf8')
   return [...source.matchAll(/\brepo:\s*['"]([^'"]+)['"]/g)].map((match) => match[1])
@@ -81,8 +90,9 @@ async function main() {
 export const stars: Record<string, number> = {${sorted ? `\n${sorted}\n` : ''}}
 `
 
-  writeFileSync(OUTPUT_PATH, body)
-  console.log(`Stars: wrote ${Object.keys(stars).length} repo(s) to src/lib/stars.generated.ts`)
+  const changed = writeFileIfChanged(OUTPUT_PATH, body)
+  const verb = changed ? 'wrote' : 'unchanged'
+  console.log(`Stars: ${verb} ${Object.keys(stars).length} repo(s) in src/lib/stars.generated.ts`)
 }
 
 main().catch((error) => {
