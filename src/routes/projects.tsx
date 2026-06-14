@@ -30,9 +30,9 @@ function Projects() {
     <div className="flex min-h-dvh flex-col bg-paper font-body text-ink">
       <SiteHeader />
 
-      <div className="border-b border-rule px-6 py-12 sm:py-16">
+      <div className="border-b border-rule px-6 py-12">
         <div className="mx-auto max-w-7xl">
-          <div className="flex text-accent" aria-hidden="true">
+          <div className="flex text-accent mb-4" aria-hidden="true">
             {eyebrowBars.map((barClass) => (
               <span
                 key={barClass}
@@ -41,7 +41,7 @@ function Projects() {
             ))}
           </div>
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end">
-            <h1 className="font-heading min-w-0 text-[clamp(4rem,10vw,12rem)] font-extrabold uppercase leading-none tracking-normal text-blog-text">
+            <h1 className="text-balance font-heading min-w-0 text-[clamp(4rem,15vw,13rem)] font-extrabold uppercase leading-35 tracking-[-0.375px] text-blog-text">
               BUILD
             </h1>
             <div className="border-l border-rule pl-4 lg:pb-3">

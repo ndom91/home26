@@ -2,6 +2,8 @@ import { allPosts } from 'content-collections'
 
 export type BlogPost = (typeof allPosts)[number]
 
+export type PostListItem = Omit<BlogPost, 'Component'>
+
 function getAllPosts() {
   return [...allPosts].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
 }
