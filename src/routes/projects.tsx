@@ -30,7 +30,7 @@ function Projects() {
     <div className="flex min-h-dvh flex-col bg-paper font-body text-ink">
       <SiteHeader />
 
-      <div className="border-b border-rule px-6 py-12">
+      <div className="border-b border-rule bg-[radial-gradient(circle_at_82%_0%,color-mix(in_oklab,var(--color-accent)_22%,transparent),transparent_34%),linear-gradient(225deg,color-mix(in_oklab,var(--color-accent)_12%,transparent),transparent_48%)] px-6 py-12">
         <div className="mx-auto max-w-7xl">
           <div className="flex text-accent mb-4" aria-hidden="true">
             {eyebrowBars.map((barClass) => (
