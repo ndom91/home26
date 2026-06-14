@@ -59,7 +59,7 @@ function Home() {
             </div>
             <h1
               id="home-title"
-              className="m-0 max-w-[12ch] font-logo text-[clamp(3.2rem,12vw,12rem)] font-bold leading-[0.8] tracking-normal max-[520px]:text-[clamp(3.9rem,28vw,7.8rem)]"
+              className="m-0 max-w-[12ch] font-domino text-[clamp(3.2rem,12vw,12rem)] font-bold leading-[0.8] max-[520px]:text-[clamp(3.9rem,28vw,7.8rem)] tracking-[-0.9rem]"
             >
               .domino
             </h1>
@@ -72,7 +72,7 @@ function Home() {
         >
           <section className="relative grid min-h-112 content-end overflow-hidden bg-ink p-[clamp(1.25rem,3vw,3rem)] text-paper max-[820px]:min-h-80 max-[520px]:min-h-60 max-[520px]:p-5">
             <AsciiGlobe />
-            <p className="relative m-0 max-w-140 text-[clamp(1.25rem,2.1vw,2.3rem)] leading-[1.16] tracking-[-0.04em] max-[520px]:max-w-[18rem] max-[520px]:text-[1.04rem] max-[520px]:leading-[1.16]">
+            <p className="font-extralight relative m-0 max-w-140 text-[clamp(1.25rem,2.1vw,2.3rem)] leading-[1.16] tracking-[-0.04em] max-[520px]:max-w-[18rem] max-[520px]:text-[1.04rem] max-[520px]:leading-[1.16]">
               I like building web tools, developer systems, and the occasional over-engineered side
               quest.
             </p>
