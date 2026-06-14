@@ -1,8 +1,8 @@
 {
-  "projectName": "my-tanstack-app",
+  "projectName": "home26",
   "mode": "file-router",
   "typescript": true,
-  "packageManager": "npm",
+  "packageManager": "pnpm",
   "includeExamples": false,
   "tailwind": true,
   "addOnOptions": {},
@@ -14,7 +14,6 @@
   "framework": "react",
   "chosenAddOns": [
     "biome",
-    "cloudflare",
-    "tanstack-query"
+    "cloudflare"
   ]
 }
