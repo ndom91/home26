@@ -517,6 +517,129 @@ html[data-theme='dark'] .mermaid-dark {
   content: none;
 }
 
+/* Callouts (rehype-callouts, github theme markup) */
+.prose .callout {
+  --callout-accent: var(--color-blog-accent);
+  margin-block: 1.5rem;
+  border-left: 3px solid var(--callout-accent);
+  border-radius: 0 6px 6px 0;
+  background: var(--color-blog-panel);
+  padding: 0.85rem 1.15rem;
+  color: var(--color-blog-description);
+}
+
+.prose .callout-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5ch;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--callout-accent);
+}
+
+.prose .callout-title-icon {
+  display: inline-flex;
+  color: var(--callout-accent);
+}
+
+.prose .callout-title-icon svg {
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+}
+
+.prose .callout-content {
+  margin-top: 0.5rem;
+}
+
+.prose .callout-content > :first-child {
+  margin-top: 0;
+}
+
+.prose .callout-content > :last-child {
+  margin-bottom: 0;
+}
+
+/* Collapsible (details/summary) variants */
+.prose details.callout > summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.prose details.callout > summary::-webkit-details-marker {
+  display: none;
+}
+
+.prose .callout-fold-icon {
+  display: inline-flex;
+  margin-left: auto;
+  color: var(--callout-accent);
+  transition: rotate 150ms ease;
+}
+
+.prose details.callout:not([open]) .callout-fold-icon {
+  rotate: -90deg;
+}
+
+.prose .callout-fold-icon svg {
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+}
+
+/* Per-type accents — light defaults */
+.prose .callout[data-callout='note'] {
+  --callout-accent: #2b6cb0;
+}
+.prose .callout[data-callout='tip'] {
+  --callout-accent: #2f855a;
+}
+.prose .callout[data-callout='important'] {
+  --callout-accent: #6b46c1;
+}
+.prose .callout[data-callout='warning'] {
+  --callout-accent: #b7791f;
+}
+.prose .callout[data-callout='caution'] {
+  --callout-accent: #c53030;
+}
+
+/* Per-type accents — dark (OS dark unless forced light, or explicit dark) */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) .prose .callout[data-callout='note'] {
+    --callout-accent: #6ea8fe;
+  }
+  html:not([data-theme='light']) .prose .callout[data-callout='tip'] {
+    --callout-accent: #5fd0a0;
+  }
+  html:not([data-theme='light']) .prose .callout[data-callout='important'] {
+    --callout-accent: #b794f4;
+  }
+  html:not([data-theme='light']) .prose .callout[data-callout='warning'] {
+    --callout-accent: #e3b341;
+  }
+  html:not([data-theme='light']) .prose .callout[data-callout='caution'] {
+    --callout-accent: #f87171;
+  }
+}
+
+html[data-theme='dark'] .prose .callout[data-callout='note'] {
+  --callout-accent: #6ea8fe;
+}
+html[data-theme='dark'] .prose .callout[data-callout='tip'] {
+  --callout-accent: #5fd0a0;
+}
+html[data-theme='dark'] .prose .callout[data-callout='important'] {
+  --callout-accent: #b794f4;
+}
+html[data-theme='dark'] .prose .callout[data-callout='warning'] {
+  --callout-accent: #e3b341;
+}
+html[data-theme='dark'] .prose .callout[data-callout='caution'] {
+  --callout-accent: #f87171;
+}
+
 .heading-anchor {
   position: absolute;
   right: 100%;

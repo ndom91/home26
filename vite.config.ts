@@ -6,6 +6,7 @@ import { devtools } from '@tanstack/devtools-vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
+import rehypeCallouts from 'rehype-callouts'
 import rehypeMdxImportMedia from 'rehype-mdx-import-media'
 import rehypePrettyCode from 'rehype-pretty-code'
 import rehypeSlug from 'rehype-slug'
@@ -41,6 +42,7 @@ const config = defineConfig({
       ...mdx({
         remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm, remarkMermaid],
         rehypePlugins: [
+          [rehypeCallouts, { theme: 'vitepress' }],
           rehypeSlug,
           [
             rehypeAutolinkHeadings,

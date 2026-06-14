@@ -1,5 +1,4 @@
 import type { AnchorHTMLAttributes, ComponentType } from 'react'
-import { Callout } from './components/mdx/callout'
 import { CodeFigure } from './components/mdx/code-block'
 import { MermaidFigure } from './components/mdx/mermaid'
 import { ScreenshotLink } from './components/mdx/screenshot-link'
@@ -12,7 +11,6 @@ function getMDXComponents(components: MDXComponents): MDXComponents {
   return {
     a: MdxAnchor as unknown as MDXComponent,
     figure: CodeFigure as unknown as MDXComponent,
-    Callout: Callout as unknown as MDXComponent,
     MermaidFigure: MermaidFigure as unknown as MDXComponent,
     ScreenshotLink: ScreenshotLink as unknown as MDXComponent,
     ...components,
