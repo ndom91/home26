@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { LinkScreenshotProvider } from '../components/mdx/link-screenshot-context'
 import { ProjectCard } from '../components/ProjectCard'
+import { SiteFooter } from '../components/SiteFooter'
 import { SiteHeader } from '../components/SiteHeader'
 import { linkScreenshotUrls } from '../lib/link-screenshots.generated'
 import { getProjects } from '../lib/projects'
@@ -82,28 +83,7 @@ function Projects() {
         )}
       </div>
 
-      <footer className="grid grid-cols-[1fr_auto] border-t border-rule">
-        <div className="border-r border-rule px-6 py-5">
-          <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted">NDO.DEV</p>
-        </div>
-        <div className="flex items-center gap-5 px-6 py-5">
-          {(
-            [
-              ['GH', 'https://github.com/ndom91'],
-              ['BS', 'https://bsky.app/ndom91'],
-              ['ML', 'mailto:home@ndo.dev'],
-            ] as const
-          ).map(([label, href]) => (
-            <a
-              key={label}
-              href={href}
-              className="text-[0.62rem] uppercase tracking-[0.2em] text-muted transition-colors hover:text-accent"
-            >
-              {label}
-            </a>
-          ))}
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   )
 }

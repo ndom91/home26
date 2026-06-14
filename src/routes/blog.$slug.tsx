@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import type { CSSProperties } from 'react'
 import { BlueskyComments } from '../components/BlueskyComments'
 import { LinkScreenshotProvider } from '../components/mdx/link-screenshot-context'
+import { SiteFooter } from '../components/SiteFooter'
 import { SiteHeader } from '../components/SiteHeader'
 import type { BlogPost as BlogPostType } from '../lib/blog'
 import { getPublishedPost, getPublishedPosts, longestWordEm } from '../lib/blog'
@@ -157,28 +158,7 @@ function BlogPost() {
         {meta.atprotoUri ? <BlueskyComments atprotoUri={meta.atprotoUri} /> : null}
       </div>
 
-      <footer className="grid grid-cols-[1fr_auto] border-t border-blog-rule">
-        <div className="border-r border-blog-rule px-6 py-5">
-          <p className="font-mono text-[9px] uppercase tracking-widest text-blog-faint">NDO.DEV</p>
-        </div>
-        <div className="flex items-center gap-5 px-6 py-5">
-          {(
-            [
-              ['GH', 'https://github.com/ndom91'],
-              ['BS', 'https://bsky.app/ndom91'],
-              ['ML', 'mailto:home@ndo.dev'],
-            ] as const
-          ).map(([label, href]) => (
-            <a
-              key={label}
-              href={href}
-              className="font-mono text-[10px] uppercase tracking-widest text-blog-muted transition-colors hover:text-blog-accent"
-            >
-              {label}
-            </a>
-          ))}
-        </div>
-      </footer>
+      <SiteFooter variant="blog" />
     </div>
   )
 }
