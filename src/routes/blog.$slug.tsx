@@ -64,13 +64,13 @@ function BlogPost() {
 
       <header className="relative isolate overflow-hidden border-b border-blog-rule bg-[radial-gradient(circle_at_18%_8%,color-mix(in_oklab,var(--color-blog-accent)_20%,transparent),transparent_32%),radial-gradient(circle_at_82%_18%,color-mix(in_oklab,var(--color-blog-accent)_12%,transparent),transparent_28%),linear-gradient(135deg,color-mix(in_oklab,var(--color-blog-accent)_12%,transparent),transparent_48%)] px-5 py-8 sm:px-6 sm:py-12 lg:py-16">
         <div
-          className="pointer-events-none absolute inset-0 bg-[image:var(--grit-image)] bg-[length:220px_220px] bg-repeat opacity-[0.05] mix-blend-overlay"
+          className="pointer-events-none absolute inset-0 bg-(image:--grit-image) bg-size-[220px_220px] bg-repeat opacity-[0.05] mix-blend-overlay"
           aria-hidden="true"
         />
         <div className="relative mx-auto max-w-7xl">
           <Link
             to="/blog"
-            className="font-mono inline-block text-[10px] uppercase tracking-widest text-blog-muted transition-colors hover:text-blog-accent focus-visible:outline-2! focus-visible:outline-blog-accent! focus-visible:outline-offset-2!"
+            className="font-mono inline-block text-xs uppercase tracking-widest text-blog-muted transition-colors hover:text-blog-accent focus-visible:outline-2! focus-visible:outline-blog-accent! focus-visible:outline-offset-2!"
           >
             ← WRITING
           </Link>
@@ -81,8 +81,8 @@ function BlogPost() {
                 : 'mx-auto max-w-5xl lg:grid-cols-[minmax(0,1fr)_14rem] lg:items-start'
             }`}
           >
-            <div className="@container min-w-0 lg:pb-3">
-              <p className="font-mono mb-4 text-[9px] uppercase tracking-[0.34em] text-blog-faint">
+            <div className="@container min-w-0 lg:pb-3 space-y-4">
+              <p className="font-mono text-[9px] uppercase tracking-[0.34em] text-blog-faint mb-3">
                 Field Note / {meta.publishedAt.slice(0, 4)}
               </p>
               <h1
@@ -95,7 +95,7 @@ function BlogPost() {
                 {meta.description}
               </p>
               <div className="mt-7 border-l border-blog-rule pl-4">
-                <p className="font-mono mb-2 text-[9px] uppercase tracking-widest text-blog-faint">
+                <p className="font-mono text-[9px] uppercase tracking-widest text-blog-faint">
                   Published
                 </p>
                 <time
@@ -105,7 +105,7 @@ function BlogPost() {
                   {meta.publishedAt}
                 </time>
                 {(meta.tags ?? []).length > 0 && (
-                  <div className="mt-5 flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 mt-2">
                     {(meta.tags ?? []).map((tag) => (
                       <span
                         key={tag}

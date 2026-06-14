@@ -37,9 +37,16 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       { rel: 'preconnect', href: 'https://fonts.gstatic.com' },
       {
         rel: 'preload',
-        href: '/manuka-bold.ttf',
+        href: '/manuka-bold.woff2',
         as: 'font',
-        type: 'font/ttf',
+        type: 'font/woff2',
+        crossOrigin: 'anonymous',
+      },
+      {
+        rel: 'preload',
+        href: '/PPNeueMontreal-Variable.woff2',
+        as: 'font',
+        type: 'font/woff2',
         crossOrigin: 'anonymous',
       },
       {

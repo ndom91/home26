@@ -1,29 +1,65 @@
-@import url('https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@700;800;900&family=Chivo+Mono:wght@700;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@700;800&family=Kode+Mono:wght@700&family=Major+Mono+Display&family=Martian+Mono:wght@700;800&family=Red+Hat+Mono:wght@700&family=Sono:wght@700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Workbench&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@700;800;900&family=Chivo+Mono:wght@700;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=JetBrains+Mono:wght@700;800&family=Kode+Mono:wght@700&family=Major+Mono+Display&family=Martian+Mono:wght@700;800&family=Red+Hat+Mono:wght@700&family=Sono:wght@700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Workbench&display=swap');
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
 @font-face {
   font-family: 'Manuka Thin';
-  src: url('/manuka-regular.ttf') format('truetype');
+  src: url('/manuka-regular.woff2') format('woff2');
   font-weight: 100 800;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Manuka';
-  src: url('/manuka-bold.ttf') format('truetype');
+  src: url('/manuka-bold.woff2') format('woff2');
   font-weight: 100 800;
   font-style: normal;
   font-display: swap;
+}
+@font-face {
+  font-family: 'Neue Montreal';
+  src: url('/PPNeueMontreal-Variable.woff2') format('woff2');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Metric-matched fallback faces: a system sans (Arial/Helvetica) scaled via
+   size-adjust + *-override so the fallback occupies near-identical space,
+   eliminating the layout shift when the real web font swaps in. Override
+   values are derived from each font's own metrics (next/font algorithm). */
+@font-face {
+  font-family: 'Manuka Fallback';
+  src: local('Arial'), local('Helvetica Neue'), local('Helvetica');
+  size-adjust: 63.59%;
+  ascent-override: 139.97%;
+  descent-override: 17.30%;
+  line-gap-override: 2.52%;
+}
+@font-face {
+  font-family: 'Manuka Thin Fallback';
+  src: local('Arial'), local('Helvetica Neue'), local('Helvetica');
+  size-adjust: 52.33%;
+  ascent-override: 170.08%;
+  descent-override: 21.02%;
+  line-gap-override: 3.06%;
+}
+@font-face {
+  font-family: 'Neue Montreal Fallback';
+  src: local('Arial'), local('Helvetica Neue'), local('Helvetica');
+  size-adjust: 96.25%;
+  ascent-override: 99.53%;
+  descent-override: 25.14%;
+  line-gap-override: 0%;
 }
 
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
 @theme {
   --font-body: 'IBM Plex Mono', ui-monospace, monospace;
-  --font-heading: 'Manuka', sans-serif;
-  --font-heading-thin: 'Manuka Thin', sans-serif;
-  --font-reading: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Manuka', 'Manuka Fallback', sans-serif;
+  --font-heading-thin: 'Manuka Thin', 'Manuka Thin Fallback', sans-serif;
+  --font-reading: 'Neue Montreal', 'Neue Montreal Fallback', ui-sans-serif, system-ui, sans-serif;
   --font-logo: var(--font-heading);
   --font-logo-jetbrains: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
   --font-logo-red-hat: 'Red Hat Mono', 'IBM Plex Mono', ui-monospace, monospace;
@@ -521,7 +557,7 @@ html[data-theme='dark'] .mermaid-dark {
 .prose :where(h1, h2, h3, h4, h5, h6) {
   position: relative;
   scroll-margin-top: 1.5rem;
-  letter-spacing: -0.04em;
+  letter-spacing: 0.02em;
 }
 
 .prose blockquote {
