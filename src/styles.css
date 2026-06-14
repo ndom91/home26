@@ -524,6 +524,35 @@ html[data-theme='dark'] .mermaid-dark {
   cursor: pointer;
 }
 
+/* Replace the platform-native disclosure triangle on plain <details> with a
+   themed chevron. Scoped to non-callout details; callouts use .callout-fold-icon. */
+.prose details:not(.callout) > summary {
+  list-style: none;
+}
+
+.prose details:not(.callout) > summary::-webkit-details-marker {
+  display: none;
+}
+
+.prose details:not(.callout) > summary::before {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-right: 0.45em;
+  vertical-align: -0.15em;
+  background-color: var(--color-blog-accent);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E")
+    no-repeat center / contain;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E")
+    no-repeat center / contain;
+  transition: rotate 150ms ease;
+}
+
+.prose details:not(.callout)[open] > summary::before {
+  rotate: 90deg;
+}
+
 /* List markers (ul bullets + ol numbers) — Tailwind Typography's default is off-theme. */
 .prose li::marker {
   color: var(--color-blog-accent);
