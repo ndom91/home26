@@ -77,7 +77,7 @@ function BlogPost() {
           <div
             className={`mt-8 grid gap-7 ${
               meta.coverImageUrl
-                ? 'lg:grid-cols-[minmax(22rem,0.95fr)_minmax(0,1.05fr)] lg:items-center lg:gap-10'
+                ? 'lg:grid-cols-[minmax(22rem,0.95fr)_minmax(0,0.75fr)] lg:items-center lg:gap-10'
                 : 'mx-auto max-w-5xl lg:grid-cols-[minmax(0,1fr)_14rem] lg:items-start'
             }`}
           >

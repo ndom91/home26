@@ -311,46 +311,46 @@
     }
 
     html:not([data-theme='light']) .blog-paper-card {
-      --blog-bg: #dfd0d9;
-      --blog-panel: #e9dde3;
-      --blog-hover: #dfd0d9;
-      --blog-text: #1b1318;
-      --blog-rule: #3d2d36;
-      --blog-muted: #6f5d67;
-      --blog-description: #57444f;
-      --blog-tag-hover: #1b1318;
-      --blog-accent: #853957;
-      --color-blog-bg: #dfd0d9;
-      --color-blog-panel: #e9dde3;
-      --color-blog-hover: #dfd0d9;
-      --color-blog-text: #1b1318;
-      --color-blog-rule: #3d2d36;
-      --color-blog-muted: #6f5d67;
-      --color-blog-description: #57444f;
-      --color-blog-tag-hover: #1b1318;
-      --color-blog-accent: #853957;
+      --blog-bg: #1a1218;
+      --blog-panel: #261a23;
+      --blog-hover: #2d202a;
+      --blog-text: #efe4ea;
+      --blog-rule: #4a3441;
+      --blog-muted: #b8a6b1;
+      --blog-description: #d5c4ce;
+      --blog-tag-hover: #efe4ea;
+      --blog-accent: #e093b0;
+      --color-blog-bg: #1a1218;
+      --color-blog-panel: #261a23;
+      --color-blog-hover: #2d202a;
+      --color-blog-text: #efe4ea;
+      --color-blog-rule: #4a3441;
+      --color-blog-muted: #b8a6b1;
+      --color-blog-description: #d5c4ce;
+      --color-blog-tag-hover: #efe4ea;
+      --color-blog-accent: #e093b0;
     }
   }
 
   html[data-theme='dark'] .blog-paper-card {
-    --blog-bg: #dfd0d9;
-    --blog-panel: #e9dde3;
-    --blog-hover: #dfd0d9;
-    --blog-text: #1b1318;
-    --blog-rule: #3d2d36;
-    --blog-muted: #6f5d67;
-    --blog-description: #57444f;
-    --blog-tag-hover: #1b1318;
-    --blog-accent: #853957;
-    --color-blog-bg: #dfd0d9;
-    --color-blog-panel: #e9dde3;
-    --color-blog-hover: #dfd0d9;
-    --color-blog-text: #1b1318;
-    --color-blog-rule: #3d2d36;
-    --color-blog-muted: #6f5d67;
-    --color-blog-description: #57444f;
-    --color-blog-tag-hover: #1b1318;
-    --color-blog-accent: #853957;
+    --blog-bg: #1a1218;
+    --blog-panel: #261a23;
+    --blog-hover: #2d202a;
+    --blog-text: #efe4ea;
+    --blog-rule: #4a3441;
+    --blog-muted: #b8a6b1;
+    --blog-description: #d5c4ce;
+    --blog-tag-hover: #efe4ea;
+    --blog-accent: #e093b0;
+    --color-blog-bg: #1a1218;
+    --color-blog-panel: #261a23;
+    --color-blog-hover: #2d202a;
+    --color-blog-text: #efe4ea;
+    --color-blog-rule: #4a3441;
+    --color-blog-muted: #b8a6b1;
+    --color-blog-description: #d5c4ce;
+    --color-blog-tag-hover: #efe4ea;
+    --color-blog-accent: #e093b0;
   }
 
   html[data-theme='dark'] .theme-toggle-thumb {
