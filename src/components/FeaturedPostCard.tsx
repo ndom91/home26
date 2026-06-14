@@ -16,7 +16,7 @@ export function FeaturedPostCard({ post }: { post: PostListItem }) {
             LATEST ENTRY
           </p>
           <h2
-            className="text-balance font-heading text-[min(clamp(1.7rem,3vw,3.25rem),calc(100cqi/var(--title-fit-em)))] font-extrabold uppercase leading-[0.9] tracking-normal text-blog-accent wrap-break-word"
+            className="text-balance font-heading text-[min(clamp(2.7rem,3vw,3.25rem),calc(100cqi/var(--title-fit-em)))] font-extrabold uppercase leading-[0.9] tracking-normal text-blog-accent wrap-break-word"
             style={{ '--title-fit-em': longestWordEm(post.title) } as CSSProperties}
           >
             {post.title}
@@ -32,7 +32,7 @@ export function FeaturedPostCard({ post }: { post: PostListItem }) {
           <img
             src={post.coverImageUrl}
             alt=""
-            className="h-full min-h-72 w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+            className="h-full min-h-72 w-full object-cover transition-transform duration-500 scale-[1.01] group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             fetchPriority="high"
           />
         </div>

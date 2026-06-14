@@ -30,8 +30,12 @@ function Projects() {
     <div className="flex min-h-dvh flex-col bg-paper font-body text-ink">
       <SiteHeader />
 
-      <div className="border-b border-rule bg-[radial-gradient(circle_at_82%_0%,color-mix(in_oklab,var(--color-accent)_22%,transparent),transparent_34%),linear-gradient(225deg,color-mix(in_oklab,var(--color-accent)_12%,transparent),transparent_48%)] px-6 py-12">
-        <div className="mx-auto max-w-7xl">
+      <div className="relative isolate overflow-hidden border-b border-rule bg-[radial-gradient(circle_at_82%_0%,color-mix(in_oklab,var(--color-accent)_22%,transparent),transparent_34%),linear-gradient(225deg,color-mix(in_oklab,var(--color-accent)_12%,transparent),transparent_48%)] px-6 py-12 sm:py-16">
+        <div
+          className="pointer-events-none absolute inset-0 bg-(image:--grit-image) bg-size-[220px_220px] bg-repeat opacity-[0.5] dark:opacity-[0.20] mix-blend-overlay"
+          aria-hidden="true"
+        />
+        <div className="relative mx-auto max-w-7xl">
           <div className="flex text-accent mb-4" aria-hidden="true">
             {eyebrowBars.map((barClass) => (
               <span
@@ -41,7 +45,7 @@ function Projects() {
             ))}
           </div>
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end">
-            <h1 className="text-balance font-heading min-w-0 text-[clamp(4rem,15vw,13rem)] font-extrabold uppercase leading-35 tracking-[-0.375px] text-blog-text">
+            <h1 className="text-balance font-heading min-w-0 text-[clamp(7rem,15vw,13rem)] font-extrabold uppercase leading-35 tracking-[-0.375px] text-blog-text">
               BUILD
             </h1>
             <div className="border-l border-rule pl-4 lg:pb-3">

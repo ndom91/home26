@@ -7,7 +7,7 @@ cover:
   imageFile: "./cover.png"
 ---
 
-My goal with this project was to allow some devices on my local LAN to use a Tailscale [exit-node](https://tailscale.com/kb/1103/exit-nodes) as a gateway to exit out onto the internet, i.e. enable some devices to route their traffic out via a Tailscale node, without having to install tailscale on those devices. The firewall should route the traffic down the Tailnet tunnel automatically without the target local devices being any the wiser. This post will walk through the steps required to get your OPNsense firewall to selectively send traffic out via a second gateway. The rest of the devices should continue to use your pre-existing gateway, while the selected devices should use a Tailscale exit-node as their gateway.
+My goal with this project was to allow some devices on my local LAN to use a Tailscale [exit-node](https://tailscale.com/kb/1103/exit-nodes) as a gateway to exit out onto the internet. Basically, to enable some devices to route their traffic out via a Tailscale node, without having to install tailscale on those devices. The firewall should route the traffic down the Tailnet tunnel automatically without the target local devices being any the wiser. This post will walk through the steps required to get your OPNsense firewall to selectively send traffic out via a second gateway. The rest of the devices should continue to use your pre-existing gateway, while the selected devices should use a Tailscale exit-node as their gateway.
 
 First, let's summarize some of the prerequisites and what I had in-place before beginning with the OPNsense configuration.
 
