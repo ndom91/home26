@@ -66,7 +66,7 @@ function seedGrid(grid: Uint8Array, cols: number, rows: number, seed: number) {
   grid.fill(0)
 
   const random = createRandom(seed ^ (cols * 73856093) ^ (rows * 19349663))
-  const activeCols = Math.max(1, Math.floor(cols * 0.68))
+  const activeCols = cols
 
   for (let y = 0; y < rows; y += 1) {
     for (let x = 0; x < activeCols; x += 1) {
