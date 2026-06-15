@@ -35,6 +35,11 @@ function setHoverPosition(el: HTMLElement, x: number) {
 // zero instead of snapping). The rAF loop below then eases the live tilt toward
 // that already-smoothed target.
 const VELOCITY_SMOOTHING = 0.08
+const IDLE_COLOR_STRENGTH = 0.58
+const MAX_COLOR_STRENGTH = 1.62
+const BASE_COLOR_STRENGTH = 0.72
+const COLOR_VELOCITY_GAIN = 0.74
+const COLOR_IDLE_DELAY_MS = 1000
 
 // Tilt response curve. Pointer velocity is mapped through an ease-in power curve
 // so slow movement stays gentle and only fast movement approaches the cap.
@@ -76,7 +81,10 @@ function handlePointerMove(event: PointerEvent<HTMLElement>) {
   // maps to full tilt; TILT_EXPONENT > 1 flattens the low-speed response.
   const tiltProgress = Math.min(1, movementStrength / TILT_SPEED_REF)
   const tilt = direction * (2 + 18 * tiltProgress ** TILT_EXPONENT)
-  const colorStrength = Math.min(1.62, Math.max(0.58, 0.72 + movementStrength * 0.74))
+  const colorStrength = Math.min(
+    MAX_COLOR_STRENGTH,
+    Math.max(IDLE_COLOR_STRENGTH, BASE_COLOR_STRENGTH + movementStrength * COLOR_VELOCITY_GAIN)
+  )
   const currentX = Number.parseFloat(el.style.getPropertyValue('--hover-x')) || targetX
 
   el.style.setProperty('--hover-target-x', `${targetX}`)
@@ -84,8 +92,6 @@ function handlePointerMove(event: PointerEvent<HTMLElement>) {
   el.style.setProperty('--hover-target-color-strength', `${colorStrength}`)
   el.dataset.hoverLastX = String(targetX)
   el.dataset.hoverLastTime = String(now)
-
-  if (el.dataset.hoverFrame) return
 
   function followPointer() {
     const latestTargetX = Number.parseFloat(el.style.getPropertyValue('--hover-target-x'))
@@ -120,6 +126,22 @@ function handlePointerMove(event: PointerEvent<HTMLElement>) {
     el.dataset.hoverFrame = String(requestAnimationFrame(followPointer))
   }
 
+  if (el.dataset.hoverIdleTimer) {
+    clearTimeout(Number(el.dataset.hoverIdleTimer))
+  }
+  el.dataset.hoverIdleTimer = String(
+    window.setTimeout(() => {
+      delete el.dataset.hoverIdleTimer
+      el.style.setProperty('--hover-target-color-strength', `${IDLE_COLOR_STRENGTH}`)
+
+      if (!el.dataset.hoverFrame) {
+        el.dataset.hoverFrame = String(requestAnimationFrame(followPointer))
+      }
+    }, COLOR_IDLE_DELAY_MS)
+  )
+
+  if (el.dataset.hoverFrame) return
+
   el.dataset.hoverFrame = String(requestAnimationFrame(followPointer))
 }
 
@@ -129,6 +151,11 @@ function handlePointerLeave(event: PointerEvent<HTMLElement>) {
   if (el.dataset.hoverFrame) {
     cancelAnimationFrame(Number(el.dataset.hoverFrame))
     delete el.dataset.hoverFrame
+  }
+
+  if (el.dataset.hoverIdleTimer) {
+    clearTimeout(Number(el.dataset.hoverIdleTimer))
+    delete el.dataset.hoverIdleTimer
   }
 
   delete el.dataset.hoverLastX
