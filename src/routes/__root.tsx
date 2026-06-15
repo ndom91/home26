@@ -70,6 +70,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 `,
           }}
         />
+        {import.meta.env.PROD ? (
+          <script
+            src="https://stats.ndo.dev/api/script.js"
+            data-site-id="1"
+            defer
+            fetchPriority="low"
+          />
+        ) : null}
       </head>
       <body>
         {children}
