@@ -76,7 +76,7 @@ function handlePointerMove(event: PointerEvent<HTMLElement>) {
   // maps to full tilt; TILT_EXPONENT > 1 flattens the low-speed response.
   const tiltProgress = Math.min(1, movementStrength / TILT_SPEED_REF)
   const tilt = direction * (2 + 18 * tiltProgress ** TILT_EXPONENT)
-  const colorStrength = Math.min(1.42, Math.max(0.68, 0.72 + movementStrength * 0.74))
+  const colorStrength = Math.min(1.62, Math.max(0.58, 0.72 + movementStrength * 0.74))
   const currentX = Number.parseFloat(el.style.getPropertyValue('--hover-x')) || targetX
 
   el.style.setProperty('--hover-target-x', `${targetX}`)
