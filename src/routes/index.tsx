@@ -59,7 +59,7 @@ function Home() {
             </div>
             <h1
               id="home-title"
-              className="m-0 max-w-[12ch] font-domino text-[clamp(3.2rem,12vw,12rem)] font-bold leading-[0.8] max-[520px]:text-[clamp(3.9rem,28vw,7.8rem)] tracking-[-0.9rem]"
+              className="m-0 max-w-[12ch] font-domino text-[clamp(3.2rem,12vw,12rem)] font-bold leading-[0.8] tracking-[-0.075em] max-[520px]:text-[clamp(3.9rem,28vw,7.8rem)]"
             >
               .domino
             </h1>
