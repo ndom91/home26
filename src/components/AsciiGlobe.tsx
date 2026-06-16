@@ -66,10 +66,30 @@ export function AsciiGlobe() {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     if (reduceMotion) return
-    if (needsPermission) return
     if (!isCoarsePointer) return
 
-    setTiltEnabled(true)
+    if (!needsPermission) {
+      setTiltEnabled(true)
+      return
+    }
+
+    let cancelled = false
+
+    // requestPermission exists: Chrome on Android resolves "granted" silently
+    // with no gesture; iOS Safari requires transient activation and rejects
+    // quietly (no prompt) when called without one. Calling it eagerly here
+    // re-enables Android while leaving iOS pointer/ambient-only with no prompt.
+    DeviceOrientation.requestPermission?.()
+      .then((state) => {
+        if (!cancelled && state === 'granted') setTiltEnabled(true)
+      })
+      .catch(() => {
+        // iOS without a user gesture, or denied — keep pointer/ambient only.
+      })
+
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   useEffect(() => {
