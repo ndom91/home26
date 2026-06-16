@@ -84,7 +84,8 @@ function BlogPost() {
           >
             <div className="@container min-w-0 lg:pb-3 space-y-4">
               <p className="font-mono text-[9px] uppercase tracking-[0.34em] text-blog-faint mb-3">
-                Field Note / {meta.publishedAt.slice(0, 4)}
+                {meta.type === 'field-notes' ? 'Field Note' : 'Article'} /{' '}
+                {meta.publishedAt.slice(0, 4)}
               </p>
               <h1
                 className="text-pretty font-heading max-w-4xl text-[min(clamp(3.15rem,5.5vw,6.55rem),calc(100cqi/var(--title-fit-em)))] font-extrabold uppercase leading-[0.94] tracking-normal text-blog-text wrap-break-word"

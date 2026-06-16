@@ -135,6 +135,7 @@ const posts = defineCollection({
     date: v.optional(isoDate),
     tags: v.optional(v.array(v.string()), []),
     draft: v.optional(v.boolean(), false),
+    type: v.optional(v.picklist(['post', 'field-notes']), 'post'),
     atprotoUri: v.optional(v.pipe(v.string(), v.startsWith('at://'))),
     cover: v.optional(
       v.object({
@@ -156,6 +157,7 @@ const posts = defineCollection({
       publishedAt,
       tags: post.tags,
       draft: post.draft,
+      type: post.type,
       atprotoUri: post.atprotoUri ?? null,
       slug: slugFromPath(post._meta.filePath),
       linkScreenshotUrls: await linkScreenshotUrlsFromContent(post.content),

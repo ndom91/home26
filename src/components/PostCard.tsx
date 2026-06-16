@@ -29,7 +29,7 @@ export function PostCard({ post, eager = false }: { post: PostListItem; eager?: 
           {post.description}
         </p>
         <div className="font-mono mt-auto flex items-center justify-between border-t border-blog-rule pt-3 text-[10px] uppercase tracking-widest text-blog-muted transition-colors group-hover:text-blog-accent">
-          <span>Read note</span>
+          <span>{post.type === 'field-notes' ? 'Read note' : 'Read post'}</span>
           <span className="transition-transform group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0">
             →
           </span>
