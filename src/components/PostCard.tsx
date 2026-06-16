@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import type { PostListItem } from '../lib/blog'
+import { FieldNoteBadge } from './FieldNoteBadge'
 import { PostCardMeta } from './PostCardMeta'
 
 export function PostCard({ post, eager = false }: { post: PostListItem; eager?: boolean }) {
@@ -10,7 +11,7 @@ export function PostCard({ post, eager = false }: { post: PostListItem; eager?: 
       className="blog-paper-card group flex h-full flex-col overflow-hidden border border-blog-rule bg-blog-panel transition-[border-color,background-color,translate] duration-300 hover:-translate-y-0.5 hover:border-blog-accent hover:bg-blog-hover motion-reduce:transition-none motion-reduce:hover:translate-y-0"
     >
       {post.coverImageUrl ? (
-        <div className="overflow-hidden border-b border-blog-rule">
+        <div className="relative overflow-hidden border-b border-blog-rule">
           <img
             src={post.coverImageUrl}
             alt=""
@@ -18,6 +19,7 @@ export function PostCard({ post, eager = false }: { post: PostListItem; eager?: 
             loading={eager ? 'eager' : 'lazy'}
             decoding="async"
           />
+          {post.type === 'field-notes' ? <FieldNoteBadge /> : null}
         </div>
       ) : null}
       <div className="flex flex-1 flex-col p-4">

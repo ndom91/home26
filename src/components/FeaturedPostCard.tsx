@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import type { CSSProperties } from 'react'
 import { longestWordEm, type PostListItem } from '../lib/blog'
+import { FieldNoteBadge } from './FieldNoteBadge'
 import { PostCardMeta } from './PostCardMeta'
 
 export function FeaturedPostCard({ post }: { post: PostListItem }) {
@@ -28,13 +29,14 @@ export function FeaturedPostCard({ post }: { post: PostListItem }) {
         <PostCardMeta post={post} className="mt-8" />
       </div>
       {post.coverImageUrl ? (
-        <div className="overflow-hidden border-t border-blog-rule lg:border-l lg:border-t-0">
+        <div className="relative overflow-hidden border-t border-blog-rule lg:border-l lg:border-t-0">
           <img
             src={post.coverImageUrl}
             alt=""
             className="h-full min-h-72 w-full object-cover transition-transform duration-500 scale-[1.01] group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             fetchPriority="high"
           />
+          {post.type === 'field-notes' ? <FieldNoteBadge /> : null}
         </div>
       ) : null}
     </Link>
