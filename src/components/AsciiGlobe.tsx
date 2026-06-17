@@ -205,7 +205,11 @@ export function AsciiGlobe() {
 
       context.fillStyle = globeShade || 'rgba(23, 20, 15, 0.2)'
       context.fillRect(0, 0, width, height)
-      context.font = '600 8.4px IBM Plex Mono, monospace'
+      // Scale the glyph size with the globe so character density stays
+      // consistent across breakpoints. A fixed size looked fine on the smaller
+      // mobile globe but left the much larger desktop globe sparse and tiny.
+      const fontPx = Math.max(8.4, scale * 0.0477)
+      context.font = `600 ${fontPx.toFixed(2)}px IBM Plex Mono, monospace`
       context.textAlign = 'center'
       context.textBaseline = 'middle'
 
