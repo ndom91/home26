@@ -62,6 +62,8 @@ type GlobeDebug = {
   gamma: number | null
   tx: number
   ty: number
+  drawFrames: number
+  rotY: number
 }
 
 export function AsciiGlobe() {
@@ -84,6 +86,8 @@ export function AsciiGlobe() {
     gamma: null,
     tx: 0,
     ty: 0,
+    drawFrames: 0,
+    rotY: 0,
   })
   const [debug, setDebug] = useState<GlobeDebug>(debugRef.current)
 
@@ -248,6 +252,8 @@ export function AsciiGlobe() {
         orientation.vx * 0.08 +
         scrollSpring.x
       const rotX = orientation.y * -0.18 + orientation.vy * -0.05 + scrollSpring.y
+      debugRef.current.drawFrames += 1
+      debugRef.current.rotY = rotY
       const cosY = Math.cos(rotY)
       const sinY = Math.sin(rotY)
       const cosX = Math.cos(rotX)
@@ -390,6 +396,8 @@ export function AsciiGlobe() {
             `handlerEvents:${debug.handlerEvents}`,
             `beta/gamma:   ${debug.beta?.toFixed(1) ?? 'null'} / ${debug.gamma?.toFixed(1) ?? 'null'}`,
             `tx/ty:        ${debug.tx.toFixed(3)} / ${debug.ty.toFixed(3)}`,
+            `drawFrames:   ${debug.drawFrames}`,
+            `rotY:         ${debug.rotY.toFixed(3)}`,
           ].join('\n')}
         </pre>
       ) : null}
