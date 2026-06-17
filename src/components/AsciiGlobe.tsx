@@ -231,7 +231,7 @@ export function AsciiGlobe() {
         const frontAlpha = 0.32 + depth * 0.54
         const backAlpha = 0.04 + depth * 0.08
         const alpha = (z2 >= 0 ? frontAlpha : backAlpha) + highlightBand * 0.18
-        const lime = influence > 0.22 || highlightBand > 0.45 || (z2 > 0.68 && y1 < -0.48)
+        const lime = influence > 0.22
 
         context.fillStyle = lime
           ? `rgb(${globeAccent || '134 169 0'} / ${0.25 + influence * 0.38 + depth * 0.18 + highlightBand * 0.24})`
