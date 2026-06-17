@@ -154,8 +154,11 @@ export function AsciiGlobe() {
 
       orientationBaseline ??= { beta: event.beta, gamma: event.gamma }
 
-      const nextX = clamp((event.gamma - orientationBaseline.gamma) / 42, -0.48, 0.48)
-      const nextY = clamp((event.beta - orientationBaseline.beta) / 52, -0.48, 0.48)
+      // Map device tilt to a spotlight position. Divisors set sensitivity
+      // (smaller = a gentler tilt sweeps the light further); the clamp lets the
+      // light travel to the globe edge like a tap in the screen corner.
+      const nextX = clamp((event.gamma - orientationBaseline.gamma) / 22, -0.7, 0.7)
+      const nextY = clamp((event.beta - orientationBaseline.beta) / 26, -0.7, 0.7)
 
       orientation.vx += (nextX - orientation.tx) * 0.12
       orientation.vy += (nextY - orientation.ty) * 0.12
