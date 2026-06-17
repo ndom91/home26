@@ -57,8 +57,11 @@ type GlobeDebug = {
   perm: string
   events: number
   absEvents: number
+  handlerEvents: number
   beta: number | null
   gamma: number | null
+  tx: number
+  ty: number
 }
 
 export function AsciiGlobe() {
@@ -76,8 +79,11 @@ export function AsciiGlobe() {
     perm: 'n/a',
     events: 0,
     absEvents: 0,
+    handlerEvents: 0,
     beta: null,
     gamma: null,
+    tx: 0,
+    ty: 0,
   })
   const [debug, setDebug] = useState<GlobeDebug>(debugRef.current)
 
@@ -202,6 +208,7 @@ export function AsciiGlobe() {
     }
 
     const onDeviceOrientation = (event: DeviceOrientationEvent) => {
+      debugRef.current.handlerEvents += 1
       if (reduceMotion.matches || event.beta === null || event.gamma === null) {
         return
       }
@@ -215,6 +222,8 @@ export function AsciiGlobe() {
       orientation.vy += (nextY - orientation.ty) * 0.12
       orientation.tx = nextX
       orientation.ty = nextY
+      debugRef.current.tx = nextX
+      debugRef.current.ty = nextY
     }
 
     const draw = (time: number) => {
@@ -368,17 +377,19 @@ export function AsciiGlobe() {
         <canvas ref={canvasRef} className="absolute inset-0 size-full" />
       </div>
       {debugOn ? (
-        <pre className="fixed top-2 left-2 z-50 m-0 whitespace-pre rounded bg-black/80 p-2 font-mono text-[11px] leading-tight text-lime-300">
+        <pre className="fixed bottom-24 left-2 z-50 m-0 whitespace-pre rounded bg-black/85 p-2 font-mono text-[11px] leading-tight text-lime-300">
           {[
-            `tiltEnabled: ${tiltEnabled}`,
-            `hasDOE:      ${debug.hasDOE}`,
-            `needsPerm:   ${debug.needsPermission}`,
-            `coarse:      ${debug.coarse}`,
-            `reduceMotion:${debug.reduceMotion}`,
-            `perm:        ${debug.perm}`,
-            `events:      ${debug.events}`,
-            `absEvents:   ${debug.absEvents}`,
-            `beta/gamma:  ${debug.beta?.toFixed(1) ?? 'null'} / ${debug.gamma?.toFixed(1) ?? 'null'}`,
+            `tiltEnabled:  ${tiltEnabled}`,
+            `hasDOE:       ${debug.hasDOE}`,
+            `needsPerm:    ${debug.needsPermission}`,
+            `coarse:       ${debug.coarse}`,
+            `reduceMotion: ${debug.reduceMotion}`,
+            `perm:         ${debug.perm}`,
+            `probeEvents:  ${debug.events}`,
+            `absEvents:    ${debug.absEvents}`,
+            `handlerEvents:${debug.handlerEvents}`,
+            `beta/gamma:   ${debug.beta?.toFixed(1) ?? 'null'} / ${debug.gamma?.toFixed(1) ?? 'null'}`,
+            `tx/ty:        ${debug.tx.toFixed(3)} / ${debug.ty.toFixed(3)}`,
           ].join('\n')}
         </pre>
       ) : null}
