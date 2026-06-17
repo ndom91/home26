@@ -178,13 +178,8 @@ export function AsciiGlobe() {
       scrollSpring.x += scrollSpring.vx * delta
       scrollSpring.y += scrollSpring.vy * delta
 
-      const rotY =
-        0.25 +
-        (reduceMotion.matches ? 0 : t * 0.035) +
-        orientation.x * 1.6 +
-        orientation.vx * 0.3 +
-        scrollSpring.x
-      const rotX = orientation.y * -1.0 + orientation.vy * -0.2 + scrollSpring.y
+      const rotY = 0.25 + (reduceMotion.matches ? 0 : t * 0.035) + scrollSpring.x
+      const rotX = scrollSpring.y
       const cosY = Math.cos(rotY)
       const sinY = Math.sin(rotY)
       const cosX = Math.cos(rotX)
@@ -192,6 +187,12 @@ export function AsciiGlobe() {
       const centerX = width / 2
       const centerY = height / 2
       const scale = Math.min(width, height) * 0.594
+
+      // Spotlight position: the mouse drives it on desktop, device tilt on
+      // mobile. Tilting moves the lit region across the globe instead of
+      // rotating the globe itself.
+      const lightX = pointer.x + orientation.x
+      const lightY = pointer.y + orientation.y
 
       context.clearRect(0, 0, width, height)
       const styles = getComputedStyle(root)
@@ -210,7 +211,7 @@ export function AsciiGlobe() {
         const z1 = point.x * sinY + point.z * cosY
         const y1 = point.y * cosX - z1 * sinX
         const z2 = point.y * sinX + z1 * cosX
-        const distance = Math.hypot(x1 - pointer.x * 1.05, y1 + pointer.y * 1.05)
+        const distance = Math.hypot(x1 - lightX * 1.05, y1 + lightY * 1.05)
         const influence = Math.max(0, 1 - distance / 0.86)
         const warp = 1 + influence * 0.08 + Math.sin(point.seed) * 0.006
         const perspective = 1.34 / (1.95 - z2 * 0.55)
