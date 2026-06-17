@@ -194,7 +194,7 @@ export function AsciiGlobe() {
       // Spotlight position: the mouse drives it on desktop, device tilt on
       // mobile. Tilting moves the lit region across the globe instead of
       // rotating the globe itself.
-      const lightX = pointer.x + orientation.x
+      const lightX = pointer.x - orientation.x
       const lightY = pointer.y + orientation.y
 
       context.clearRect(0, 0, width, height)
