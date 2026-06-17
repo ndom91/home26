@@ -49,10 +49,57 @@ function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value))
 }
 
+type GlobeDebug = {
+  hasDOE: boolean
+  needsPermission: boolean
+  coarse: boolean
+  reduceMotion: boolean
+  perm: string
+  events: number
+  absEvents: number
+  beta: number | null
+  gamma: number | null
+}
+
 export function AsciiGlobe() {
   const rootRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [tiltEnabled, setTiltEnabled] = useState(false)
+  const [debugOn] = useState(
+    () => typeof window !== 'undefined' && window.location.search.includes('globedebug')
+  )
+  const debugRef = useRef<GlobeDebug>({
+    hasDOE: false,
+    needsPermission: false,
+    coarse: false,
+    reduceMotion: false,
+    perm: 'n/a',
+    events: 0,
+    absEvents: 0,
+    beta: null,
+    gamma: null,
+  })
+  const [debug, setDebug] = useState<GlobeDebug>(debugRef.current)
+
+  useEffect(() => {
+    if (!debugOn) return
+    const probe = (event: DeviceOrientationEvent) => {
+      debugRef.current.events += 1
+      debugRef.current.beta = event.beta
+      debugRef.current.gamma = event.gamma
+    }
+    const probeAbs = () => {
+      debugRef.current.absEvents += 1
+    }
+    window.addEventListener('deviceorientation', probe)
+    window.addEventListener('deviceorientationabsolute', probeAbs)
+    const id = window.setInterval(() => setDebug({ ...debugRef.current }), 250)
+    return () => {
+      window.removeEventListener('deviceorientation', probe)
+      window.removeEventListener('deviceorientationabsolute', probeAbs)
+      window.clearInterval(id)
+    }
+  }, [debugOn])
 
   useEffect(() => {
     const DeviceOrientation = window.DeviceOrientationEvent as
@@ -64,6 +111,11 @@ export function AsciiGlobe() {
     const needsPermission = typeof DeviceOrientation?.requestPermission === 'function'
     const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    debugRef.current.hasDOE = true
+    debugRef.current.needsPermission = needsPermission
+    debugRef.current.coarse = isCoarsePointer
+    debugRef.current.reduceMotion = reduceMotion
 
     if (reduceMotion) return
     if (!isCoarsePointer) return
@@ -81,9 +133,11 @@ export function AsciiGlobe() {
     // re-enables Android while leaving iOS pointer/ambient-only with no prompt.
     DeviceOrientation.requestPermission?.()
       .then((state) => {
+        debugRef.current.perm = `resolved:${state}`
         if (!cancelled && state === 'granted') setTiltEnabled(true)
       })
-      .catch(() => {
+      .catch((err) => {
+        debugRef.current.perm = `rejected:${err?.name ?? 'err'}`
         // iOS without a user gesture, or denied — keep pointer/ambient only.
       })
 
@@ -305,12 +359,29 @@ export function AsciiGlobe() {
   }, [tiltEnabled])
 
   return (
-    <div
-      ref={rootRef}
-      className="absolute top-[max(-19rem,-24vw)] right-[max(-18rem,-22vw)] aspect-square w-[clamp(32rem,58vw,56rem)] overflow-hidden rounded-full border border-[rgb(var(--globe-text)/0.18)] bg-[image:var(--globe-background)] opacity-[0.96] min-[821px]:max-[1150px]:top-[-10rem] min-[821px]:max-[1150px]:right-[-17rem] min-[821px]:max-[1150px]:w-[clamp(42rem,70vw,50rem)] max-[820px]:top-[-7rem] max-[820px]:right-[-8rem] max-[820px]:w-[27rem] max-[520px]:top-[-5.5rem] max-[520px]:right-[-6.25rem] max-[520px]:w-[18.5rem]"
-      aria-hidden="true"
-    >
-      <canvas ref={canvasRef} className="absolute inset-0 size-full" />
-    </div>
+    <>
+      <div
+        ref={rootRef}
+        className="absolute top-[max(-19rem,-24vw)] right-[max(-18rem,-22vw)] aspect-square w-[clamp(32rem,58vw,56rem)] overflow-hidden rounded-full border border-[rgb(var(--globe-text)/0.18)] bg-[image:var(--globe-background)] opacity-[0.96] min-[821px]:max-[1150px]:top-[-10rem] min-[821px]:max-[1150px]:right-[-17rem] min-[821px]:max-[1150px]:w-[clamp(42rem,70vw,50rem)] max-[820px]:top-[-7rem] max-[820px]:right-[-8rem] max-[820px]:w-[27rem] max-[520px]:top-[-5.5rem] max-[520px]:right-[-6.25rem] max-[520px]:w-[18.5rem]"
+        aria-hidden="true"
+      >
+        <canvas ref={canvasRef} className="absolute inset-0 size-full" />
+      </div>
+      {debugOn ? (
+        <pre className="fixed top-2 left-2 z-50 m-0 whitespace-pre rounded bg-black/80 p-2 font-mono text-[11px] leading-tight text-lime-300">
+          {[
+            `tiltEnabled: ${tiltEnabled}`,
+            `hasDOE:      ${debug.hasDOE}`,
+            `needsPerm:   ${debug.needsPermission}`,
+            `coarse:      ${debug.coarse}`,
+            `reduceMotion:${debug.reduceMotion}`,
+            `perm:        ${debug.perm}`,
+            `events:      ${debug.events}`,
+            `absEvents:   ${debug.absEvents}`,
+            `beta/gamma:  ${debug.beta?.toFixed(1) ?? 'null'} / ${debug.gamma?.toFixed(1) ?? 'null'}`,
+          ].join('\n')}
+        </pre>
+      ) : null}
+    </>
   )
 }
