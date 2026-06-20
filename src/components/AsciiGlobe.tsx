@@ -13,7 +13,7 @@ type DeviceOrientationEventConstructorWithPermission = typeof DeviceOrientationE
   requestPermission?: () => Promise<PermissionState>
 }
 
-const CHARS = Array.from('  .,:;i!+><*#%@')
+const CHARS = Array.from('   ..::;;++**##%@')
 const ROWS = 70
 const COLS = 136
 const FRAME_INTERVAL = 1000 / 30
