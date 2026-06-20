@@ -49,6 +49,9 @@ export const Route = createFileRoute('/blog/$slug')({
           { name: 'description', content: loaderData.description },
         ]
       : [],
+    links: loaderData?.standardSiteUri
+      ? [{ rel: 'site.standard.document', href: loaderData.standardSiteUri }]
+      : [],
   }),
   component: BlogPost,
 })
@@ -156,7 +159,9 @@ function BlogPost() {
           </LinkScreenshotProvider>
         </article>
         <ArticleNavigation nextPost={meta.nextPost} previousPost={meta.previousPost} />
-        {meta.atprotoUri ? <BlueskyComments atprotoUri={meta.atprotoUri} /> : null}
+        {meta.discussionAtprotoUri ? (
+          <BlueskyComments discussionAtprotoUri={meta.discussionAtprotoUri} />
+        ) : null}
       </div>
 
       <SiteFooter variant="blog" />

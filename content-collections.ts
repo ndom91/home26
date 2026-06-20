@@ -136,7 +136,8 @@ const posts = defineCollection({
     tags: v.optional(v.array(v.string()), []),
     draft: v.optional(v.boolean(), false),
     type: v.optional(v.picklist(['post', 'field-notes']), 'post'),
-    atprotoUri: v.optional(v.pipe(v.string(), v.startsWith('at://'))),
+    discussionAtprotoUri: v.optional(v.pipe(v.string(), v.startsWith('at://'))),
+    standardSiteUri: v.optional(v.pipe(v.string(), v.startsWith('at://'))),
     cover: v.optional(
       v.object({
         imageFile: v.string(),
@@ -158,7 +159,8 @@ const posts = defineCollection({
       tags: post.tags,
       draft: post.draft,
       type: post.type,
-      atprotoUri: post.atprotoUri ?? null,
+      discussionAtprotoUri: post.discussionAtprotoUri ?? null,
+      standardSiteUri: post.standardSiteUri ?? null,
       slug: slugFromPath(post._meta.filePath),
       linkScreenshotUrls: await linkScreenshotUrlsFromContent(post.content),
       coverImageUrl: post.cover

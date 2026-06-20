@@ -38,13 +38,13 @@ type CommentsState =
   | { status: 'loaded'; thread: ThreadViewPost }
   | { status: 'error' }
 
-export function BlueskyComments({ atprotoUri }: { atprotoUri: string }) {
+export function BlueskyComments({ discussionAtprotoUri }: { discussionAtprotoUri: string }) {
   const [state, setState] = useState<CommentsState>({ status: 'loading' })
 
   useEffect(() => {
     const controller = new AbortController()
     const url = new URL(blueskyThreadEndpoint)
-    url.searchParams.set('uri', atprotoUri)
+    url.searchParams.set('uri', discussionAtprotoUri)
     url.searchParams.set('depth', '2')
     url.searchParams.set('parentHeight', '0')
 
@@ -76,10 +76,10 @@ export function BlueskyComments({ atprotoUri }: { atprotoUri: string }) {
     void loadComments()
 
     return () => controller.abort()
-  }, [atprotoUri])
+  }, [discussionAtprotoUri])
 
   const rootPost = state.status === 'loaded' ? state.thread.post : null
-  const rootUrl = rootPost ? blueskyPostUrl(rootPost) : blueskyUriToPostUrl(atprotoUri)
+  const rootUrl = rootPost ? blueskyPostUrl(rootPost) : blueskyUriToPostUrl(discussionAtprotoUri)
   const replyItems = state.status === 'loaded' ? state.thread.replies : []
   const replies = replyItems.filter(isThreadViewPost)
   const unavailableReplyCount = countUnavailableReplies(replyItems)

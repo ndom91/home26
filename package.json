@@ -27,6 +27,7 @@
     "sign-screenshots": "node scripts/sign-link-screenshots.ts",
     "refresh-generated": "pnpm run stars && pnpm run sign-screenshots",
     "warm": "node scripts/warm-link-screenshots.ts",
+    "atproto:publish": "node scripts/publish-standard-site.ts",
     "build": "content-collections build && vite build",
     "preview": "vite preview",
     "deploy": "wrangler deploy && (pnpm run warm || true)",

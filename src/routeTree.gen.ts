@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ApiLinkScreenshotRouteImport } from './routes/api/link-screenshot'
+import { Route as DotwellKnownSiteDotstandardDotpublicationRouteImport } from './routes/[.]well-known.site[.]standard[.]publication'
 
 const ProjectsRoute = ProjectsRouteImport.update({
   id: '/projects',
@@ -46,11 +47,18 @@ const ApiLinkScreenshotRoute = ApiLinkScreenshotRouteImport.update({
   path: '/api/link-screenshot',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DotwellKnownSiteDotstandardDotpublicationRoute =
+  DotwellKnownSiteDotstandardDotpublicationRouteImport.update({
+    id: '/.well-known/site.standard.publication',
+    path: '/.well-known/site.standard.publication',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/blog': typeof BlogRouteWithChildren
   '/projects': typeof ProjectsRoute
+  '/.well-known/site.standard.publication': typeof DotwellKnownSiteDotstandardDotpublicationRoute
   '/api/link-screenshot': typeof ApiLinkScreenshotRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/': typeof BlogIndexRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/projects': typeof ProjectsRoute
+  '/.well-known/site.standard.publication': typeof DotwellKnownSiteDotstandardDotpublicationRoute
   '/api/link-screenshot': typeof ApiLinkScreenshotRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog': typeof BlogIndexRoute
@@ -67,6 +76,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/blog': typeof BlogRouteWithChildren
   '/projects': typeof ProjectsRoute
+  '/.well-known/site.standard.publication': typeof DotwellKnownSiteDotstandardDotpublicationRoute
   '/api/link-screenshot': typeof ApiLinkScreenshotRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/': typeof BlogIndexRoute
@@ -77,16 +87,24 @@ export interface FileRouteTypes {
     | '/'
     | '/blog'
     | '/projects'
+    | '/.well-known/site.standard.publication'
     | '/api/link-screenshot'
     | '/blog/$slug'
     | '/blog/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/projects' | '/api/link-screenshot' | '/blog/$slug' | '/blog'
+  to:
+    | '/'
+    | '/projects'
+    | '/.well-known/site.standard.publication'
+    | '/api/link-screenshot'
+    | '/blog/$slug'
+    | '/blog'
   id:
     | '__root__'
     | '/'
     | '/blog'
     | '/projects'
+    | '/.well-known/site.standard.publication'
     | '/api/link-screenshot'
     | '/blog/$slug'
     | '/blog/'
@@ -96,6 +114,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BlogRoute: typeof BlogRouteWithChildren
   ProjectsRoute: typeof ProjectsRoute
+  DotwellKnownSiteDotstandardDotpublicationRoute: typeof DotwellKnownSiteDotstandardDotpublicationRoute
   ApiLinkScreenshotRoute: typeof ApiLinkScreenshotRoute
 }
 
@@ -143,6 +162,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiLinkScreenshotRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.well-known/site.standard.publication': {
+      id: '/.well-known/site.standard.publication'
+      path: '/.well-known/site.standard.publication'
+      fullPath: '/.well-known/site.standard.publication'
+      preLoaderRoute: typeof DotwellKnownSiteDotstandardDotpublicationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -162,6 +188,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BlogRoute: BlogRouteWithChildren,
   ProjectsRoute: ProjectsRoute,
+  DotwellKnownSiteDotstandardDotpublicationRoute:
+    DotwellKnownSiteDotstandardDotpublicationRoute,
   ApiLinkScreenshotRoute: ApiLinkScreenshotRoute,
 }
 export const routeTree = rootRouteImport
