@@ -14,8 +14,8 @@ type DeviceOrientationEventConstructorWithPermission = typeof DeviceOrientationE
 }
 
 const CHARS = Array.from('  .,:;i!+><*#%@')
-const ROWS = 54
-const COLS = 104
+const ROWS = 70
+const COLS = 136
 const FRAME_INTERVAL = 1000 / 30
 
 function createPoints() {
@@ -235,10 +235,11 @@ export function AsciiGlobe() {
         const frontAlpha = 0.32 + depth * 0.54
         const backAlpha = 0.04 + depth * 0.08
         const alpha = (z2 >= 0 ? frontAlpha : backAlpha) + highlightBand * 0.18
-        const lime = influence > 0.22
+        const accentInfluence = influence * Math.max(0, z2)
+        const lime = accentInfluence > 0.22
 
         context.fillStyle = lime
-          ? `rgb(${globeAccent || '134 169 0'} / ${0.25 + influence * 0.38 + depth * 0.18 + highlightBand * 0.24})`
+          ? `rgb(${globeAccent || '134 169 0'} / ${0.25 + accentInfluence * 0.38 + depth * 0.18 + highlightBand * 0.24})`
           : `rgb(${globeText || '242 234 217'} / ${alpha})`
         context.fillText(char, sx, sy)
       }
