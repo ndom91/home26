@@ -227,16 +227,16 @@ export function AsciiGlobe() {
         const depth = Math.max(0, Math.min(1, (z2 + 1) / 2))
         const meridian = point.lon % 13 === 0
         const latitude = point.lat % 9 === 0
-        const orbitCue = meridian || latitude
+        const orbitCue = (meridian || latitude) && z2 >= 0
         const highlightBand = Math.max(0, 1 - Math.abs(x1 - 0.28) / 0.08) * Math.max(0, z2)
         const shade = Math.max(0, Math.min(1, 0.18 + depth * 0.68 + influence * 0.18))
         const charIndex = Math.min(CHARS.length - 1, Math.floor(shade * CHARS.length))
         const char = orbitCue ? CHARS[Math.max(charIndex, CHARS.length - 5)] : CHARS[charIndex]
-        const frontAlpha = 0.32 + depth * 0.54
-        const backAlpha = 0.04 + depth * 0.08
+        const frontAlpha = 0.3 + depth * 0.6
+        const backAlpha = 0.125 + depth * 0.2
         const alpha = (z2 >= 0 ? frontAlpha : backAlpha) + highlightBand * 0.18
         const accentInfluence = influence * Math.max(0, z2)
-        const lime = accentInfluence > 0.22
+        const lime = accentInfluence > 0.2
 
         context.fillStyle = lime
           ? `rgb(${globeAccent || '134 169 0'} / ${0.25 + accentInfluence * 0.38 + depth * 0.18 + highlightBand * 0.24})`
