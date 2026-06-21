@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@200;400;500;600&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 @import "tailwindcss";
+@import "react-medium-image-zoom/dist/styles.css";
 @plugin "@tailwindcss/typography";
 
 @font-face {
@@ -560,6 +561,82 @@ html[data-theme='dark'] .mermaid-dark {
   font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: 0.03em;
+}
+
+.prose :where([data-rmiz]) {
+  --mdx-image-radius: 0.5rem;
+  position: relative;
+  display: block;
+  margin-block: 2.5rem;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--color-blog-text) 12%, var(--color-blog-rule));
+  border-radius: var(--mdx-image-radius);
+  background:
+    linear-gradient(135deg, color-mix(in oklab, var(--color-blog-accent) 18%, transparent), transparent 38%),
+    color-mix(in oklab, var(--color-blog-panel) 74%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, white 16%, transparent),
+    0 1.5rem 4rem color-mix(in oklab, var(--color-blog-bg) 72%, black 18%);
+  backdrop-filter: blur(18px) saturate(1.18);
+}
+
+.prose :where([data-rmiz])::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklab, white 9%, transparent),
+    inset 0 -2rem 4rem color-mix(in oklab, var(--color-blog-bg) 26%, transparent);
+  content: '';
+}
+
+.prose :where([data-rmiz-content]) {
+  display: block;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--color-blog-panel);
+}
+
+.prose :where([data-rmiz] img.mdx-zoom-image) {
+  display: block;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  border: 0;
+  border-radius: calc(var(--mdx-image-radius) - 1px);
+  background: transparent;
+  box-shadow: none;
+}
+
+.prose :where([data-rmiz-btn-zoom]) {
+  background: color-mix(in oklab, var(--color-blog-panel) 82%, black 18%);
+  border: 1px solid color-mix(in oklab, var(--color-blog-text) 18%, transparent);
+  color: var(--color-blog-text);
+}
+
+.mdx-image-zoom-dialog :where([data-rmiz-modal-overlay='visible']) {
+  background: color-mix(in oklab, var(--color-blog-bg) 86%, black 14%);
+  backdrop-filter: blur(18px) saturate(0.86);
+}
+
+.mdx-image-zoom-dialog :where([data-rmiz-modal-img]) {
+  border-radius: 0.5rem;
+  box-shadow: 0 2rem 5rem rgb(0 0 0 / 0.42);
+}
+
+.mdx-image-zoom-dialog :where([data-rmiz-btn-unzoom]) {
+  background: color-mix(in oklab, var(--color-blog-panel) 82%, black 18%);
+  border: 1px solid color-mix(in oklab, var(--color-blog-text) 18%, transparent);
+  color: var(--color-blog-text);
+}
+
+@media (min-width: 64rem) {
+  .prose :where([data-rmiz]) {
+    width: calc(100% + 8rem);
+    max-width: none;
+    margin-inline: -4rem;
+  }
 }
 
 .prose blockquote {

@@ -41,6 +41,9 @@ importers:
       react-dom:
         specifier: 19.2.6
         version: 19.2.6(react@19.2.6)
+      react-medium-image-zoom:
+        specifier: 5.4.8
+        version: 5.4.8(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       rehype-autolink-headings:
         specifier: 7.1.0
         version: 7.1.0
@@ -2682,6 +2685,12 @@ packages:
 
   react-is@17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
+
+  react-medium-image-zoom@5.4.8:
+    resolution: {integrity: sha512-72CIldEUaPejjcaDOYIeDsGlWzNKpmxyKgiPi1LBCkWCIGHDLlA2KTeo2uNtmN/m72Y3k/2uWDfon9SDiPbHaA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   react@19.2.6:
     resolution: {integrity: sha512-sfWGGfavi0xr8Pg0sVsyHMAOziVYKgPLNrS7ig+ivMNb3wbCBw3KxtflsGBAwD3gYQlE/AEZsTLgToRrSCjb0Q==}
@@ -5915,6 +5924,11 @@ snapshots:
       scheduler: 0.27.0
 
   react-is@17.0.2: {}
+
+  react-medium-image-zoom@5.4.8(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
+    dependencies:
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
 
   react@19.2.6: {}
 

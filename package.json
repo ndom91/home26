@@ -52,6 +52,7 @@
     "lucide-react": "0.545.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
+    "react-medium-image-zoom": "5.4.8",
     "rehype-autolink-headings": "7.1.0",
     "rehype-callouts": "2.1.2",
     "rehype-pretty-code": "0.14.3",
