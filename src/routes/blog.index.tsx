@@ -12,6 +12,7 @@ import {
   contentLicense,
   isoDateToUtcDateTime,
   personId,
+  serializeJsonLd,
   siteLanguage,
   websiteId,
 } from '../lib/structured-data'
@@ -25,7 +26,7 @@ export const Route = createFileRoute('/blog/')({
       scripts: [
         {
           type: 'application/ld+json',
-          children: JSON.stringify({
+          children: serializeJsonLd({
             '@context': 'https://schema.org',
             '@type': 'Blog',
             '@id': blogId,

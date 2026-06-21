@@ -13,6 +13,7 @@ import {
   contentLicense,
   isoDateToUtcDateTime,
   personId,
+  serializeJsonLd,
   siteLanguage,
 } from '../lib/structured-data'
 import { mdxComponents } from '../mdx-components'
@@ -65,7 +66,7 @@ export const Route = createFileRoute('/blog/$slug')({
       ? [
           {
             type: 'application/ld+json',
-            children: JSON.stringify({
+            children: serializeJsonLd({
               '@context': 'https://schema.org',
               '@type': 'BlogPosting',
               '@id': `${blogUrl}/${loaderData.slug}#blogposting`,

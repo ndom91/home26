@@ -1,7 +1,7 @@
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { personId, siteLanguage, siteUrl, websiteId } from '../lib/structured-data'
+import { personId, serializeJsonLd, siteLanguage, siteUrl, websiteId } from '../lib/structured-data'
 import appCss from '../styles.css?url'
 
 const websiteStructuredData = {
@@ -92,7 +92,7 @@ export const Route = createRootRoute({
     scripts: [
       {
         type: 'application/ld+json',
-        children: JSON.stringify(websiteStructuredData),
+        children: serializeJsonLd(websiteStructuredData),
       },
     ],
   }),

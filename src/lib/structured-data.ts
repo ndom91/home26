@@ -15,3 +15,7 @@ export function absoluteSiteUrl(url: string) {
 export function isoDateToUtcDateTime(date: string) {
   return `${date}T00:00:00.000Z`
 }
+
+export function serializeJsonLd(data: unknown) {
+  return JSON.stringify(data).replace(/</g, '\\u003c')
+}
