@@ -99,6 +99,14 @@ const projects: Project[] = [
     tags: ['Swift', 'Jellyfin'],
   },
   {
+    title: 'airescue.dev',
+    blurb:
+      'This one is the result of a domain bought on a whim. After it sat dormant for a few months, I decided it should not completely go to waste. So I built this marketing page for a hypothetical consulting firm specializing in helping out where, "you shipped fast. we\'ll make it last."',
+    demo: 'https://airescue.dev',
+    status: 'live',
+    tags: ['Landing Page', 'Marketing'],
+  },
+  {
     title: 'briefkasten',
     blurb:
       'Self-hosted bookmarking and RSS reader application. Originally written in React, v2 was a complete rewrite with SvelteKit.',
