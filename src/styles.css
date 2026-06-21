@@ -528,7 +528,38 @@ html[data-theme='dark'] .mermaid-dark {
 .prose :where(h1, h2, h3, h4, h5, h6) {
   position: relative;
   scroll-margin-top: 1.5rem;
+  line-height: 1;
   letter-spacing: 0.02em;
+}
+
+.prose :where(h1) {
+  font-size: clamp(2.75rem, 7vw, 3.75rem);
+}
+
+.prose :where(h2) {
+  font-size: clamp(2.15rem, 5vw, 2.85rem);
+}
+
+.prose :where(h3) {
+  font-size: clamp(1.65rem, 4vw, 2.15rem);
+}
+
+.prose :where(h4) {
+  font-size: clamp(1.35rem, 3vw, 1.65rem);
+}
+
+.prose :where(h5, h6) {
+  font-size: 1.2rem;
+}
+
+.prose :where(table) {
+  font-size: 0.98rem;
+}
+
+.prose :where(th) {
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
 }
 
 .prose blockquote {
@@ -708,10 +739,14 @@ html[data-theme='dark'] .prose .callout[data-callout='caution'] {
 .heading-anchor {
   position: absolute;
   right: 100%;
-  margin-right: 0.5ch;
+  display: inline-block;
+  margin-right: 0.75ch;
   color: color-mix(in oklab, var(--color-blog-accent) 55%, transparent);
   text-decoration: none;
-  font-weight: 400;
+  font-family: var(--font-reading);
+  font-size: 1em;
+  font-weight: 200;
+  letter-spacing: normal;
 }
 
 .heading-anchor:hover,

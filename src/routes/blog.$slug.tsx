@@ -86,7 +86,7 @@ function BlogPost() {
             }`}
           >
             <div className="@container min-w-0 lg:pb-3 space-y-4">
-              <p className="font-mono text-[9px] uppercase tracking-[0.34em] text-blog-faint mb-3">
+              <p className="font-mono text-xs uppercase tracking-[0.34em] text-blog-faint mb-3">
                 {meta.type === 'field-notes' ? 'Field Note' : 'Article'} /{' '}
                 {meta.publishedAt.slice(0, 4)}
               </p>
@@ -100,12 +100,12 @@ function BlogPost() {
                 {meta.description}
               </p>
               <div className="mt-7 border-l border-blog-rule pl-4">
-                <p className="font-mono text-[9px] uppercase tracking-widest text-blog-faint">
+                <p className="font-mono text-xs uppercase tracking-widest text-blog-faint">
                   Published
                 </p>
                 <time
                   dateTime={meta.publishedAt}
-                  className="font-mono text-[10px] uppercase tracking-widest text-blog-muted"
+                  className="font-mono text-xs uppercase tracking-widest text-blog-muted"
                 >
                   {meta.publishedAt}
                 </time>
@@ -114,7 +114,7 @@ function BlogPost() {
                     {(meta.tags ?? []).map((tag) => (
                       <span
                         key={tag}
-                        className="font-mono border border-blog-rule bg-blog-panel px-2 py-0.5 text-[9px] uppercase tracking-widest text-blog-muted"
+                        className="font-mono border border-blog-rule bg-blog-panel px-2 py-0.5 text-xs uppercase tracking-widest text-blog-muted"
                       >
                         {tag}
                       </span>
