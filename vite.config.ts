@@ -72,6 +72,11 @@ const config = defineConfig({
     tanstackStart({
       prerender: {
         enabled: true,
+        crawlLinks: true,
+      },
+      sitemap: {
+        enabled: true,
+        host: 'https://ndo.dev',
       },
     }),
     viteReact(),
