@@ -6,6 +6,15 @@ import { SiteFooter } from '../components/SiteFooter'
 import { SiteHeader } from '../components/SiteHeader'
 import type { BlogPost as BlogPostType } from '../lib/blog'
 import { getPublishedPost, getPublishedPosts, longestWordEm } from '../lib/blog'
+import {
+  absoluteSiteUrl,
+  blogId,
+  blogUrl,
+  contentLicense,
+  isoDateToUtcDateTime,
+  personId,
+  siteLanguage,
+} from '../lib/structured-data'
 import { mdxComponents } from '../mdx-components'
 
 type PostMeta = Omit<BlogPostType, 'Component'>
@@ -51,6 +60,46 @@ export const Route = createFileRoute('/blog/$slug')({
       : [],
     links: loaderData?.standardSiteUri
       ? [{ rel: 'site.standard.document', href: loaderData.standardSiteUri }]
+      : [],
+    scripts: loaderData
+      ? [
+          {
+            type: 'application/ld+json',
+            children: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'BlogPosting',
+              '@id': `${blogUrl}/${loaderData.slug}#blogposting`,
+              url: `${blogUrl}/${loaderData.slug}`,
+              mainEntityOfPage: {
+                '@id': `${blogUrl}/${loaderData.slug}#webpage`,
+              },
+              isPartOf: {
+                '@id': blogId,
+              },
+              headline: loaderData.title,
+              description: loaderData.description,
+              articleSection: loaderData.tags[0],
+              keywords: loaderData.tags.join(', '),
+              inLanguage: siteLanguage,
+              datePublished: isoDateToUtcDateTime(loaderData.publishedAt),
+              dateModified: isoDateToUtcDateTime(loaderData.publishedAt),
+              author: {
+                '@id': personId,
+              },
+              publisher: {
+                '@id': personId,
+              },
+              image: loaderData.coverImageUrl
+                ? {
+                    '@type': 'ImageObject',
+                    '@id': `${blogUrl}/${loaderData.slug}#blogposting-image`,
+                    url: absoluteSiteUrl(loaderData.coverImageUrl),
+                  }
+                : undefined,
+              license: contentLicense,
+            }),
+          },
+        ]
       : [],
   }),
   component: BlogPost,

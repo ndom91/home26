@@ -6,9 +6,49 @@ import { SiteFooter } from '../components/SiteFooter'
 import { SiteHeader } from '../components/SiteHeader'
 import type { PostListItem } from '../lib/blog'
 import { getPublishedPosts } from '../lib/blog'
+import {
+  blogId,
+  blogWebPageId,
+  contentLicense,
+  isoDateToUtcDateTime,
+  personId,
+  siteLanguage,
+  websiteId,
+} from '../lib/structured-data'
 
 export const Route = createFileRoute('/blog/')({
   loader: () => getPublishedPosts().map(({ Component: _c, ...post }): PostListItem => post),
+  head: ({ loaderData }) => {
+    const latestPost = loaderData?.[0]
+
+    return {
+      scripts: [
+        {
+          type: 'application/ld+json',
+          children: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Blog',
+            '@id': blogId,
+            isPartOf: {
+              '@id': websiteId,
+            },
+            mainEntityOfPage: {
+              '@id': blogWebPageId,
+            },
+            name: "Nico's Blog",
+            description:
+              'Field notes, server rituals, UI experiments, and open-source side projects.',
+            inLanguage: siteLanguage,
+            dateModified: latestPost ? isoDateToUtcDateTime(latestPost.publishedAt) : undefined,
+            publisher: {
+              '@id': personId,
+            },
+            license: contentLicense,
+          }),
+        },
+      ],
+    }
+  },
   component: BlogIndex,
 })
 

@@ -117,7 +117,7 @@ async function upsertPublication() {
     $type: 'site.standard.publication',
     name: 'ndo.dev',
     url: SITE_URL,
-    description: 'Personal writing and technical notes by Nico Domino.',
+    description: 'Personal writing and technical notes by ndom91.',
     preferences: { showInDiscover: true },
   }
   const existingUri = process.env.STANDARD_SITE_PUBLICATION_URI ?? readGeneratedPublicationUri()

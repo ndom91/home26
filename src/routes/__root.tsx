@@ -1,7 +1,48 @@
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import { personId, siteLanguage, siteUrl, websiteId } from '../lib/structured-data'
 import appCss from '../styles.css?url'
+
+const websiteStructuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': websiteId,
+      url: siteUrl,
+      name: 'ndom91',
+      alternateName: ['ndo.dev', 'ndom91', '.domino'],
+      description:
+        "Nico's personal site and technical blog, a Berlin-based software engineer building web tools, developer systems, and open-source side projects.",
+      inLanguage: siteLanguage,
+      publisher: {
+        '@id': personId,
+      },
+      image: {
+        '@type': 'ImageObject',
+        '@id': `${siteUrl}#website-image`,
+        url: 'https://ndo.dev/web-app-manifest-512x512.png',
+        caption: 'ndo.dev logo',
+      },
+    },
+    {
+      '@type': 'ProfilePage',
+      '@id': `${siteUrl}#webpage`,
+      url: siteUrl,
+      isPartOf: {
+        '@id': websiteId,
+      },
+      name: 'About Nico',
+      inLanguage: siteLanguage,
+      dateCreated: '2026-05-10T14:40:15.000Z',
+      dateModified: '2026-06-15T17:58:06.000Z',
+      mainEntity: {
+        '@id': personId,
+      },
+    },
+  ],
+} as const
 
 export const Route = createRootRoute({
   head: () => ({
@@ -46,6 +87,12 @@ export const Route = createRootRoute({
       {
         rel: 'stylesheet',
         href: appCss,
+      },
+    ],
+    scripts: [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify(websiteStructuredData),
       },
     ],
   }),
