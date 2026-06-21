@@ -21,7 +21,6 @@ function BlogIndex() {
       <SiteHeader />
 
       <PageHero
-        variant="blog"
         title="WRITE"
         description="Field notes, server rituals, UI experiments, and the occasional strongly held opinion."
         eyebrow={
