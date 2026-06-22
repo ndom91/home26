@@ -53,7 +53,7 @@ export function CodeBlock({ children, title }: { children?: ReactNode; title?: s
           type="button"
           onClick={copyCode}
           disabled={!code}
-          className="rounded-full border border-blog-rule px-3 py-1 font-mono text-[10px] uppercase leading-none tracking-widest text-blog-muted opacity-0 transition hover:cursor-pointer hover:border-blog-accent hover:text-blog-accent focus-visible:opacity-100 focus-visible:outline-2! focus-visible:outline-blog-accent/60! focus-visible:outline-offset-2! disabled:pointer-events-none disabled:opacity-30 group-hover/code:opacity-100 motion-reduce:transition-none"
+          className="min-h-10 rounded-full border border-blog-rule px-3 py-1 font-mono text-[10px] uppercase leading-none tracking-widest text-blog-muted opacity-0 transition-[border-color,color,opacity,scale] hover:cursor-pointer hover:border-blog-accent hover:text-blog-accent active:scale-[0.96] focus-visible:opacity-100 focus-visible:outline-2! focus-visible:outline-blog-accent/60! focus-visible:outline-offset-2! disabled:pointer-events-none disabled:opacity-30 group-hover/code:opacity-100 motion-reduce:transition-none"
         >
           {copyState === 'copied' ? 'Copied' : copyState === 'failed' ? 'Failed' : 'Copy'}
         </button>

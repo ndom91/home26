@@ -8,14 +8,14 @@ export function PostCard({ post, eager = false }: { post: PostListItem; eager?: 
     <Link
       to="/blog/$slug"
       params={{ slug: post.slug }}
-      className="blog-paper-card group flex h-full flex-col overflow-hidden border border-blog-rule bg-blog-panel transition-[border-color,background-color,translate] duration-300 hover:-translate-y-0.5 hover:border-blog-accent hover:bg-blog-hover motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+      className="blog-paper-card group flex h-full flex-col overflow-hidden border border-blog-rule bg-blog-panel transition-[border-color,background-color,translate,scale] duration-300 hover:-translate-y-0.5 hover:border-blog-accent hover:bg-blog-hover active:scale-[0.96] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
     >
       {post.coverImageUrl ? (
         <div className="relative overflow-hidden border-b border-blog-rule">
           <img
             src={post.coverImageUrl}
             alt=""
-            className="aspect-4/3 w-full object-cover transition-transform duration-500 group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+            className="image-outline aspect-4/3 w-full object-cover transition-transform duration-500 group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             loading={eager ? 'eager' : 'lazy'}
             decoding="async"
           />
@@ -24,10 +24,10 @@ export function PostCard({ post, eager = false }: { post: PostListItem; eager?: 
       ) : null}
       <div className="flex flex-1 flex-col p-4">
         <PostCardMeta post={post} />
-        <h2 className="mt-4 text-pretty font-heading font-extrabold text-[2rem] tracking-[0.005em] leading-[0.9] text-blog-accent">
+        <h2 className="mt-4 text-balance font-heading font-extrabold text-[2rem] tracking-[0.005em] leading-[0.9] text-blog-accent">
           {post.title}
         </h2>
-        <p className="mt-3 mb-5 font-reading text-sm leading-6 text-blog-description">
+        <p className="mt-3 mb-5 text-pretty font-reading text-sm leading-6 text-blog-description">
           {post.description}
         </p>
         <div className="font-mono mt-auto flex items-center justify-between border-t border-blog-rule pt-3 text-[10px] uppercase tracking-widest text-blog-muted transition-colors group-hover:text-blog-accent">

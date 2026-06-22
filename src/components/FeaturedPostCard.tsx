@@ -9,7 +9,7 @@ export function FeaturedPostCard({ post }: { post: PostListItem }) {
     <Link
       to="/blog/$slug"
       params={{ slug: post.slug }}
-      className="blog-paper-card group mb-5 grid overflow-hidden border border-blog-rule bg-blog-panel transition-[border-color,background-color,translate] duration-300 hover:-translate-y-0.5 hover:border-blog-accent hover:bg-blog-hover motion-reduce:transition-none motion-reduce:hover:translate-y-0 lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,0.85fr)]"
+      className="blog-paper-card group mb-5 grid overflow-hidden border border-blog-rule bg-blog-panel transition-[border-color,background-color,translate,scale] duration-300 hover:-translate-y-0.5 hover:border-blog-accent hover:bg-blog-hover active:scale-[0.96] motion-reduce:transition-none motion-reduce:hover:translate-y-0 lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,0.85fr)]"
     >
       <div className="@container flex min-h-80 min-w-0 flex-col justify-between p-5 sm:p-7">
         <div>
@@ -22,7 +22,7 @@ export function FeaturedPostCard({ post }: { post: PostListItem }) {
           >
             {post.title}
           </h2>
-          <p className="mt-5 max-w-2xl font-reading text-base leading-7 text-blog-description">
+          <p className="mt-5 max-w-2xl text-pretty font-reading text-base leading-7 text-blog-description">
             {post.description}
           </p>
         </div>
@@ -33,7 +33,7 @@ export function FeaturedPostCard({ post }: { post: PostListItem }) {
           <img
             src={post.coverImageUrl}
             alt=""
-            className="h-full min-h-72 w-full object-cover transition-transform duration-500 scale-[1.01] group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+            className="image-outline h-full min-h-72 w-full scale-[1.01] object-cover transition-transform duration-500 group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             fetchPriority="high"
           />
           {post.type === 'field-notes' ? <FieldNoteBadge /> : null}

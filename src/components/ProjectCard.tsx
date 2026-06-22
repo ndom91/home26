@@ -15,7 +15,7 @@ const statusStyles: Record<ProjectStatus, { dot: string; label: string }> = {
 }
 
 const iconLinkClass =
-  'grid size-8 place-items-center border border-rule transition-colors hover:border-accent hover:text-accent'
+  'grid size-10 place-items-center border border-rule transition-[border-color,color,scale] hover:border-accent hover:text-accent active:scale-[0.96] motion-reduce:transition-none'
 
 export function ProjectCard({ project }: { project: Project }) {
   const status = statusStyles[project.status]
@@ -38,7 +38,7 @@ export function ProjectCard({ project }: { project: Project }) {
           <img
             src={project.image}
             alt=""
-            className="aspect-16/10 w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+            className="image-outline aspect-16/10 w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             loading="lazy"
             decoding="async"
           />
@@ -51,7 +51,7 @@ export function ProjectCard({ project }: { project: Project }) {
           <span>{status.label}</span>
         </div>
 
-        <h2 className="font-heading text-[clamp(3rem,3vw,3rem)] font-bold uppercase tracking-wide leading-[0.92]">
+        <h2 className="text-balance font-heading text-[clamp(3rem,3vw,3rem)] font-bold uppercase tracking-wide leading-[0.92]">
           {titleHref ? (
             <a
               href={titleHref}
@@ -66,7 +66,9 @@ export function ProjectCard({ project }: { project: Project }) {
           )}
         </h2>
 
-        <p className="mt-3 font-reading text-[0.92rem] leading-6 text-muted">{project.blurb}</p>
+        <p className="mt-3 text-pretty font-reading text-[0.92rem] leading-6 text-muted">
+          {project.blurb}
+        </p>
 
         {project.tags.length > 0 ? (
           <div className="mt-4 mb-5 flex flex-wrap gap-2">
@@ -100,7 +102,7 @@ export function ProjectCard({ project }: { project: Project }) {
               target="_blank"
               rel="noreferrer"
               aria-label={`${project.title} GitHub stars: ${project.stars}`}
-              className="ml-auto flex items-center gap-1.5 text-[0.72rem] tabular-nums text-muted transition-colors hover:text-accent"
+              className="ml-auto flex min-h-10 items-center gap-1.5 text-[0.72rem] tabular-nums text-muted transition-[color,scale] hover:text-accent active:scale-[0.96] motion-reduce:transition-none"
             >
               <Star className="size-3.5" strokeWidth={2} aria-hidden="true" />
               {project.stars.toLocaleString('en-US')}

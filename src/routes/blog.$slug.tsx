@@ -116,20 +116,22 @@ function BlogPost() {
     <div className="flex min-h-screen flex-col bg-blog-bg text-blog-text">
       <SiteHeader />
 
-      <header className="relative isolate overflow-hidden border-b border-blog-rule bg-[radial-gradient(circle_at_18%_8%,color-mix(in_oklab,var(--color-blog-accent)_20%,transparent),transparent_32%),radial-gradient(circle_at_82%_18%,color-mix(in_oklab,var(--color-blog-accent)_12%,transparent),transparent_28%),linear-gradient(135deg,color-mix(in_oklab,var(--color-blog-accent)_12%,transparent),transparent_48%)] px-5 py-8 sm:px-6 sm:py-12 lg:py-16">
+      <header className="relative isolate overflow-hidden border-b border-blog-rule bg-[radial-gradient(circle_at_18%_8%,color-mix(in_oklab,var(--color-blog-accent)_20%,transparent),transparent_32%),radial-gradient(circle_at_82%_18%,color-mix(in_oklab,var(--color-blog-accent)_12%,transparent),transparent_28%),linear-gradient(135deg,color-mix(in_oklab,var(--color-blog-accent)_12%,transparent),transparent_48%)] px-5 pb-8 sm:px-6 sm:py-12 lg:py-16">
         <div
           className="pointer-events-none absolute inset-0 bg-(image:--grit-image) bg-size-[220px_220px] bg-repeat opacity-[0.05] mix-blend-overlay"
           aria-hidden="true"
         />
         <div className="relative mx-auto max-w-7xl">
-          <Link
-            to="/blog"
-            className="font-mono inline-block text-xs uppercase tracking-widest text-blog-muted transition-colors hover:text-blog-accent focus-visible:outline-2! focus-visible:outline-blog-accent! focus-visible:outline-offset-2!"
-          >
-            ← WRITING
-          </Link>
+          <div className="flex h-14 items-center sm:block sm:h-auto">
+            <Link
+              to="/blog"
+              className="font-mono relative inline-flex items-center text-xs uppercase tracking-widest text-blog-muted transition-colors before:absolute before:inset-x-[-0.35rem] before:inset-y-[-0.75rem] before:content-[''] hover:text-blog-accent focus-visible:outline-2! focus-visible:outline-blog-accent! focus-visible:outline-offset-2!"
+            >
+              ← WRITING
+            </Link>
+          </div>
           <div
-            className={`mt-8 grid gap-7 ${
+            className={`grid gap-7 sm:mt-8 ${
               meta.coverImageUrl
                 ? 'lg:grid-cols-[minmax(22rem,0.95fr)_minmax(0,0.75fr)] lg:items-center lg:gap-10'
                 : 'mx-auto max-w-5xl lg:grid-cols-[minmax(0,1fr)_14rem] lg:items-start'
@@ -141,12 +143,12 @@ function BlogPost() {
                 {meta.publishedAt.slice(0, 4)}
               </p>
               <h1
-                className="text-pretty font-heading max-w-4xl text-[min(clamp(3.15rem,5.5vw,6.55rem),calc(100cqi/var(--title-fit-em)))] font-extrabold uppercase leading-[0.94] tracking-normal text-blog-text wrap-break-word"
+                className="max-w-4xl text-balance font-heading text-[min(clamp(3.15rem,5.5vw,6.55rem),calc(100cqi/var(--title-fit-em)))] font-extrabold uppercase leading-[0.94] tracking-normal text-blog-text wrap-break-word"
                 style={{ '--title-fit-em': longestWordEm(meta.title) } as CSSProperties}
               >
                 {meta.title}
               </h1>
-              <p className="mt-5 max-w-xl font-reading text-base leading-7 text-blog-description sm:text-md sm:leading-8">
+              <p className="mt-5 max-w-xl text-pretty font-reading text-base leading-7 text-blog-description sm:text-md sm:leading-8">
                 {meta.description}
               </p>
               <div className="mt-7 border-l border-blog-rule pl-4">
@@ -155,7 +157,7 @@ function BlogPost() {
                 </p>
                 <time
                   dateTime={meta.publishedAt}
-                  className="font-mono text-xs uppercase tracking-widest text-blog-muted"
+                  className="font-mono text-xs tabular-nums uppercase tracking-widest text-blog-muted"
                 >
                   {meta.publishedAt}
                 </time>
@@ -189,7 +191,7 @@ function BlogPost() {
                     loading="eager"
                     decoding="sync"
                     fetchPriority="high"
-                    className="aspect-[4/3] w-full object-cover"
+                    className="image-outline aspect-[4/3] w-full object-cover"
                   />
                   <div
                     className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,transparent_58%,color-mix(in_oklab,var(--color-blog-accent)_22%,transparent)),linear-gradient(0deg,rgb(0_0_0/0.14),transparent_34%)] mix-blend-multiply dark:mix-blend-screen"
@@ -203,7 +205,7 @@ function BlogPost() {
       </header>
 
       <div className="flex-1 px-6 py-12 sm:py-16">
-        <article className="prose mx-auto max-w-2xl font-reading prose-headings:mt-12 prose-headings:text-balance prose-headings:font-heading prose-headings:text-blog-text prose-p:text-[1.05rem] prose-p:leading-8 prose-p:text-blog-description prose-a:text-blog-accent prose-strong:text-blog-text prose-li:text-[1.05rem] prose-li:leading-8 prose-li:text-blog-description prose-th:text-blog-text prose-td:text-blog-description prose-code:bg-blog-panel prose-code:px-1 prose-code:py-0.5 prose-code:font-mono prose-code:text-blog-text prose-code:before:content-none prose-code:after:content-none prose-blockquote:border-blog-accent prose-blockquote:text-blog-description prose-hr:border-blog-rule prose-pre:border prose-pre:border-blog-rule prose-pre:bg-blog-panel!">
+        <article className="prose mx-auto max-w-2xl font-reading prose-headings:mt-12 prose-headings:text-balance prose-headings:font-heading prose-headings:text-blog-text prose-p:text-pretty prose-p:text-[1.05rem] prose-p:leading-8 prose-p:text-blog-description prose-a:text-blog-accent prose-strong:text-blog-text prose-li:text-pretty prose-li:text-[1.05rem] prose-li:leading-8 prose-li:text-blog-description prose-th:text-blog-text prose-td:text-blog-description prose-code:bg-blog-panel prose-code:px-1 prose-code:py-0.5 prose-code:font-mono prose-code:text-blog-text prose-code:before:content-none prose-code:after:content-none prose-blockquote:text-pretty prose-blockquote:border-blog-accent prose-blockquote:text-blog-description prose-hr:border-blog-rule prose-pre:border prose-pre:border-blog-rule prose-pre:bg-blog-panel!">
           <LinkScreenshotProvider urls={meta.linkScreenshotUrls}>
             <Component components={mdxComponents} />
           </LinkScreenshotProvider>
@@ -262,7 +264,7 @@ function ArticleNavLink({
     <Link
       to="/blog/$slug"
       params={{ slug: post.slug }}
-      className={`group flex min-h-48 flex-col justify-between bg-blog-panel p-5 transition-colors hover:bg-blog-hover sm:p-6 ${
+      className={`group flex min-h-48 flex-col justify-between bg-blog-panel p-5 transition-[background-color,scale] hover:bg-blog-hover active:scale-[0.96] motion-reduce:transition-none sm:p-6 ${
         isNext ? 'text-right' : ''
       }`}
     >
@@ -273,7 +275,7 @@ function ArticleNavLink({
         <h2 className="text-balance font-heading text-xl font-extrabold uppercase leading-[0.95] text-blog-text transition-colors group-hover:text-blog-accent sm:text-4xl">
           {post.title}
         </h2>
-        <p className="mt-4 line-clamp-2 font-reading text-sm leading-6 text-blog-description">
+        <p className="mt-4 line-clamp-2 text-pretty font-reading text-sm leading-6 text-blog-description">
           {post.description}
         </p>
       </div>
@@ -287,7 +289,9 @@ function ArticleNavLink({
             ←
           </span>
         ) : null}
-        <time dateTime={post.publishedAt}>{post.publishedAt}</time>
+        <time dateTime={post.publishedAt} className="tabular-nums">
+          {post.publishedAt}
+        </time>
         {isNext ? (
           <span className="transition-transform group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0">
             →

@@ -214,6 +214,11 @@
     color: var(--ink);
   }
 
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
   body {
     margin: 0;
     font-family: var(--font-body);
@@ -273,14 +278,14 @@
 
   .theme-toggle-sun {
     opacity: 1;
-    rotate: 0deg;
     scale: 1;
+    filter: blur(0);
   }
 
   .theme-toggle-moon {
     opacity: 0;
-    rotate: -70deg;
-    scale: 0.55;
+    scale: 0.25;
+    filter: blur(4px);
   }
 
   @media (prefers-color-scheme: dark) {
@@ -290,14 +295,14 @@
 
     html:not([data-theme='light']) .theme-toggle-sun {
       opacity: 0;
-      rotate: 70deg;
-      scale: 0.55;
+      scale: 0.25;
+      filter: blur(4px);
     }
 
     html:not([data-theme='light']) .theme-toggle-moon {
       opacity: 1;
-      rotate: 0deg;
       scale: 1;
+      filter: blur(0);
     }
 
     html:not([data-theme='light']) .blog-paper-card {
@@ -331,14 +336,14 @@
 
   html[data-theme='dark'] .theme-toggle-sun {
     opacity: 0;
-    rotate: 70deg;
-    scale: 0.55;
+    scale: 0.25;
+    filter: blur(4px);
   }
 
   html[data-theme='dark'] .theme-toggle-moon {
     opacity: 1;
-    rotate: 0deg;
     scale: 1;
+    filter: blur(0);
   }
 
   html[data-theme='light'] .theme-toggle-thumb {
@@ -347,15 +352,30 @@
 
   html[data-theme='light'] .theme-toggle-sun {
     opacity: 1;
-    rotate: 0deg;
     scale: 1;
+    filter: blur(0);
   }
 
   html[data-theme='light'] .theme-toggle-moon {
     opacity: 0;
-    rotate: -70deg;
-    scale: 0.55;
+    scale: 0.25;
+    filter: blur(4px);
   }
+}
+
+.image-outline {
+  outline: 1px solid rgb(0 0 0 / 0.1);
+  outline-offset: -1px;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) .image-outline {
+    outline-color: rgb(255 255 255 / 0.1);
+  }
+}
+
+html[data-theme='dark'] .image-outline {
+  outline-color: rgb(255 255 255 / 0.1);
 }
 
 :where(
@@ -531,6 +551,11 @@ html[data-theme='dark'] .mermaid-dark {
   scroll-margin-top: 1.5rem;
   line-height: 1;
   letter-spacing: 0.02em;
+  text-wrap: balance;
+}
+
+.prose :where(p, li, blockquote) {
+  text-wrap: pretty;
 }
 
 .prose :where(h1) {
@@ -576,8 +601,23 @@ html[data-theme='dark'] .mermaid-dark {
     color-mix(in oklab, var(--color-blog-panel) 74%, transparent);
   box-shadow:
     inset 0 1px 0 color-mix(in oklab, white 16%, transparent),
-    0 1.5rem 4rem color-mix(in oklab, var(--color-blog-bg) 72%, black 18%);
+    0 0.75rem 1.75rem rgb(0 0 0 / 0.08),
+    0 1.75rem 3.25rem rgb(0 0 0 / 0.045);
   backdrop-filter: blur(18px) saturate(1.18);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) .prose :where([data-rmiz]) {
+    box-shadow:
+      inset 0 1px 0 color-mix(in oklab, white 16%, transparent),
+      0 1.5rem 4rem color-mix(in oklab, var(--color-blog-bg) 72%, black 18%);
+  }
+}
+
+html[data-theme='dark'] .prose :where([data-rmiz]) {
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, white 16%, transparent),
+    0 1.5rem 4rem color-mix(in oklab, var(--color-blog-bg) 72%, black 18%);
 }
 
 .prose :where([data-rmiz])::after {
@@ -586,9 +626,23 @@ html[data-theme='dark'] .mermaid-dark {
   pointer-events: none;
   border-radius: inherit;
   box-shadow:
-    inset 0 0 0 1px color-mix(in oklab, white 9%, transparent),
+    inset 0 0 0 1px rgb(0 0 0 / 0.1),
     inset 0 -2rem 4rem color-mix(in oklab, var(--color-blog-bg) 26%, transparent);
   content: '';
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) .prose :where([data-rmiz])::after {
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.1),
+      inset 0 -2rem 4rem color-mix(in oklab, var(--color-blog-bg) 26%, transparent);
+  }
+}
+
+html[data-theme='dark'] .prose :where([data-rmiz])::after {
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.1),
+    inset 0 -2rem 4rem color-mix(in oklab, var(--color-blog-bg) 26%, transparent);
 }
 
 .prose :where([data-rmiz-content]) {
@@ -607,6 +661,18 @@ html[data-theme='dark'] .mermaid-dark {
   border-radius: calc(var(--mdx-image-radius) - 1px);
   background: transparent;
   box-shadow: none;
+  outline: 1px solid rgb(0 0 0 / 0.1);
+  outline-offset: -1px;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) .prose :where([data-rmiz] img.mdx-zoom-image) {
+    outline-color: rgb(255 255 255 / 0.1);
+  }
+}
+
+html[data-theme='dark'] .prose :where([data-rmiz] img.mdx-zoom-image) {
+  outline-color: rgb(255 255 255 / 0.1);
 }
 
 .prose :where([data-rmiz-btn-zoom]) {
@@ -829,4 +895,10 @@ html[data-theme='dark'] .prose .callout[data-callout='caution'] {
 .heading-anchor:hover,
 .heading-anchor:focus-visible {
   color: var(--color-blog-accent);
+}
+
+@media (max-width: 47.999rem) {
+  .heading-anchor {
+    display: none;
+  }
 }

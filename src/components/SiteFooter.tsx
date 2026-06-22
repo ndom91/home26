@@ -8,12 +8,12 @@ const footerVariants = {
   default: {
     border: 'border-rule',
     label: 'text-[0.62rem] uppercase tracking-[0.2em] text-muted',
-    link: 'text-[0.62rem] uppercase tracking-[0.2em] text-muted transition-colors hover:text-accent',
+    link: 'inline-flex min-h-10 items-center text-[0.62rem] uppercase tracking-[0.2em] text-muted transition-[color,scale] hover:text-accent active:scale-[0.96] motion-reduce:transition-none',
   },
   blog: {
     border: 'border-blog-rule',
     label: 'font-mono text-[9px] uppercase tracking-widest text-blog-faint',
-    link: 'font-mono text-[10px] uppercase tracking-widest text-blog-muted transition-colors hover:text-blog-accent',
+    link: 'font-mono inline-flex min-h-10 items-center text-[10px] uppercase tracking-widest text-blog-muted transition-[color,scale] hover:text-blog-accent active:scale-[0.96] motion-reduce:transition-none',
   },
 } as const
 

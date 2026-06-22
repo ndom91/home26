@@ -105,7 +105,7 @@ export function BlueskyComments({ discussionAtprotoUri }: { discussionAtprotoUri
           href={rootUrl}
           target="_blank"
           rel="noreferrer"
-          className="font-mono border border-blog-rule bg-blog-panel px-3 py-2 text-[10px] uppercase tracking-widest text-blog-muted transition-colors hover:border-blog-accent hover:text-blog-accent focus-visible:outline-2! focus-visible:outline-blog-accent! focus-visible:outline-offset-2!"
+          className="font-mono inline-flex min-h-10 items-center border border-blog-rule bg-blog-panel px-3 py-2 text-[10px] uppercase tracking-widest text-blog-muted transition-[border-color,color,scale] hover:border-blog-accent hover:text-blog-accent active:scale-[0.96] focus-visible:outline-2! focus-visible:outline-blog-accent! focus-visible:outline-offset-2! motion-reduce:transition-none"
         >
           Open thread
         </a>
@@ -125,11 +125,11 @@ export function BlueskyComments({ discussionAtprotoUri }: { discussionAtprotoUri
 
       {state.status === 'loaded' ? (
         <div className="space-y-6">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-blog-muted">
+          <p className="font-mono text-[10px] tabular-nums uppercase tracking-widest text-blog-muted">
             {formatStat(rootPost?.replyCount ?? replies.length, 'reply')}
           </p>
           {unavailableReplyCount > 0 ? (
-            <p className="font-reading text-sm leading-6 text-blog-description">
+            <p className="text-pretty font-reading text-sm leading-6 text-blog-description">
               {formatStat(unavailableReplyCount, 'reply')} could not be displayed because it was
               deleted, blocked, or unavailable through the public API.
             </p>
@@ -141,7 +141,7 @@ export function BlueskyComments({ discussionAtprotoUri }: { discussionAtprotoUri
               ))}
             </ol>
           ) : (
-            <p className="font-reading text-sm leading-6 text-blog-description">
+            <p className="text-pretty font-reading text-sm leading-6 text-blog-description">
               {(rootPost?.replyCount ?? 0) > 0
                 ? 'Replies exist on Bluesky, but they cannot be displayed here. Open the Bluesky thread to view them.'
                 : 'No replies yet. Open the Bluesky thread to start the conversation.'}
@@ -168,10 +168,10 @@ function BlueskyComment({ thread, depth = 0 }: { thread: ThreadViewPost; depth?:
               alt=""
               loading="lazy"
               decoding="async"
-              className="size-9 shrink-0 rounded-full border border-blog-rule bg-blog-bg"
+              className="image-outline size-9 shrink-0 rounded-full bg-blog-bg"
             />
           ) : (
-            <div className="size-9 shrink-0 rounded-full border border-blog-rule bg-blog-bg" />
+            <div className="image-outline size-9 shrink-0 rounded-full bg-blog-bg" />
           )}
           <div className="min-w-0 flex-1">
             <a
@@ -189,21 +189,23 @@ function BlueskyComment({ thread, depth = 0 }: { thread: ThreadViewPost; depth?:
         </header>
 
         {text ? (
-          <p className="whitespace-pre-wrap font-reading text-sm leading-6 text-blog-description">
+          <p className="whitespace-pre-wrap text-pretty font-reading text-sm leading-6 text-blog-description">
             {text}
           </p>
         ) : (
-          <p className="font-reading text-sm leading-6 text-blog-muted">Media-only reply</p>
+          <p className="text-pretty font-reading text-sm leading-6 text-blog-muted">
+            Media-only reply
+          </p>
         )}
 
-        <footer className="font-mono mt-4 flex flex-wrap gap-3 text-[10px] uppercase tracking-widest text-blog-muted">
+        <footer className="font-mono mt-4 flex flex-wrap items-center gap-3 text-[10px] tabular-nums uppercase tracking-widest text-blog-muted">
           <span>{formatStat(post.likeCount ?? 0, 'like')}</span>
           <span>{formatStat(post.repostCount ?? 0, 'repost')}</span>
           <a
             href={blueskyPostUrl(post)}
             target="_blank"
             rel="noreferrer"
-            className="transition-colors hover:text-blog-accent"
+            className="inline-flex min-h-10 items-center transition-colors hover:text-blog-accent"
           >
             Reply
           </a>

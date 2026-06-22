@@ -5,7 +5,7 @@ export function PostCardMeta({ post, className }: { post: PostListItem; classNam
     <div className={`flex flex-wrap items-center gap-2 ${className ?? ''}`}>
       <time
         dateTime={post.publishedAt}
-        className="font-mono text-[10px] uppercase tracking-widest text-blog-muted transition-colors group-hover:text-blog-accent"
+        className="font-mono text-[10px] tabular-nums uppercase tracking-widest text-blog-muted transition-colors group-hover:text-blog-accent"
       >
         {post.publishedAt}
       </time>

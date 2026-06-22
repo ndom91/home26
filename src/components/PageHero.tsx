@@ -23,8 +23,10 @@ export function PageHero({ description, eyebrow, meta, title }: PageHeroProps) {
             {title}
           </h1>
           <div className={`border-l pl-4 lg:pb-3 border-rule`}>
-            <p className={`text-xs leading-6 text-muted`}>{description}</p>
-            <p className={`mt-4 font-bold text-[0.66rem] uppercase tracking-[0.2em] text-muted`}>
+            <p className={`text-pretty text-xs leading-6 text-muted`}>{description}</p>
+            <p
+              className={`mt-4 font-bold text-[0.66rem] tabular-nums uppercase tracking-[0.2em] text-muted`}
+            >
               {meta}
             </p>
           </div>
