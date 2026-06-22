@@ -17,7 +17,7 @@ export function FeaturedPostCard({ post }: { post: PostListItem }) {
             LATEST ENTRY
           </p>
           <h2
-            className="text-balance font-heading text-[min(clamp(3.7rem,3vw,3.25rem),calc(100cqi/var(--title-fit-em)))] font-extrabold uppercase leading-[0.9] text-blog-accent wrap-break-word"
+            className="text-balance font-heading text-[min(clamp(3.7rem,3vw,3.25rem),calc(100cqi/var(--title-fit-em)))] font-extrabold uppercase leading-[0.9] text-blog-text transition-colors group-hover:text-blog-accent wrap-break-word"
             style={{ '--title-fit-em': longestWordEm(post.title) } as CSSProperties}
           >
             {post.title}

@@ -24,7 +24,7 @@ export function PostCard({ post, eager = false }: { post: PostListItem; eager?: 
       ) : null}
       <div className="flex flex-1 flex-col p-4">
         <PostCardMeta post={post} />
-        <h2 className="mt-4 text-balance font-heading font-extrabold text-[2rem] tracking-[0.005em] leading-[0.9] text-blog-accent">
+        <h2 className="mt-4 text-balance font-heading font-extrabold text-[2rem] tracking-[0.005em] leading-[0.9] text-blog-text transition-colors group-hover:text-blog-accent">
           {post.title}
         </h2>
         <p className="mt-3 mb-5 text-pretty font-reading text-sm leading-6 text-blog-description">
