@@ -1,6 +1,7 @@
-import { BookOpen, ExternalLink, Github, type LucideIcon, Star } from 'lucide-react'
+import { BookOpen, ExternalLink, type LucideIcon, Star } from 'lucide-react'
 import type { Project, ProjectStatus } from '../lib/projects'
 import { usePointerSweep } from '../lib/use-pointer-sweep'
+import { GitHub } from './GitHubLogo'
 
 const cardFlairClass =
   'group relative flex h-full flex-col bg-paper [--detail-accent:var(--globe-accent)] [--hover-color-strength:1] [--sweep-int:calc(var(--hover-color-strength)*var(--sweep-dampen))] [--hover-tilt:2.5deg] [--hover-x:50%]'
@@ -22,9 +23,9 @@ export function ProjectCard({ project }: { project: Project }) {
   const titleHref = project.demo ?? project.repo
   const pointerSweep = usePointerSweep()
 
-  const iconLinks: { href: string; label: string; Icon: LucideIcon }[] = []
+  const iconLinks: { href: string; label: string; Icon: LucideIcon | typeof GitHub }[] = []
   if (project.repo)
-    iconLinks.push({ href: project.repo, label: `${project.title} repository`, Icon: Github })
+    iconLinks.push({ href: project.repo, label: `${project.title} repository`, Icon: GitHub })
   if (project.demo)
     iconLinks.push({ href: project.demo, label: `${project.title} live demo`, Icon: ExternalLink })
   if (project.docs)
