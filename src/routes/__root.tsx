@@ -38,7 +38,13 @@ const websiteStructuredData = {
       dateCreated: '2026-05-10T14:40:15.000Z',
       dateModified: '2026-06-15T17:58:06.000Z',
       mainEntity: {
+        '@type': 'Person',
         '@id': personId,
+        name: 'Nico',
+        alternateName: ['ndom91', '.domino'],
+        url: siteUrl,
+        jobTitle: 'Software Engineer',
+        sameAs: ['https://github.com/ndom91'],
       },
     },
   ],
