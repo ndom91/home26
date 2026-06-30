@@ -66,7 +66,7 @@ on_timer_finished:
   - switch.turn_on: timer_ringing
 ```
 
-That `timer_ringing` switch runs the real `ring_timer` script including the ringing audio, audio ducking, the ability to "say stop to silence it" wake word. The problem: `timer_ringing` is marked `internal: true` and the scripts have no `name:`, so none of it is callable from Home Assistant out of the box. It's all internal to the Voice PE only.
+That `timer_ringing` switch runs the real `ring_timer` script including the ringing audio, audio ducking, the "say stop to silence it" wake word. The problem: `timer_ringing` is marked `internal: true` and the scripts have no `name:`, so none of it is callable from Home Assistant out of the box. It's all internal to the Voice PE only.
 
 Fortunately the fix is small. The switch's `id` still exists in the compiled firmware — `internal:` only hides it from HA, it doesn't stop you referencing it. So in your Voice PE's ESPHome config, add a template button that flips that existing switch:
 
@@ -95,18 +95,26 @@ actions:
       entity_id: button.kitchen_ha_voice_pe_001_ring_timer
 ```
 
-**This ensures that when any Home Assistant native `timer.*` entity finishes, the Voice PE internal `timer_ringing` script runs.**
+This ensures that when your Home Assistant native `timer.kitchen` entity finishes, the Voice PE internal `timer_ringing` script runs and acts like a normal Voice PE-native timer.
 
 ## Step 4 — Show the countdown on the display
 
-Now that the timer is a real entity and everything is wired up and working on the Voice PE again, just through a native `timer.*` entity, my panel can watch it! Over the Home Assistant websocket API, the cleanest subscription is **`subscribe_entities`** with an explicit entity list:
+Now that the timer is a real entity and everything is wired up and working on the Voice PE again, through our new Home Assistant native `timer.kitchen` entity, my panel can watch that entity via the normal websocket subscription!
+
+Over the Home Assistant websocket API, the cleanest subscription is **`subscribe_entities`** with an explicit entity list, for example:
 
 ```json
-{ "id": 1, "type": "subscribe_entities", "entity_ids": ["timer.kitchen"] }
+{
+  "id":1,
+  "type":"subscribe_entities",
+  "entity_ids":[
+    "timer.kitchen"
+  ]
+}
 ```
 
 ## The result
 
-I say "set a timer for two minutes" → the agent starts `timer.kitchen` → my desk panel shows the live countdown → when it finishes, the automation presses the ring button and the Voice PE rings its real alarm. One helper entity ties it all together, and now the timer is visible to anything in my house that can speak websocket, not just the satellite that set it.
+I say "set a timer for two minutes" like always, and now the Voice PE starts a `timer.kitchen` native Home Assistant timer and my desk panel shows the live countdown. When it finishes the small automation we added triggers the ring button and the Voice PE rings its real alarm. One helper entity ties it all together, and now the timer is visible to anything in my house that can speak websocket, not just the satellite that set it.
 
-I hope documenting this windy road can help someone else stuck in this situation too.
+I hope documenting this windy road can help someone else stuck in this situation too. Stay tuned for a full walk through of the Steam Deck-like desk panel!
