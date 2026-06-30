@@ -38,6 +38,7 @@ const projects: Project[] = [
     blurb:
       'llama-dash turns a self-hosted local inference box into an observable, policy-controlled AI gateway: one UI for model state, request history, API keys, routing rules, proxy metrics, and client setup.',
     repo: 'https://github.com/ndom91/llama-dash',
+    demo: 'https://llama-dash.dev',
     status: 'live',
     tags: ['TanStack', 'Local LLM', 'Observability'],
   },
@@ -46,8 +47,8 @@ const projects: Project[] = [
     blurb: (
       <>
         Go-to Next.js authentication library supporting more social signin providers than you can
-        shake a stick at, and your own database to store your users in. Inactive after transfering
-        the project to <ScreenshotLink url="https://better-auth.com">better-auth</ScreenshotLink>.
+        shake a stick at. Bring your own database. Inactive after transfering the project to{' '}
+        <ScreenshotLink url="https://better-auth.com">better-auth</ScreenshotLink> in 2025.
       </>
     ),
 
@@ -59,7 +60,7 @@ const projects: Project[] = [
   {
     title: 'ha-voice-rocm',
     blurb:
-      "AMD (ROCm) oriented local voice LLM collection. This is an ever growing collection of various TTS and STT models each of which is also wrapped in the Open Home Foundation's Wyoming API to make it easy to consume the models in Home Assistant's voice assistant pipeline.",
+      "AMD (ROCm) oriented local voice LLM collection. This is an ever growing collection of various TTS and STT models, each of which is also wrapped in a slim Open Home Foundation Wyoming API layer to make it easy to consume said models in Home Assistant's voice assistant pipeline.",
     repo: 'https://github.com/ndom91/ha-voice-rocm',
     status: 'live',
     featured: true,
@@ -76,7 +77,7 @@ const projects: Project[] = [
   {
     title: 'frame-web',
     blurb:
-      'Frontend for a custom digital frame project I built for my grandparents. The device consists of a custom wooden picture frame, display, Raspberry Pi, and some power electronics. The web app allows family members to login and manage the various deployed frames and their media.',
+      'Frontend for a custom digital frame project I built for my grandparents. The device consists of a custom wooden picture frame, LCD display, Raspberry Pi, and some power electronics. The web app allows family members to login and manage our families deployed frames and their media.',
     repo: 'https://github.com/ndom91/frame-web',
     status: 'archived',
     tags: ['Frame', 'Next.js'],
@@ -84,7 +85,7 @@ const projects: Project[] = [
   {
     title: 'frame-go',
     blurb:
-      'Golang client for a custom digital frame project I built for my grandparents. The device consists of a custom wooden picture frame, display, Raspberry Pi, and some power electronics. Syncs media from a bucket destined for the current device.',
+      'Golang client for a custom digital frame project I built for my grandparents. The device consists of a custom wooden picture frame, LCD display, Raspberry Pi, and some power electronics. Runs on the Raspberry Pi and syncs media from thebucket configured for that frame as well as runs the slideshow UI.',
     repo: 'https://github.com/ndom91/frame-go',
     status: 'archived',
     tags: ['Frame', 'Go'],
@@ -92,7 +93,7 @@ const projects: Project[] = [
   {
     title: 'jellyfin-random-macos-screensaver',
     blurb:
-      'Play a random Jellyfin TV show or movie as a MacOS screensaver. Configurable to play with or without audio, with or without subtitles, and will begin playing at a random point in the media anywhere between 2% and 30% of the way through.',
+      'Play a random Jellyfin TV show or movie as your MacOS screensaver. Configurable to play with or without audio, with or without subtitles, and will begin playing at a random point in the media anywhere between 2% and 30% of the way through.',
     repo: 'https://github.com/ndom91/jellyfin-random-macos-screensaver',
     status: 'live',
     featured: true,
@@ -101,7 +102,7 @@ const projects: Project[] = [
   {
     title: 'airescue.dev',
     blurb:
-      'This one is the result of a domain bought on a whim. After it sat dormant for a few months, I decided it should not completely go to waste. So I built this marketing page for a hypothetical consulting firm specializing in helping out where, "you shipped fast. we\'ll make it last."',
+      'This project is the result of a domain bought on a whim. After it sat dormant for a few months, I decided to do something with it. The result is a marketing page for a hypothetical consulting firm specializing in helping out where, "you shipped fast. [So] we\'ll make it last."',
     demo: 'https://airescue.dev',
     status: 'live',
     tags: ['Landing Page', 'Marketing'],
@@ -109,14 +110,16 @@ const projects: Project[] = [
   {
     title: 'briefkasten',
     blurb:
-      'Self-hosted bookmarking and RSS reader application. Originally written in React, v2 was a complete rewrite with SvelteKit.',
+      'Self-hosted bookmarking and RSS reader web app. Originally written years ago in React, the latest deployed iteration is SvelteKit rewrite.',
     repo: 'https://github.com/ndom91/briefkasten',
+    demo: 'https://briefkastenhq.com',
     status: 'archived',
     tags: ['Svelte'],
   },
   {
     title: 'react-timezone-select',
-    blurb: 'An extremely usable and dynamic React timezone selector',
+    blurb:
+      'An extremely usable and dynamic React timezone selector. Optionally available as a headless hook.',
     repo: 'https://github.com/ndom91/react-timezone-select',
     demo: 'https://ndom91.github.io/react-timezone-select/',
     status: 'live',
@@ -124,7 +127,7 @@ const projects: Project[] = [
   },
   {
     title: 'svelte-infinite',
-    blurb: 'Svelte 5 infinite loader and virtualized list component',
+    blurb: 'Svelte 5 infinite loader and virtualized list component.',
     repo: 'https://github.com/ndom91/svelte-infinite',
     demo: 'https://svelte-5-infinite.vercel.app',
     status: 'live',
@@ -133,8 +136,9 @@ const projects: Project[] = [
   {
     title: 'pebble-plain',
     blurb:
-      'Plain support application for the new era of Pebble smart watches. Specifically the Pebble Time 2 and Round 2.',
+      'Plain support application for the new era of Pebble smart watches, the Pebble Time 2 and Round 2.',
     repo: 'https://github.com/ndom91/pebble-plain',
+    demo: 'https://apps.repebble.com/77adb361a9aa4038b0f9cecf',
     status: 'live',
     tags: ['Pebble', 'Smartwatch'],
   },
