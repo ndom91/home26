@@ -117,6 +117,14 @@ const projects: Project[] = [
     tags: ['Svelte'],
   },
   {
+    title: 'calendar-led-strip',
+    blurb:
+      'Sync your GCal events to any WLED strip for a visual indicator of your daily schedule. See screenshot in linked repo below.',
+    repo: 'https://github.com/ndom91/calendar-led-strip',
+    status: 'live',
+    tags: ['wled', 'eletronics'],
+  },
+  {
     title: 'react-timezone-select',
     blurb:
       'An extremely usable and dynamic React timezone selector. Optionally available as a headless hook.',
