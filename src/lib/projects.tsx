@@ -119,7 +119,7 @@ const projects: Project[] = [
   {
     title: 'calendar-led-strip',
     blurb:
-      'Sync your GCal events to any WLED strip for a visual indicator of your daily schedule. See screenshot in linked repo below.',
+      'Sync your GCal events to any WLED strip for a visual indicator of your daily schedule. See photo in linked repo below for my example use-case.',
     repo: 'https://github.com/ndom91/calendar-led-strip',
     status: 'live',
     tags: ['wled', 'eletronics'],
