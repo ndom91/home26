@@ -8,100 +8,75 @@ cover:
   imageFile: "./cover.png"
 ---
 
-I've been building a little Stream-Deck-style control panel for my desk that talks to Home Assistant (future more in-depth blog post coming soon). However, I wanted to put out this potentially helpful tidbit first.
+I've been building a little Stream-Deck-style control panel for my desk that talks to Home Assistant (future more in-depth blog post coming soon). However, I want to share this deep dive into Home Assitant timers first.
 
 I often set a timer for something in the kitchen, and then hop back on the computer while it runs. So I wanted to mirror the Home Assistant timer that I'd set via the Voice PE to the deck's display and trigger an alert animation on its screen as well.
 
-That turned out to be way more involved than I expected, for one annoying reason: **voice timers are invisible to everything except the device that created them.** What follows is the setup I landed on that gives me the best of both worlds — a timer I can see on my panel _and_ that still rings with the Voice PE's native alarm.
+That turned out to be way more involved than I expected, for one annoying reason: **voice timers are invisible to everything except the device that created them.** What follows is the windy road I took to get Voice PE timers working on both the original device, as well as anything else that can subscribe to Home Assistant websockets events.
 
 ## Why voice timers are invisible
 
 When you say "set a timer for 10 minutes" to a Voice PE (or any ESPHome/Wyoming satellite), Home Assistant creates a timer that lives **on that satellite device**. It's delivered to the device via ESPHome triggers like `on_timer_started` / `on_timer_finished`, and that's also what plays the alarm sound when it's done.
 
-The catch: that timer is **not a `timer.*` entity** visible to the rest of Home Assistant, and there's no public websocket command for some _other_ client (like my panel) to list or subscribe to active voice timers. So my display had no way to know a timer even existed.
+The issue is that that timer is **not a `timer.*` entity** visible to the rest of Home Assistant, and there's no public websocket command for some _other_ client (like my panel) to list or subscribe to active voice timers. So my display had no way to know a timer even existed.
 
-## The plan
+## First attempt: route everything through a helper
 
-The trick is to stop relying on the device-bound timer and instead route everything through a regular **`timer.` helper entity**, which _is_ a normal entity any client can watch:
+My first instinct was to stop relying on the device-bound timer and make a regular **`timer.` helper entity** the source of truth: have the voice assistant start a `timer.kitchen` helper instead of its own internal timer, then bridge everything off of that. A `timer.*` helper has a `state` of `idle` / `active` / `paused` and, while active, a `finishes_at` attribute — everything a display needs.
 
-1. Make the voice assistant start a `timer.kitchen` **helper** instead of its own internal timer.
-2. Surface that helper's countdown on my custom display.
-3. Bridge the helper's "finished" event back to the Voice PE so it still rings with the real native alarm.
+Concretely that meant three things:
 
-## Step 1 — Create the timer helper
+1. **Create the helper** (Settings → Devices & Services → Helpers → Create Helper → Timer).
+2. **Point the voice agent at it.** I turned off "Prefer handling commands locally" so the Voice PE stopped grabbing "set a timer" itself, and added a few lines to my LLM agent's system prompt telling it to always call `timer.start` on `timer.kitchen`.
+3. **Bridge the alarm back.** Routing around the native timer meant the Voice PE's `on_timer_finished` never fired, so it went silent. The alarm is driven by an internal `timer_ringing` switch (marked `internal: true`), but its `id` still exists in the compiled firmware — so a one-line template button that flips it, plus an automation on the helper's `timer.finished` event, brought the native ring back.
 
-In Home Assistant: **Settings → Devices & Services → Helpers → Create Helper → Timer**. I named mine "Kitchen", which results in the entity id `timer.kitchen`. Tick **Restore** so it survives a restart.
+This worked, the panel showed the countdown and the Voice PE rang. But it had a some downsides.
 
-A `timer.*` entity carries everything we need: a `state` of `idle` / `active` / `paused`, and — while active — a `finishes_at` attribute with the absolute UTC end time.
+First,the Voice PE's **LED countdown ring** never animated, because, just like the alarm, that ring is driven entirely by the device's internal timer objects, with no external hook to trigger it. In addition, disabling "Prefer handling commands locally" was also a pure downgrade. There are a few other commands I use often like "what's the weather" that it's able to handle itself much faster by skipping the LLM call entirely.
 
-## Step 2 — Point the voice agent at the helper
+## A cleaner approach: let the Voice PE keep its timer
 
-Two parts here.
+Once I realized the LED ring was _also_ native-only, I decided to pivot. Let the Voice PE create its **native** timer — which gives you the LED countdown _and_ the alarm for free — and simply **mirror that native timer into the helper** so my panel can see it.
 
-First, in your voice pipeline settings, **turn off "Prefer handling commands locally."** With it on, the Voice PE kept intercepting "set a timer" and using its internal mechanism instead of my helper.
-
-Second, I'm using an LLM agent for Assist, so I had to teach it about the helper explicitly. The LLM kept misreading the timer's leftover `duration` attribute and insisting "the kitchen timer is already set" instead of just starting a new one. This `## Timers` section in the voice assistant's system prompt fixed it:
-
-```markdown
-## Timers
-- There is one timer: timer.kitchen. To start or restart it, call the timer.start
-  service with the requested duration (e.g. "00:02:00" for two minutes). Always
-  start it when the user asks for a timer, even if it was used before.
-- A timer is running only when its state is "active". "idle" means nothing is
-  running; "paused" means paused. Never say a timer is already set unless its
-  state is "active".
-- An idle timer's duration and remaining attributes are leftovers from the last
-  run, not proof a timer is set. Ignore them when deciding whether to start one.
-- To cancel a running timer, call timer.cancel.
-```
-
-The key insights: tell it the actual _action_ (`timer.start`, which safely restarts even if already running), and correct the _state semantics_ so it stops treating a finished timer as still set.
-
-## Step 3 — Restore the native alarm
-
-Routing through the helper means the Voice PE's `on_timer_finished` trigger never fires, so the alarm went silent. Looking at the [Voice PE ESPHome config](https://github.com/esphome/home-assistant-voice-pe/blob/dev/home-assistant-voice.yaml), the alarm chain is:
+So I flipped "Prefer handling commands locally" back on, dropped the agent-prompt tweaks, deleted the ring bridge, and added the following to my Voice PE's ESPHome config to mirror the timer lifecycle into `timer.kitchen`:
 
 ```yaml
-on_timer_finished:
-  - switch.turn_on: timer_ringing
+voice_assistant:
+  on_timer_started:
+    - script.execute: control_leds          # keep the native LED countdown
+    - homeassistant.service:
+        service: timer.start
+        data:
+          entity_id: timer.kitchen
+          duration: !lambda |-
+            int s = timer.total_seconds;
+            char b[9]; sprintf(b, "%02d:%02d:%02d", s/3600, (s%3600)/60, s%60);
+            return std::string(b);
+  on_timer_updated:                          # extend / resync remaining
+    - script.execute: control_leds
+    - homeassistant.service:
+        service: timer.start
+        data:
+          entity_id: timer.kitchen
+          duration: !lambda |-
+            int s = timer.seconds_left;
+            char b[9]; sprintf(b, "%02d:%02d:%02d", s/3600, (s%3600)/60, s%60);
+            return std::string(b);
+  on_timer_cancelled:
+    - script.execute: control_leds
+    - homeassistant.service: { service: timer.cancel, data: { entity_id: timer.kitchen } }
+  on_timer_finished:
+    - switch.turn_on: timer_ringing          # keep the native ring
+    - homeassistant.service: { service: timer.finish, data: { entity_id: timer.kitchen } }
 ```
 
-That `timer_ringing` switch runs the real `ring_timer` script including the ringing audio, audio ducking, the "say stop to silence it" wake word. The problem: `timer_ringing` is marked `internal: true` and the scripts have no `name:`, so none of it is callable from Home Assistant out of the box. It's all internal to the Voice PE only.
+The one gotcha that cost me an embarrassing amount of time: `homeassistant.service` calls from ESPHome are **blocked** until you enable **"Allow the device to perform Home Assistant actions"** on that device in Home Assistant's ESPHome integration. Flip that on and the mirror springs to life.
 
-Fortunately the fix is small. The switch's `id` still exists in the compiled firmware — `internal:` only hides it from HA, it doesn't stop you referencing it. So in your Voice PE's ESPHome config, add a template button that flips that existing switch:
+Now the helper is a passive shadow of the real timer, and the Voice PE does timers exactly the way it was designed to.
 
-```yaml
-button:
-  - platform: template
-    name: "Ring timer"
-    on_press:
-      - switch.turn_on: timer_ringing
-```
+## Showing it on the panel
 
-Flash it, and you get a new `button.<your_device>_ring_timer` entity that triggers the **full native alarm** — loop, ducking, stop-word, LED and all.
-
-Then wire the helper's finish to that button with a new automation:
-
-```yaml
-alias: Ring Voice PE when kitchen timer finishes
-triggers:
-  - trigger: event
-    event_type: timer.finished
-    event_data:
-      entity_id: timer.kitchen
-actions:
-  - action: button.press
-    target:
-      entity_id: button.kitchen_ha_voice_pe_001_ring_timer
-```
-
-This ensures that when your Home Assistant native `timer.kitchen` entity finishes, the Voice PE internal `timer_ringing` script runs and acts like a normal Voice PE-native timer.
-
-## Step 4 — Show the countdown on the display
-
-Now that the timer is a real entity and everything is wired up and working on the Voice PE again, through our new Home Assistant native `timer.kitchen` entity, my panel can watch that entity via the normal websocket subscription!
-
-Over the Home Assistant websocket API, the cleanest subscription is **`subscribe_entities`** with an explicit entity list, for example:
+Either way, once the timer is a real `timer.*` entity, my panel can watch it. Over the Home Assistant websocket API the cleanest subscription is **`subscribe_entities`** with an explicit entity list:
 
 ```json
 {
@@ -113,8 +88,8 @@ Over the Home Assistant websocket API, the cleanest subscription is **`subscribe
 }
 ```
 
+It's filtered to just the entities you name (so the frames stay tiny — the esp32 websocket library drops anything over 15 KB, which the unfiltered `state_changed` firehose blows past the moment some big entity updates), the initial event seeds current state, and the compact payload carries the `finishes_at` attribute. From there the panel just counts down against an NTP-synced clock and flashes a border when it hits zero.
+
 ## The result
 
-I say "set a timer for two minutes" like always, and now the Voice PE starts a `timer.kitchen` native Home Assistant timer and my desk panel shows the live countdown. When it finishes the small automation we added triggers the ring button and the Voice PE rings its real alarm. One helper entity ties it all together, and now the timer is visible to anything in my house that can speak websocket, not just the satellite that set it.
-
-I hope documenting this windy road can help someone else stuck in this situation too. Stay tuned for a full walk through of the Steam Deck-like desk panel!
+I say "set a timer for two minutes" like always. The Voice PE starts its native timer — LED ring and all — and mirrors it into `timer.kitchen`, which my desk panel watches and counts down. When it finishes, the Voice PE rings its real alarm and the panel flashes. One helper entity ties it all together, and the timer is now visible to anything in my house that can speak websocket, not just the satellite that set it.
