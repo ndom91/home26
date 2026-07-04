@@ -13,7 +13,7 @@ cover:
 
 Proton Mail is a great web email service, but if you've landed here, you've probably run into their lack of support for SMTP. They offer a local bridge application which is designed to run in a desktop environment and enable you to use your Outlook, Thunderbird, etc. email client on that same local computer with your Proton Mail account. However, if you'd like to access your Proton Mail email via another email client on your mobile device or another computer where you can't run their bridge application - that is not supported. This was incredibly frustrating so I figured out how to compile their bridge application without the GUI dependencies in order to run it on any Linux server and expose SMTP / IMAP ports for you to consume from your email client of choice.
 
-# Challenges
+## Challenges
 
 There are a few challenges here that we've got to overcome to enable using the `proton-bridge` project in this way:
 
@@ -21,7 +21,7 @@ There are a few challenges here that we've got to overcome to enable using the `
 2. Application listens only on localhost (`127.0.0.1`)
 3. And only on non-standard ports
 
-# Prerequisites
+## Prerequisites
 
 I'll be doing this on an Ubuntu 24.04 server, so we'll need to install some dependencies.
 
@@ -36,7 +36,7 @@ sudo tar -C /usr/local -xzf go1.26.3.linux-amd64.tar.gz
 go version  # should print go1.26.3
 ```
 
-# User Account
+## User Account
 
 We're going to create a system user account and group for the `proton-bridge` service to run as. To do this, simply use this `useradd` command.
 
@@ -59,7 +59,7 @@ sudo mkdir /var/log/proton-bridge
 sudo chown -R proton: /var/log/proton-bridge
 ```
 
-# Keystore
+## Keystore
 
 Next, lets figure out how to start the thing on a server without a desktop environment.
 
@@ -81,7 +81,7 @@ $ sudo -u proton pass init "ProtonMail Bridge"
 
 Now we've got all of the prerequisite steps out of the way!
 
-# Compiling from source
+## Compiling from source
 
 Finally, we can begin installing the actual ProtonMail `proton-bridge` package. They offer a `deb` build artifact, but the `*.deb` package that they provide on their download page requires a ton of graphical dependencies that we don't want to install on our server. Fortunately they have a `make` target called `build-nogui` setup in their Makefile in the repository. Before we begin compiling it with this special target, there is one change we must make in the source-code.
 
@@ -92,13 +92,13 @@ git tag --sort=-v:refname | head -5
 git checkout v3.20.1   # or whatever the latest tag is
 ```
 
-## `0.0.0.0` Host
+### `0.0.0.0` Host
 
 By default, the bridge is designed as a local application to run on your desktop machine to enable you to use Thunderbird/Outlook with ProtonMail. With that use-case in mind, it makes sense to only listen on `127.0.0.1` because you'll only be consuming it from the same host. However, we want to run it on a server and connect to it from the outside. So we've got to make a small change in the `internal/constants/constants.go` file and tell it to listen on `0.0.0.0`. This is a shortcut that basically means "all interfaces".
 
 Change the line defining `Host` from `Host = '127.0.0.1'` to `Host = '0.0.0.0'`.
 
-## `build-nogui` Compilation
+### `build-nogui` Compilation
 
 Next, ensure you're in the root of the `proton-bridge` repository again and run `make build-nogui`. This should compile the simple go binary `proton-bridge` without all of the GUI dependencnies like `qt-*` and the like.
 
@@ -112,7 +112,7 @@ If that all seems well, symlink this binary to a more appropriate location. Ensu
 sudo ln -s $(pwd)/bridge /usr/local/bin/proton-bridge
 ```
 
-# Authentication
+## Authentication
 
 Finally, we can begin authenticating and getting this thing up and running. Execute the binary with the `--cli` flag to enter into an interactive CLI mode.
 
@@ -127,7 +127,7 @@ After that's completed, type `info` in the interactive shell and it will print o
 - SMTP / IMAP port and host connection details
 - SMTP / IMAP credentials
 
-# Daemonizing
+## Daemonizing
 
 Finally, we can set this `bridge` binary to run as a service with a small systemd unit file.
 
@@ -170,7 +170,7 @@ This should start the `proton-bridge` service now and enable it to auto-start on
 
 You can check the current status by executing `sudo systemctl status proton-bridge` and as the service file indicated, the logs are located at `/var/log/proton-bridge/*`.
 
-# Ports (Optional)
+## Ports (Optional)
 
 Finally, after starting that service we have the IMAP and SMTP bridge running as a daemon on our server! However, it's still using the odd arbitrary ports. This may be fine if your client application allows you to manually input any number in the port field. However, many Email clients will only allow you to select from a dropdown of a preselected few IMAP/SMTP ports when adding a new Email account.
 
