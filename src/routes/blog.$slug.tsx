@@ -26,6 +26,12 @@ type PostLoaderData = PostMeta & {
   previousPost: ArticleNavPost | null
 }
 
+function formatReadTime(seconds: number): string {
+  const minutes = Math.floor(seconds / 60)
+  const remainder = seconds % 60
+  return minutes > 0 ? `${minutes}m ${remainder}s` : `${remainder}s`
+}
+
 function toArticleNavPost(post: BlogPostType): ArticleNavPost {
   return {
     description: post.description,
@@ -153,18 +159,28 @@ function BlogPost() {
               <p className="mt-5 max-w-xl text-pretty font-reading text-base leading-7 text-blog-description sm:text-md sm:leading-8">
                 {meta.description}
               </p>
-              <div className="mt-7 border-l border-blog-rule pl-4">
-                <p className="font-mono text-xs uppercase tracking-widest text-blog-faint">
-                  Published
-                </p>
-                <time
-                  dateTime={meta.publishedAt}
-                  className="font-mono text-xs tabular-nums uppercase tracking-widest text-blog-muted"
-                >
-                  {meta.publishedAt}
-                </time>
+              <div className="mt-7 space-y-1.5 border-l border-blog-rule pl-4">
+                <div className="flex items-baseline gap-3">
+                  <span className="font-mono text-xs uppercase tracking-widest text-blog-faint">
+                    Published
+                  </span>
+                  <time
+                    dateTime={meta.publishedAt}
+                    className="font-mono text-xs tabular-nums uppercase tracking-widest text-blog-muted"
+                  >
+                    {meta.publishedAt}
+                  </time>
+                </div>
+                <div className="flex items-baseline gap-3">
+                  <span className="font-mono text-xs uppercase tracking-widest text-blog-faint">
+                    Read time
+                  </span>
+                  <span className="font-mono text-xs tabular-nums tracking-widest text-blog-muted">
+                    {formatReadTime(meta.readTimeSeconds)}
+                  </span>
+                </div>
                 {(meta.tags ?? []).length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
+                  <div className="flex flex-wrap gap-2 pt-1.5">
                     {(meta.tags ?? []).map((tag) => (
                       <span
                         key={tag}

@@ -4,6 +4,7 @@ import {
   defineConfig,
 } from '@content-collections/core'
 import type { MDXContent } from 'mdx/types.js'
+import readingTime from 'reading-time'
 import * as v from 'valibot'
 import { collectBlogLinkTargets } from './src/lib/link-screenshot-targets'
 import { signLinkScreenshotUrls } from './src/lib/sign-link-screenshot'
@@ -124,6 +125,13 @@ function linkScreenshotUrlsFromContent(content: string) {
   return signLinkScreenshotUrls(collectBlogLinkTargets(content))
 }
 
+// Reading time in seconds, via the `reading-time` library (what
+// remark-reading-time wraps). Computed here in the transform because the header
+// estimate is post metadata, not part of the MDX render pipeline.
+function readTimeSecondsFromContent(content: string) {
+  return Math.round(readingTime(content).time / 1000)
+}
+
 const posts = defineCollection({
   name: 'posts',
   directory: 'content/blog',
@@ -162,6 +170,7 @@ const posts = defineCollection({
       discussionAtprotoUri: post.discussionAtprotoUri ?? null,
       standardSiteUri: post.standardSiteUri ?? null,
       slug: slugFromPath(post._meta.filePath),
+      readTimeSeconds: readTimeSecondsFromContent(post.content),
       linkScreenshotUrls: await linkScreenshotUrlsFromContent(post.content),
       coverImageUrl: post.cover
         ? createDefaultImport<string>(imageImportPath(post._meta.filePath, post.cover.imageFile))
