@@ -233,6 +233,12 @@
     scrollbar-width: thin;
   }
 
+  /* 404 fills the viewport and never scrolls, so drop the reserved
+     gutter that would otherwise leave a gap at the right edge. */
+  html:has(main[data-page='not-found']) {
+    scrollbar-gutter: auto;
+  }
+
   ::-webkit-scrollbar {
     width: 12px;
   }

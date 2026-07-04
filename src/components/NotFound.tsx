@@ -13,7 +13,10 @@ const eyebrowBars = [
 
 export function NotFound() {
   return (
-    <main className="relative grid min-h-dvh grid-rows-[auto_1fr_auto] overflow-hidden bg-paper font-body text-ink">
+    <main
+      data-page="not-found"
+      className="relative grid min-h-dvh grid-rows-[auto_1fr_auto] overflow-hidden bg-paper font-body text-ink"
+    >
       <LifeField />
 
       <SiteHeader />
