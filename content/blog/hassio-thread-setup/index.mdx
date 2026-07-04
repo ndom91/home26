@@ -1,0 +1,179 @@
+---
+date: "2026-07-04"
+title: "Home Assistant, Thread & Matter Across Multiple VLANs"
+tags: ["homeassistant", "thread", "ipv6", "opnsense", "networking"]
+category: "Home Automation"
+cover:
+  imageFile: "./cover.png"
+---
+
+Almost every "get Thread/Matter working with Home Assistant" guide ends with the same shrug: _"just put all your IoT stuff on the same VLAN as Home Assistant."_ And sure — that works, and is almost definitely the easier alternative. It also throws away the entire reason a lot of us segment our networks in the first place. My smart home gear is exactly the pile of cheap, chatty, questionably-updated devices I most want to keep away from my main LAN.
+
+So I did the annoying thing and powered through to make it work across VLANs. This post is the guide I wish I'd had while staring at OPNsense firewall logs at midnight. If you're here because your Matter device sits forever on **"checking connectivity to thread network…"** before failing — you're in the right place.
+
+Fair warning: this is a first-hand troubleshooting log more than a polished tutorial. It's aimed at people already comfortable with VLANs, IPv6, and a firewall. If that's not you yet, the single-VLAN approach really is easier, and there's no shame in it.
+
+## The setup
+
+Here's the shape of my network for the parts that matter:
+
+- **OPNsense** doing inter-VLAN routing and firewalling.
+- **Home Assistant OS** (HAOS) running the built-in **OpenThread Border Router** (OTBR) add-on, living on my **NAS** VLAN.
+- The phone I commission new devices with is on the **AP/WiFi** VLAN — a _different_ subnet from the OTBR.
+- A Thread radio attached to the HAOS box, and a handful of already-working Thread devices.
+
+The key detail: **the commissioner (phone) and the border router are on different VLANs.** Everything that follows is mostly a consequence of that.
+
+## Why this is genuinely hard
+
+Two things about Thread/Matter make cross-VLAN a pain:
+
+**1. Discovery is done via mDNS, and mDNS is link-local multicast.** When your phone commissions a device, it hunts for the border router and the device's operational endpoint using mDNS — multicast DNS (for example, `_meshcop._udp`, `_matterc._udp`, `_matter._tcp`, all over `ff02::fb`). Multicast doesn't cross a VLAN boundary on its own. So the phone on VLAN A literally never hears the OTBR announcing itself on VLAN B.
+
+**2. Thread's operational addresses are usually a ULA — Unique Local Address — (`fd…`) prefix.** The OTBR hands out an "OMR" (Off-Mesh-Routable) prefix to the mesh, and unless it has a globally-routable prefix to work with, that OMR is a ULA — something like `fd01:7e50:6f0d:1::/64`. Two problems fall out of that:
+
+- Your router won't route to it unless you tell it to (it learns nothing useful from the OTBR's Router Advertisements, because on your LAN interfaces _your router is the router_ and ignores downstream router advertisements (RAs)).
+- **Android, in my experience, refuses to route to a ULA off-link on its own.** The packets just never leave the phone. No error, no firewall hit, nothing. This one cost me hours.
+
+The upshot: getting a device commissioned needs the phone to both **discover** (mDNS) and **reach the operational IPv6** (routing + firewall) of gear on another VLAN. Miss any single piece and it fails silently at a different stage. There is no one error message. You have to trace the packet.
+
+## The five pieces
+
+Here's everything that had to be true. I'll use my prefixes/interfaces as examples. The Android device had a SLAAC IPv6 address in the AP subnet (`dd01`) and the NAS / Home Assistant VM has a SLAAC IPv6 address in the NAS subnet (`dd02`).
+
+| VLAN | Prefix | Role |
+|---|---|---|
+| AP (phone) | `2a03:…:dd01::/64` | commissioner |
+| NAS (OTBR) | `2a03:…:dd02::/64` | border router / Home Assistant |
+| Thread OMR | `fd01:7e50:6f0d:1::/64` | the mesh's operational prefix (ULA) |
+
+### 1. Reflect mDNS between the two VLANs
+
+This is the discovery half and there's bad news for OPNsense users. There is currently no plugin (that I could find) that supports mDNS repeating for IPv6. the existing options are all **IPv4-only**. `os-mdns-repeater` and `os-udpbroadcastrelay` won't carry the IPv6 mDNS that Matter/Thread relies on, and the old `os-avahi` plugin got pulled from the repo. So OPNsense itself can't do it.
+
+What did work is a tiny **Avahi reflector in its own container**, dual-homed with one NIC on each VLAN. I run mine as a Proxmox LXC (unprivileged, 1GB RAM, nothing fancy) with an interface bridged onto the AP VLAN and another onto the NAS VLAN.
+
+`/etc/avahi/avahi-daemon.conf`:
+
+```ini
+[server]
+use-ipv4=yes
+use-ipv6=yes
+allow-interfaces=eth1,eth2   # your two VLAN legs
+
+[reflector]
+enable-reflector=yes
+
+[publish]
+publish-workstation=no
+publish-hinfo=no
+```
+
+Enable it on boot (`systemctl enable --now avahi-daemon`) and make sure the container itself autostarts. Any always-on box with a leg in both VLANs works — it doesn't have to be Proxmox.
+
+Quick sanity check from inside the container:
+
+```bash
+avahi-browse -art | grep -iE 'meshcop|matter'
+```
+
+> [!TIP]
+> You may have to install the `avahi-utils` package to get `avahi-browser`
+
+If you see your border router's `_meshcop._udp` record show up on _both_ interfaces, reflection is alive.
+
+One gotcha if your reflector box has legs in three-plus VLANs: pin **static** IPs on each interface and give **only one** of them a default gateway. Multiple default routes across subnets create asymmetric routing that'll randomly break things. The extra legs just need a static address on their subnet — no gateway.
+
+### 2. Route to the OMR
+
+Your router needs a static route to the Thread OMR prefix, pointed at the OTBR host. Use the OTBR host's **link-local** address as the gateway — it's stable, unlike SLAAC (Stateless Address Autoconfiguration) privacy addresses which rotate and will silently break your route later.
+
+In OPNsense: create a gateway on the NAS interface with the OTBR's `fe80::…` address (disable gateway monitoring — link-local won't answer the monitor pings), then add a static route `fd01:7e50:6f0d:1::/64` → that gateway.
+
+Confirm it's actually in the routing table by running this on your OPNSense box:
+
+```bash
+netstat -rn6 | grep -i 6f0d
+```
+
+### 3. Advertise the route to the client (RA / RIO)
+
+This is the fix for the "Android won't route the ULA" problem, and it's the least-documented bit. Have your router **advertise a route to the OMR** in its Router Advertisements on the client's VLAN (a Route Information Option). Then the phone actually installs a route and starts sending the traffic to your router.
+
+In OPNsense: **Services → Router Advertisements → [your AP interface]**, and add `fd01:7e50:6f0d:1::/64` to the **Routes** field. Toggle the phone's WiFi afterward to force it to pick up the new RA immediately instead of waiting.
+
+I found out I need this after running a `tcpdump` on the client VLAN and it showed the phone sending **nothing** toward the OMR during commissioning. If the phone isn't even emitting packets, it has no route — this fixes that.
+
+### 4. Firewall — let the phone reach the mesh
+
+Next, I setup a "pass" rule on the AP interface. Source = AP net, destination `fd01:7e50:6f0d:1::/64`, and set **state type to sloppy** (the return path is asymmetric enough that strict state tracking bites you).
+
+### 5. Firewall — let the replies home (the one everyone misses)
+
+This was the last domino and the least obvious. The **replies** coming back from a mesh device have a **source address in the Thread OMR (`fd01:…`)**, not in your NAS subnet. So the nice default "allow NAS → anywhere" rule doesn't match them — the source isn't a NAS address, it's a mesh address — and they hit default-deny on the way back in.
+
+Add a mirror rule on the NAS interface: **source `fd01:7e50:6f0d:1::/64`**, destination your AP net (or any), sloppy state.
+
+Once all five are in place: flush states (`pfctl -F states`), and commission again.
+
+## Debugging: trace the packet, don't guess
+
+The following are some debug steps / locations that helped me track down where the packets were failing to get through, one fix at a time. Commissioning fails silently at whatever hop is broken, so **follow one packet through each interface** until it stops.
+
+- **OPNsense live firewall log**, filtered to `action is block`. To cut the noise down to just IPv6, add a filter for `address` **contains** `:` — every IPv6 address has a colon, no IPv4 address does. Cheap trick, works great.
+- Click the little **ⓘ** on a blocked row — it shows the direction, interface, protocol, and the exact rule that dropped it. (Heads up: "Default deny / state violation rule" is just OPNsense's name for the final catch-all. It usually means _nothing matched_, not that there was a real state violation.)
+- **tcpdump per interface** to find where forwarding stops:
+
+  ```bash
+  tcpdump -ni <ap_if>  'udp port 5353 and ip6'          # mDNS on the phone's side
+  tcpdump -ni <nas_if> 'udp port 5353 and ip6'          # mDNS on the OTBR side
+  tcpdump -ni <ap_if>  'ip6 and host <device-omr-addr>' # phone → device
+  tcpdump -ni <nas_if> 'ip6 and host <device-omr-addr>' # did it get forwarded?
+  ```
+
+- **On the HAOS host**, get a real shell via the community _Advanced SSH & Web Terminal_ add-on with **Protection Mode off** (that gives you `docker` and `nsenter`). Then:
+
+  ```bash
+  # what OMR prefix is the mesh actually using?
+  docker exec -i addon_core_openthread_border_router ot-ctl br omrprefix
+  docker exec -i addon_core_openthread_border_router ot-ctl netdata show
+
+  # host-side routing and forwarding (enter PID1's netns)
+  nsenter -t 1 -n ip -6 route | grep -i <omr>
+  nsenter -t 1 -n sysctl net.ipv6.conf.all.forwarding   # must be 1
+  nsenter -t 1 -n tcpdump -ni wpan0 'host <device-omr-addr>'
+  ```
+
+That last one is gold: **if you see a healthy back-and-forth on `wpan0` for `phone ↔ device:5540`, the mesh and the device are fine** — every remaining problem is on your router's forward or return path, not Thread.
+
+And to confirm a firewall rule is _actually loaded_ (saving the config isn't the same as applying it):
+
+```bash
+pfctl -sr | grep -n <substring>
+```
+
+## Red herrings that ate my evening
+
+- **`ping6` to a Thread device fails with 100% loss — and that's fine.** Sleepy/Matter Thread devices happily ignore ICMP echo but answer Matter UDP on port `5540`. Don't use ping as your reachability test; watch for the UDP exchange instead.
+- **A second, unused Thread network showing up.** I have an Ikea DIRIGERA hub that runs its _own_ Thread border router and advertises its _own_ OMR prefix. Its chatter looked related and wasn't — it was just the hub polling its own mesh. If you've got Nest/Apple/Ikea hubs around, you may have multiple Thread networks whether you meant to or not. Figure out which one you're actually commissioning onto (`ot-ctl br omrprefix` on the one you care about) and ignore the rest.
+- **A gateway/route that points at your own router.** Double-check any link-local or host address you use as a next-hop is actually the _other_ box and not one of your router's own interface addresses. Ask me how I know.
+
+## The commissioning device itself can be the problem
+
+One thing that cost me a whole evening before I'd touched a single firewall rule: **which device you commission from matters more than you'd think.** Android apparently keeps a single "preferred Thread network" at the OS level, and if that's pointed at the wrong network, provisioning quietly defaults to the wrong border router no matter what Home Assistant thinks.
+
+My phone had the Ikea app installed, and somewhere along the way it had set Ikea's Thread network (the one we're ignoring here) as the phone's preferred Thread network. So every commissioning attempt from the phone latched onto the Ikea mesh instead of the HA one. The usual advice online is to open the Home Assistant app's troubleshooting settings and hit **"Sync Thread credentials"** — but on my phone that just errored out with a complaint that the phone prefers a different network than the actual Home Assistant Thread network we're trying to target here. You will discover this when you get the Matter / Thread provisioning step that says something like "Checking connectivity to Thread Network ...". And no matter what I did I could not get it to prefer my `ha-thread-xxxx` network over the Ikea DIRIGERA one. The only fixes I could find suggested online were things like uninstalling Google Play Services or other heavy-handed workarounds I wasn't willing to do.
+
+What actually worked was simply using another Android device. I grabbed a secondary tablet that only had the Home Assistant app installed — no Ikea app, nothing else potentially setting default Thread networks. Provisioning from there immediately defaulted to the HA Thread network and just worked. So if you've got a hub vendor's app (Ikea, Nest, whatever) on your phone and commissioning keeps grabbing the wrong network, try a clean device before you burn hours on it.
+
+## TL;DR
+
+Cross-VLAN Matter-over-Thread with a ULA OMR needs **five** things, and missing any one fails silently at a different step:
+
+1. **IPv6 mDNS reflection** between the VLANs (Avahi in a dual-homed container — OPNsense's built-ins and available plugins are IPv4-only).
+2. A **static route** to the OMR prefix, via the OTBR's link-local.
+3. An **RA Route Information Option** so the client (looking at you, Android) will actually route the ULA.
+4. A **forward** firewall rule (client → OMR).
+5. A **return** firewall rule matching the **mesh ULA source** (this is the one everyone forgets).
+
+Good luck out there!
