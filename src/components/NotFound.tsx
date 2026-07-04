@@ -1,15 +1,8 @@
 import { Link } from '@tanstack/react-router'
+import { EyebrowBars } from './EyebrowBars'
 import { LifeField } from './LifeField'
 import { SiteFooter } from './SiteFooter'
 import { SiteHeader } from './SiteHeader'
-
-const eyebrowBars = [
-  'bg-accent-100',
-  'bg-accent-300',
-  'bg-accent-500',
-  'bg-accent-700',
-  'bg-accent-900',
-]
 
 export function NotFound() {
   return (
@@ -26,14 +19,7 @@ export function NotFound() {
         aria-labelledby="notfound-title"
       >
         <div className="w-full max-w-7xl">
-          <div className="mb-6 flex text-accent" aria-hidden="true">
-            {eyebrowBars.map((barClass) => (
-              <span
-                key={barClass}
-                className={`block h-9 w-7 border-2 border-r-0 border-paper max-[520px]:h-6 max-[520px]:w-4 ${barClass}`}
-              />
-            ))}
-          </div>
+          <EyebrowBars className="mb-6" />
 
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_32rem] lg:items-end">
             <h1

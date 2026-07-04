@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { EyebrowBars } from '../components/EyebrowBars'
 import { LinkScreenshotProvider } from '../components/mdx/link-screenshot-context'
 import { PageHero } from '../components/PageHero'
 import { ProjectCard } from '../components/ProjectCard'
@@ -14,14 +15,6 @@ export const Route = createFileRoute('/projects')({
   component: Projects,
 })
 
-const eyebrowBars = [
-  'bg-accent-100',
-  'bg-accent-300',
-  'bg-accent-500',
-  'bg-accent-700',
-  'bg-accent-900',
-]
-
 function Projects() {
   // Computed in-component (not via loader): blurbs may be React elements, which
   // are not serializable as loader data. The list is static, bundled build-time
@@ -35,16 +28,7 @@ function Projects() {
       <PageHero
         title="BUILD"
         description="Some experiments survived contact with production. These are those — the tools, side quests, and libraries that earned a spot."
-        eyebrow={
-          <div className="flex text-accent mb-4" aria-hidden="true">
-            {eyebrowBars.map((barClass) => (
-              <span
-                key={barClass}
-                className={`block h-9 w-7 border-2 border-r-0 border-paper max-[520px]:h-6 max-[520px]:w-4 ${barClass}`}
-              />
-            ))}
-          </div>
-        }
+        eyebrow={<EyebrowBars className="mb-4" />}
         meta={`${projects.length} ${projects.length === 1 ? 'project' : 'projects'}`}
       />
 

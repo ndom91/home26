@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { AsciiGlobe } from '../components/AsciiGlobe'
+import { EyebrowBars } from '../components/EyebrowBars'
 import { LifeField } from '../components/LifeField'
 import { SiteHeader } from '../components/SiteHeader'
 import { usePointerSweep } from '../lib/use-pointer-sweep'
@@ -14,13 +15,6 @@ const detailCardClass =
 const detailLabelClass = 'relative z-1 mb-2 block text-[0.72rem] uppercase tracking-[0.22em]'
 const detailValueClass = 'relative z-1 text-[0.72rem] uppercase tracking-[0.14em] text-muted'
 
-const eyebrowBars = [
-  'bg-accent-100',
-  'bg-accent-300',
-  'bg-accent-500',
-  'bg-accent-700',
-  'bg-accent-900',
-]
 const details = [
   { label: 'Currently At', value: 'Plain', accentClass: '[--detail-accent:88_135_50]' },
   { label: 'Based In', value: 'Berlin', accentClass: '[--detail-accent:8_151_154]' },
@@ -46,17 +40,10 @@ function Home() {
           aria-labelledby="home-title"
         >
           <div>
-            <div
-              className="mb-10 flex justify-self-end text-accent max-[520px]:mb-4"
-              aria-hidden="true"
-            >
-              {eyebrowBars.map((barClass) => (
-                <span
-                  key={barClass}
-                  className={`block h-[3.2rem] w-[2.2rem] border-2 border-r-0 border-paper max-[520px]:h-[1.85rem] max-[520px]:w-[1.35rem] ${barClass}`}
-                />
-              ))}
-            </div>
+            <EyebrowBars
+              className="mb-10 justify-self-end max-[520px]:mb-4"
+              barClassName="h-[3.2rem] w-[2.2rem] max-[520px]:h-[1.85rem] max-[520px]:w-[1.35rem]"
+            />
             <h1
               id="home-title"
               className="m-0 max-w-[12ch] font-domino text-[clamp(3.2rem,12vw,12rem)] font-bold leading-[0.8] tracking-[-0.075em] max-[520px]:text-[clamp(3.9rem,28vw,7.8rem)]"
