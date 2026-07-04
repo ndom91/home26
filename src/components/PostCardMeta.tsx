@@ -1,4 +1,4 @@
-import type { PostListItem } from '../lib/blog'
+import { type PostListItem, readTimeLabel } from '../lib/blog'
 
 export function PostCardMeta({ post, className }: { post: PostListItem; className?: string }) {
   return (
@@ -17,6 +17,9 @@ export function PostCardMeta({ post, className }: { post: PostListItem; classNam
           {tag}
         </span>
       ))}
+      <span className="font-mono ml-auto text-[10px] tabular-nums uppercase tracking-widest text-blog-muted transition-colors group-hover:text-blog-accent">
+        {readTimeLabel(post.readTimeSeconds)}
+      </span>
     </div>
   )
 }

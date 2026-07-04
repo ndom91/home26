@@ -16,6 +16,11 @@ export function getPublishedPost(slug: string) {
   return getPublishedPosts().find((post) => post.slug === slug)
 }
 
+// Compact read-time label for list cards, e.g. "4 min" (floors at 1).
+export function readTimeLabel(seconds: number): string {
+  return `${Math.max(1, Math.round(seconds / 60))} min`
+}
+
 // Glyph advance widths (in em) for Manuka Bold, extracted from the font's
 // hmtx table (unitsPerEm 1000). Titles render uppercase font-extrabold, which
 // resolves to the Bold file, so only caps/digits/punctuation matter.
