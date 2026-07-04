@@ -6,11 +6,13 @@ const footerLinks = [
 
 const footerVariants = {
   default: {
+    surface: 'relative z-1 bg-paper',
     border: 'border-rule',
     label: 'text-[0.62rem] uppercase tracking-[0.2em] text-muted',
     link: 'inline-flex min-h-10 items-center text-[0.62rem] uppercase tracking-[0.2em] text-muted transition-[color,scale] hover:text-accent active:scale-[0.96] motion-reduce:transition-none',
   },
   blog: {
+    surface: '',
     border: 'border-blog-rule',
     label: 'font-mono text-[9px] uppercase tracking-widest text-blog-faint',
     link: 'font-mono inline-flex items-center py-1 text-[10px] leading-none uppercase tracking-widest text-blog-muted transition-[color,scale] hover:text-blog-accent active:scale-[0.96] motion-reduce:transition-none',
@@ -25,7 +27,7 @@ export function SiteFooter({ variant = 'default' }: SiteFooterProps) {
   const classes = footerVariants[variant]
 
   return (
-    <footer className={`grid grid-cols-[1fr_auto] border-t ${classes.border}`}>
+    <footer className={`grid grid-cols-[1fr_auto] border-t ${classes.surface} ${classes.border}`}>
       <div className={`flex items-center border-r px-6 py-5 ${classes.border}`}>
         <p className={classes.label}>NDO.DEV</p>
       </div>
