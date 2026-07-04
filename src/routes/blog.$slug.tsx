@@ -207,10 +207,10 @@ function BlogPost() {
       </header>
 
       <div className="flex-1 px-6 py-12 sm:py-16">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 items-start gap-x-10 xl:grid-cols-[1fr_minmax(0,42rem)_1fr]">
+        <div className="xl:grid xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-x-8">
           <TableOfContents
             containerRef={articleRef}
-            className="hidden xl:col-start-1 xl:block xl:justify-self-end xl:sticky xl:top-28 xl:w-56"
+            className="hidden xl:col-start-1 xl:block xl:self-start xl:sticky xl:top-28 xl:w-56 xl:max-h-[calc(100vh-9rem)] xl:overflow-y-auto xl:overscroll-contain"
           />
           <article
             ref={articleRef}

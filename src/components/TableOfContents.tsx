@@ -101,10 +101,8 @@ export function TableOfContents({
   if (headings.length === 0) return null
 
   return (
-    <nav aria-label="Table of contents" className={className}>
-      <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-blog-faint">
-        On this page
-      </p>
+    <nav aria-label="Table of contents" className={`font-reading ${className ?? ''}`}>
+      <p className="text-[10px] uppercase tracking-[0.28em] text-blog-faint">On this page</p>
       <ul className="mt-4 space-y-0.5 border-l border-blog-rule">
         {headings.map((heading) => {
           const isActive = heading.id === activeId
@@ -114,7 +112,7 @@ export function TableOfContents({
                 href={`#${heading.id}`}
                 aria-current={isActive ? 'location' : undefined}
                 data-active={isActive || undefined}
-                className={`-ml-px block border-l-2 border-transparent py-1 font-mono text-xs leading-snug tracking-wide text-blog-muted transition-colors hover:text-blog-accent data-[active]:border-blog-accent data-[active]:text-blog-accent ${
+                className={`-ml-px block border-l-2 border-transparent py-1 text-sm leading-snug text-blog-muted transition-colors hover:text-blog-accent data-[active]:border-blog-accent data-[active]:text-blog-accent ${
                   heading.level === 3 ? 'pl-7' : 'pl-4'
                 }`}
               >
