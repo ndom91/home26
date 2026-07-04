@@ -49,7 +49,7 @@ Here's everything that had to be true. I'll use my prefixes/interfaces as exampl
 
 ### 1. Reflect mDNS between the two VLANs
 
-This is the discovery half and there's bad news for OPNsense users. There is currently no plugin (that I could find) that supports mDNS repeating for IPv6. the existing options are all **IPv4-only**. `os-mdns-repeater` and `os-udpbroadcastrelay` won't carry the IPv6 mDNS that Matter/Thread relies on, and the old `os-avahi` plugin got pulled from the repo. So OPNsense itself can't do it.
+This is the discovery half and there's bad news for OPNsense users. There is currently no plugin (that I could find) that supports mDNS repeating for IPv6. The existing options are all **IPv4-only**. `os-mdns-repeater` and `os-udpbroadcastrelay` won't carry the IPv6 mDNS that Matter/Thread relies on, and the old `os-avahi` plugin got pulled from the repo. So OPNsense itself can't do it.
 
 What did work is a tiny **Avahi reflector in its own container**, dual-homed with one NIC on each VLAN. I run mine as a Proxmox LXC (unprivileged, 1GB RAM, nothing fancy) with an interface bridged onto the AP VLAN and another onto the NAS VLAN.
 
@@ -78,7 +78,7 @@ avahi-browse -art | grep -iE 'meshcop|matter'
 ```
 
 > [!TIP]
-> You may have to install the `avahi-utils` package to get `avahi-browser`
+> You may have to install the `avahi-utils` package to get `avahi-browse`
 
 If you see your border router's `_meshcop._udp` record show up on _both_ interfaces, reflection is alive.
 
@@ -90,7 +90,7 @@ Your router needs a static route to the Thread OMR prefix, pointed at the OTBR h
 
 In OPNsense: create a gateway on the NAS interface with the OTBR's `fe80::…` address (disable gateway monitoring — link-local won't answer the monitor pings), then add a static route `fd01:7e50:6f0d:1::/64` → that gateway.
 
-Confirm it's actually in the routing table by running this on your OPNSense box:
+Confirm it's actually in the routing table by running this on your OPNsense box:
 
 ```bash
 netstat -rn6 | grep -i 6f0d
@@ -106,7 +106,7 @@ I found out I need this after running a `tcpdump` on the client VLAN and it show
 
 ### 4. Firewall — let the phone reach the mesh
 
-Next, I setup a "pass" rule on the AP interface. Source = AP net, destination `fd01:7e50:6f0d:1::/64`, and set **state type to sloppy** (the return path is asymmetric enough that strict state tracking bites you).
+Next, I set up a "pass" rule on the AP interface. Source = AP net, destination `fd01:7e50:6f0d:1::/64`, and set **state type to sloppy** (the return path is asymmetric enough that strict state tracking bites you).
 
 ### 5. Firewall — let the replies home (the one everyone misses)
 
