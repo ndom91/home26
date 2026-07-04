@@ -1,9 +1,10 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
-import type { CSSProperties } from 'react'
+import { type CSSProperties, useRef } from 'react'
 import { BlueskyComments } from '../components/BlueskyComments'
 import { LinkScreenshotProvider } from '../components/mdx/link-screenshot-context'
 import { SiteFooter } from '../components/SiteFooter'
 import { SiteHeader } from '../components/SiteHeader'
+import { TableOfContents } from '../components/TableOfContents'
 import type { BlogPost as BlogPostType } from '../lib/blog'
 import { getPublishedPost, getPublishedPosts, longestWordEm } from '../lib/blog'
 import {
@@ -109,6 +110,7 @@ export const Route = createFileRoute('/blog/$slug')({
 function BlogPost() {
   const meta = Route.useLoaderData()
   const post = getPublishedPost(meta.slug)
+  const articleRef = useRef<HTMLElement>(null)
   if (!post) return null
   const { Component } = post
 
@@ -205,11 +207,20 @@ function BlogPost() {
       </header>
 
       <div className="flex-1 px-6 py-12 sm:py-16">
-        <article className="prose mx-auto max-w-2xl font-reading prose-headings:mt-12 prose-headings:text-balance prose-headings:font-heading prose-headings:text-blog-text prose-p:text-pretty prose-p:text-[1.05rem] prose-p:leading-8 prose-p:text-blog-description prose-a:text-blog-accent prose-strong:text-blog-text prose-li:text-pretty prose-li:text-[1.05rem] prose-li:leading-8 prose-li:text-blog-description prose-th:text-blog-text prose-td:text-blog-description prose-code:bg-blog-panel prose-code:px-1 prose-code:py-0.5 prose-code:font-mono prose-code:text-blog-text prose-code:before:content-none prose-code:after:content-none prose-blockquote:text-pretty prose-blockquote:border-blog-accent prose-blockquote:text-blog-description prose-hr:border-blog-rule prose-pre:border prose-pre:border-blog-rule prose-pre:bg-blog-panel!">
-          <LinkScreenshotProvider urls={meta.linkScreenshotUrls}>
-            <Component components={mdxComponents} />
-          </LinkScreenshotProvider>
-        </article>
+        <div className="mx-auto grid max-w-6xl grid-cols-1 items-start gap-x-10 xl:grid-cols-[1fr_minmax(0,42rem)_1fr]">
+          <TableOfContents
+            containerRef={articleRef}
+            className="hidden xl:col-start-1 xl:block xl:justify-self-end xl:sticky xl:top-28 xl:w-56"
+          />
+          <article
+            ref={articleRef}
+            className="prose mx-auto max-w-2xl font-reading xl:col-start-2 prose-headings:mt-12 prose-headings:text-balance prose-headings:font-heading prose-headings:text-blog-text prose-p:text-pretty prose-p:text-[1.05rem] prose-p:leading-8 prose-p:text-blog-description prose-a:text-blog-accent prose-strong:text-blog-text prose-li:text-pretty prose-li:text-[1.05rem] prose-li:leading-8 prose-li:text-blog-description prose-th:text-blog-text prose-td:text-blog-description prose-code:bg-blog-panel prose-code:px-1 prose-code:py-0.5 prose-code:font-mono prose-code:text-blog-text prose-code:before:content-none prose-code:after:content-none prose-blockquote:text-pretty prose-blockquote:border-blog-accent prose-blockquote:text-blog-description prose-hr:border-blog-rule prose-pre:border prose-pre:border-blog-rule prose-pre:bg-blog-panel!"
+          >
+            <LinkScreenshotProvider urls={meta.linkScreenshotUrls}>
+              <Component components={mdxComponents} />
+            </LinkScreenshotProvider>
+          </article>
+        </div>
         <ArticleNavigation nextPost={meta.nextPost} previousPost={meta.previousPost} />
         {meta.discussionAtprotoUri ? (
           <BlueskyComments discussionAtprotoUri={meta.discussionAtprotoUri} />
