@@ -2,16 +2,17 @@
 // Keyed by lowercase `owner/repo`. Committed so the build never calls the
 // GitHub API — refresh with `pnpm stars` and commit the result.
 export const stars: Record<string, number> = {
-  'ndom91/briefkasten': 1176,
+  'ndom91/briefkasten': 1177,
+  'ndom91/calendar-led-strip': 3,
   'ndom91/frame-go': 1,
   'ndom91/frame-web': 1,
   'ndom91/ha-voice-rocm': 31,
   'ndom91/jellyfin-random-macos-screensaver': 4,
-  'ndom91/llama-dash': 8,
-  'ndom91/open-plan-annotator': 70,
+  'ndom91/llama-dash': 10,
+  'ndom91/open-plan-annotator': 72,
   'ndom91/pebble-plain': 1,
-  'ndom91/react-timezone-select': 241,
-  'ndom91/svelte-infinite': 110,
+  'ndom91/react-timezone-select': 242,
+  'ndom91/svelte-infinite': 109,
   'ndom91/tmux-ai-window-name': 3,
-  'nextauthjs/next-auth': 28268,
+  'nextauthjs/next-auth': 28289,
 }
