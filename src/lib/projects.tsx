@@ -75,18 +75,18 @@ const projects: Project[] = [
     tags: ['tmux', 'LLM'],
   },
   {
-    title: 'frame-web',
+    title: 'domino-frame-web',
     blurb:
       'Frontend for a custom digital frame project I built for my grandparents. The device consists of a custom wooden picture frame, LCD display, Raspberry Pi, and some power electronics. The web app allows family members to login and manage our families deployed frames and their media.',
-    repo: 'https://github.com/ndom91/frame-web',
+    repo: 'https://github.com/ndom91/domino-frame-web',
     status: 'archived',
     tags: ['Frame', 'Next.js'],
   },
   {
-    title: 'frame-go',
+    title: 'domino-frame',
     blurb:
       'Golang client for a custom digital frame project I built for my grandparents. The device consists of a custom wooden picture frame, LCD display, Raspberry Pi, and some power electronics. Runs on the Raspberry Pi and syncs media from thebucket configured for that frame as well as runs the slideshow UI.',
-    repo: 'https://github.com/ndom91/frame-go',
+    repo: 'https://github.com/ndom91/domino-frame',
     status: 'archived',
     tags: ['Frame', 'Go'],
   },
