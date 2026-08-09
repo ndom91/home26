@@ -52,16 +52,16 @@ Below is a light bill of materials (also known as a BOM in the electronics world
 
 After doing some shopping and getting all my components in, I began by designing and modelling the case, which would be 3D printed. It consisted of 3 parts:
 
-1. The initial mounting bracket that screwed into the wooden frame and served two purposes. First, it clamped the screen into the inset lip, also known as a rabbet, that I'd cut into the back of the picture frame. Second, it provided mounting options to clip in the rest of the electronics housing.
+1. The initial mounting bracket screws into the wooden frame and serves two purposes. First, it clamps the screen into the inset lip, also known as a rabbet, that I'd cut into the back of the picture frame. Second, it provides mounting options to clip in the rest of the electronics housing.
 
 ![OnShape screenshot of mounting bracket for electronics housing](./case_mount000.png)
 
-2. Next was the primary housing which contained all of the electronics and gave this a bit of a professional product feel in my opinion. There are ventilation holes as well as a bit of branding inset into the back ("DOMINO FRAME"). In addition, there are cut-outs for a USB-C power cable in the bottom and that aforementioned switch in the left side of the housing.
+2. Next is the primary housing, which contains all of the electronics and gives this a bit of a professional product feel in my opinion. There are ventilation holes as well as a bit of branding inset into the back ("DOMINO FRAME"). In addition, there are cut-outs for a USB-C power cable in the bottom and that aforementioned switch in the left side of the housing.
 
 ![OnShape screenshot of the inside of the electronics cover](./case_inside000.png)
 ![OnShape screenshot of the outside of the electronics cover](./case_outside000.png)
 
-3. Finally, a small bracket that would screw into the factory mounting holes on the backside of the LCD. This would provide electrical isolation between the bottom of the Pi and the back of the LCD's aluminum housing, as well as 4 convenient plastic stand-offs to mount the Pi onto.
+3. Finally, a small bracket screws into the factory mounting holes on the backside of the LCD. This provides electrical isolation between the bottom of the Pi and the back of the LCD's aluminum housing, as well as 4 convenient plastic stand-offs to mount the Pi onto.
 
 ![OnShape screenshot of the Raspberry Pi mount](./case_rpi_mount000.png)
 
@@ -113,7 +113,7 @@ The web application is a simple Next.js application hosted on Vercel. It provide
 - Manage existing frames (rename, reboot, etc.)
 - Manage the media library of each frame
 
-My target audience was my family members who would overwhelmingly be using this application from their phones. I'm significantly more experienced building and maintaining web applications as opposed to mobile apps, so I designed this to be responsive and work well from mobile. I also included a PWA-style `manifest.json` which allowed it to be "installed" to users' home screens on iOS and Android. By not including a service worker, we skip a lot of the typical caching and service worker complexities, but retain the PWA-style installability.
+My target audience is my family members, who overwhelmingly use this application from their phones. I'm significantly more experienced building and maintaining web applications as opposed to mobile apps, so I designed this to be responsive and work well from mobile. I also included a PWA-style `manifest.json` which allowed it to be "installed" to users' home screens on iOS and Android. By not including a service worker, we skip a lot of the typical caching and service worker complexities, but retain the PWA-style installability.
 
 All of the CRUD functionality around managing Frames and their media is really standard and was easy enough to implement. However, I really wanted a grade-A on-boarding experience for new frames (even though realistically there will only ever be 2-3 of these devices out in the wild max and I will be the one setting them up haha).
 
