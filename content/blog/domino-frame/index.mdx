@@ -36,10 +36,11 @@ I began by shopping around for electronics components that I would need. I wante
 Below is a light bill of materials (also known as a BOM in the electronics world):
 
 - Raspberry Pi Zero 2 W
+  - Eventually migrated to a Raspberry Pi 4B+ (1GB)
 - LiPo battery (3.7V, 2000mAh)
   - Just happened to be what I had on hand
 - 1024x600 HDMI touchscreen display
-- Witty Pi Mini RTC and power-management board
+- Witty Pi RTC and power-management board
   - Specifically the "Witty Pi L3V7", which now looks to be deprecated in favor of the "Witty Pi Mini"
 - MicroSD card
 - 5V power supply appropriate for the Pi, display, and Witty Pi
@@ -117,11 +118,13 @@ My target audience was my family members who would overwhelmingly be using this 
 All of the CRUD functionality around managing Frames and their media is really standard and was easy enough to implement. However, I really wanted a grade-A on-boarding experience for new frames (even though realistically there will only ever be 2-3 of these devices out in the wild max and I will be the one setting them up haha).
 
 > [!NOTE]
-> Many devices in the HomeAssistant ecosystem including ESPHome, Matter, etc. use something called [Improv](https://www.improv-wifi.com) to manage onboarding a new device onto your WiFi. The target IoT device surfaces a BLE GATT endpoint and because browsers now support a Bluetooth API, you can simply send init data (like target WiFi credentials) via BLE to the IoT device. This is generally a great experience and I wanted to emulate it.
+> Many devices in the Home Assistant ecosystem, including ESPHome and Matter devices, use something called [Improv](https://www.improv-wifi.com) to manage onboarding a new device onto WiFi. The target IoT device exposes a BLE GATT endpoint, and supported browsers can send setup data, such as WiFi credentials, directly to it. This is generally a great experience and I wanted to emulate it. Domino Frame does not implement Improv itself. I used a custom BLE GATT service with the same general idea.
 
-The plan was that when a device initially fires up the Go application and does not have a configuration file set up, it advertises a BLE GATT service characteristic that allows WiFi credentials to be sent via BLE. Once the device receives these credentials, it connects to the WiFi network, begins pulling the photo files destined for its `deviceId`, and polls for updates.
+When the Go application starts, it advertises the custom service as `DominoFrame-<frame ID>`. In a supported browser, the web app finds a frame by that name, connects to the service, and first registers the frame over HTTPS. That registration returns an API endpoint and API key for the frame.
 
-I knew browsers should have Web Bluetooth support and that doing this local BLE onboarding experience should work out of the browser, but getting this to fully work was the most complicated and head-scratching part of the whole project. First of all, support for this API is spotty among browsers, especially the BLE GATT part. Second, the common Linux Bluetooth stack package is super out of date on the Raspberry Pi OS repo, so I had to manually compile the latest version of BlueZ a few times. I should have just skipped this by creating the DB entry manually for every new frame and writing out its config file by hand whenever a new set of family members gets one of these 😂
+The browser then writes WiFi credentials and frame configuration to separate BLE characteristics. The configuration includes the frame name, image host, API endpoint, and API key. Finally, it sends a `complete_setup` command. The frame connects to the requested WiFi network with NetworkManager, verifies that connection, and saves the configuration to a local `config.json` file. There is also a `test_wifi` command in the setup sequence, though it currently only pings `1.1.1.1`; the actual WiFi connection happens during `complete_setup`.
+
+I knew Web Bluetooth made this local BLE onboarding experience possible from the browser, but getting it to fully work was the most complicated and head-scratching part of the whole project. First of all, support for this API is spotty among browsers, especially the BLE GATT part. Second, the common Linux Bluetooth stack package is super out of date on the Raspberry Pi OS repo, so I had to manually compile the latest version of BlueZ a few times. I should have just skipped this by creating the DB entry manually for every new frame and writing out its config file by hand whenever a new set of family members gets one of these 😂
 
 > [!TIP]
 > You can find the Next.js web application on GitHub [here](https://github.com/ndom91/domino-frame-web).
