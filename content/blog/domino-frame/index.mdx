@@ -68,6 +68,9 @@ Below you can see a dry-fit testing of the assembly of the case parts before fin
 
 ![Dry-fit of the 3D Printed electronics housing mounted to the frame, from behind](./006.jpg)
 
+> [!TIP]
+> The 3D model files can be found at the Makerworld page here: https://makerworld.com/en/models/3152351-digital-picture-frame-rpi
+
 ## Electronics
 
 Eagle-eyed readers may have noticed references to two different Raspberry Pis. Unfortunately it turned out that the Raspberry Pi Zero 2W was just not powerful enough. In hindsight this was almost certainly due to my inefficient "firmware" application I had written to query an S3 bucket and run a slideshow on the screen. So I switched to a Raspberry Pi 4 Model B, which handled the decoding and UI rendering much more smoothly.
@@ -120,7 +123,8 @@ The plan was that when a device initially fires up the Go application and does n
 
 I knew browsers should have Web Bluetooth support and that doing this local BLE onboarding experience should work out of the browser, but getting this to fully work was the most complicated and head-scratching part of the whole project. First of all, support for this API is spotty among browsers, especially the BLE GATT part. Second, the common Linux Bluetooth stack package is super out of date on the Raspberry Pi OS repo, so I had to manually compile the latest version of BlueZ a few times. I should have just skipped this by creating the DB entry manually for every new frame and writing out its config file by hand whenever a new set of family members gets one of these 😂
 
-You can find the Next.js application on GitHub [here](https://github.com/ndom91/domino-frame-web).
+> [!TIP]
+> You can find the Next.js web application on GitHub [here](https://github.com/ndom91/domino-frame-web).
 
 ## Summary
 
