@@ -136,6 +136,9 @@ The web application is a simple Next.js application hosted on Vercel. It provide
 
 My target audience is my family members, who overwhelmingly use this application from their phones. I'm significantly more experienced building and maintaining web applications as opposed to mobile apps, so I designed this web app to be responsive and work well from mobile browsers. I also included a PWA-style `manifest.json` which allowed it to be "installed" to users' home screens on iOS and Android. I decided to not go full-on progressive web app and skipped a service worker. That way we skip a lot of the typical caching and service worker complexities, but retain the PWA-style installability.
 
+![Web app frame management list](./app_frameList.png)
+![Web app media management masonry grid](./app_mediaList.png)
+
 All of the CRUD functionality around managing Frames and their media is very straightforward and was easy enough to implement. However, I really wanted a grade-A on-boarding experience for new frames (even though realistically there will only ever be 2-3 of these devices out in the wild max and I will be the one setting them up haha).
 
 > [!NOTE]
@@ -146,6 +149,8 @@ When the Go application starts, it advertises the custom service as `DominoFrame
 The browser then writes WiFi credentials and frame configuration to separate BLE characteristics. The configuration includes the frame name, image host, API endpoint, and API key. Finally, it sends a `complete_setup` command. The frame connects to the requested WiFi network with NetworkManager, verifies that connection, and saves the configuration to a local `config.json` file. There is also a `test_wifi` command in the setup sequence, though it currently only pings `1.1.1.1`; the actual WiFi connection happens during `complete_setup`.
 
 I knew Web Bluetooth made this local BLE onboarding experience possible from the browser, but getting it to fully work was the most complicated and head-scratching part of the whole project. First of all, support for this API is spotty among browsers, especially the BLE GATT part. Second, the common Linux Bluetooth stack package is super out of date on the Raspberry Pi OS repo, so I had to manually compile the latest version of BlueZ a few times. Maybe I should have just skipped this by creating the DB entry manually for every new frame and writing out its config file by hand whenever a new set of family members gets one of these 😂
+
+![Web app new frame on-boarding empty state](./app_onboarding.png)
 
 > [!TIP]
 > You can find the Next.js web application on GitHub [here](https://github.com/ndom91/domino-frame-web).
