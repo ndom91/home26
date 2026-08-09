@@ -15,6 +15,7 @@ import remarkGfm from 'remark-gfm'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import { defineConfig } from 'vite'
 import { mermaidPlugin } from './src/lib/mermaid-vite'
+import { rehypeImageCaptions } from './src/lib/rehype-image-captions'
 import { remarkMermaid } from './src/lib/remark-mermaid'
 
 function useFilenameAsCodeTitle(meta: string) {
@@ -65,6 +66,7 @@ const config = defineConfig({
               filterMetaString: useFilenameAsCodeTitle,
             },
           ],
+          rehypeImageCaptions,
           rehypeMdxImportMedia,
         ],
       }),

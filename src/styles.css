@@ -612,6 +612,32 @@ html[data-theme='dark'] .mermaid-dark {
   backdrop-filter: blur(18px) saturate(1.18);
 }
 
+.prose :where(.mdx-image-figure) {
+  margin-block: 2.5rem;
+}
+
+.prose :where(.mdx-image-figure [data-rmiz]) {
+  margin-block: 0;
+}
+
+.prose :where(.mdx-image-caption) {
+  max-width: 42rem;
+  margin-top: 0.9rem;
+  padding-inline: 0.125rem;
+  color: var(--color-blog-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.prose :where(.mdx-image-caption)::before {
+  display: block;
+  width: 2.25rem;
+  height: 1px;
+  margin-bottom: 0.55rem;
+  background: var(--color-blog-accent);
+  content: '';
+}
+
 @media (prefers-color-scheme: dark) {
   html:not([data-theme='light']) .prose :where([data-rmiz]) {
     box-shadow:
