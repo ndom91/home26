@@ -8,6 +8,8 @@ cover:
   imageFile: "./cover.png"
 ---
 
+![Digital Frame on shelf](008.jpg)
+
 In my quest to get better with electronics and hardware projects, I recently decided I wanted to build my own "digital picture frame" project as gifts for my grandparents. I know these things can be bought pretty cheaply, but who knows where your family is uploading their photos to and who has access to the hardware in the picture frames. Plus it seemed like a perfectly scoped project to handle myself over the course of a few weekends and evenings.
 
 Going into this I was pretty confident in my ability to build the software part of this project as it was pretty straightforward and simple. I knew I needed some storage for the photos, a web app to manage the displays as well as give family members access to manage media, and ideally good mobile support including PWA-like "install" capability so they can put the web app on their home screen without having to build a whole Android/iOS application. Boy did that turn out to not be as simple as I had pictured of course 😅 More details below.
@@ -47,6 +49,8 @@ Below is a light bill of materials (also known as a BOM in the electronics world
 - Normally open toggle switch to power on/off
 
 ![Initial electronics test assembly with RPi Zero 2W](./000_0.jpg)
+
+> Initial electronics test assembly with the RPi Zero 2W, before migrating to the Pi 4B+
 
 ## Case
 
@@ -92,6 +96,22 @@ The current schedule is:
 
 - Power on at 08:00
 - Power off at 20:15
+
+```bash
+pi@domino-frame-8dp4:~ $ cat wittypi/schedule.wpi
+# Try to turn on your Raspberry Pi every hour sharp.
+# This script doesn't schedule the shutdown, which is supposed to be done externally.
+# You can shutdown your Raspberry Pi with your program just after finishing the job.
+#
+# [Tips]
+# Although the ON state is marked as 1 minute, its actual duration may vary.
+# The OFF state will end exactly 60 minutes after your RPi gets turned on.
+
+BEGIN 2022-08-01 08:00:00
+END   2035-07-31 23:59:59
+ON    H12 M15
+OFF   H11 M45
+```
 
 That keeps the Pi on for 12 hours and 15 minutes, then off for 11 hours and 45 minutes. This legitimately helps reduce overall power usage with the bonus side-effect of calming the nerves of grandparents who are used to chasing us about leaving the lights on.
 
