@@ -18,27 +18,25 @@ The part I was less confident in, and where I was looking forward to learning mo
 
 ## Goals
 
-So let's put those down as concrete goals and see how we did, or did not, achieve them.
+Let's write down a list of what we need to do to achieve our self-hosted digital picture frame project:
 
 - Build software system for managed picture frame
   - S3 Bucket for storing photos
   - Web application for:
     - Managing frame deployments
     - Managing media (create, read, edit, delete, etc.)
-- Build custom picture frame hardware
+  - "firmware" to query images and run a slideshow on the display
+- Build custom picture frame hardware (electronics)
 - Design and 3D print housing for electronics
-- Assemble custom picture frame with LCD display
-- Select components and assemble electronics
-- Build "firmware" to query images and run a slideshow on the display
 
 ## Shopping
 
 I began by shopping around for electronics components that I would need. I wanted this thing to be low powered enough to run at least 1 day on a decently sized LiPo battery, not too big to be impossible to ship and/or take on a plane. I sourced a few key components, including a Raspberry Pi Zero 2 W for its low power consumption and small form factor, a 7-inch HDMI touchscreen display, and a Witty Pi Mini RTC board to handle power management and real-time clock functionality. I also picked up a suitable LiPo battery to ensure the system could run independently of a constant power source.
 
-Below is a light bill of materials (also known as a BOM in the electronics world):
+Below is a simplified BOM (bill of materials):
 
 - Raspberry Pi Zero 2 W
-  - Eventually migrated to a Raspberry Pi 4B+ (1GB)
+  - Eventually migrated to a Raspberry Pi 4B (1GB)
 - LiPo battery (3.7V, 2000mAh)
   - Just happened to be what I had on hand
 - 1024x600 HDMI touchscreen display
@@ -46,9 +44,9 @@ Below is a light bill of materials (also known as a BOM in the electronics world
   - Specifically the "Witty Pi L3V7", which now looks to be deprecated in favor of the "Witty Pi Mini"
 - MicroSD card
 - 5V power supply appropriate for the Pi, display, and Witty Pi
-- Normally open toggle switch to power on/off
+- Toggle switch to power on/off
 
-![Initial electronics test assembly with the RPi Zero 2W, before migrating to the Pi 4B+](./000_0.jpg)
+![Initial electronics test assembly with the RPi Zero 2W, before migrating to the Pi 4B](./000_0.jpg)
 
 ## Case
 
@@ -76,13 +74,13 @@ Below you can see a dry-fit testing of the assembly of the case parts before fin
 
 ## Electronics
 
-Eagle-eyed readers may have noticed references to two different Raspberry Pis. Unfortunately it turned out that the Raspberry Pi Zero 2W was just not powerful enough. In hindsight this was almost certainly due to my inefficient "firmware" application I had written to query an S3 bucket and run a slideshow on the screen. So I switched to a Raspberry Pi 4 Model B, which handled the decoding and UI rendering much more smoothly.
+Eagle-eyed readers may have noticed references to two different Raspberry Pis. Unfortunately it turned out that the Raspberry Pi Zero 2W was just not powerful enough. In hindsight this was almost certainly due to my inefficient "firmware" application I had written. All it had to do was query an S3 bucket and run a slideshow on the screen. However, the subtle image animation effects and navigating backward/forward were painfully slow. So I switched to a Raspberry Pi 4B, which handled the decoding and UI rendering much more smoothly.
 
-Here's a look at how the Raspberry Pi 4B+ mounting and electronics panel turned out.
+Here's a look at how the Raspberry Pi 4B mounting and electronics panel turned out.
 
 ![Photo of the dry-fitted electronics housing components](./007.jpg)
 
-I've referenced "firmware" in quotes a few times so far, as my software played the classic role of firmware if this were an embedded project. But for simplicity's sake, I opted to just run the standard Raspberry Pi OS and write the auto-started application in Go, as it had some lightweight UI libraries available for native desktop applications on Linux. The Go application itself turned out to be quite lightweight, leveraging the `fyne` toolkit for the GUI and `minio-go` for interacting with the S3-compatible storage backend. Caveat: I'm far from a Go expert, so this was written with significant help from Claude Code and co.
+I've referenced "firmware" in quotes a few times so far, as my software played the classic role of firmware if this were an embedded project. But for simplicity's sake, I opted to just run the standard Raspberry Pi OS and write the auto-started application in Go, as it had some lightweight UI libraries available for native desktop applications on Linux. The Go application itself turned out to be quite straightforward, leveraging the `fyne` toolkit for the GUI and `minio-go` for interacting with the S3-compatible storage backend. Caveat: I'm far from a Go expert, so this was written with significant help from Claude and co.
 
 ## Power scheduling with Witty Pi
 
@@ -111,15 +109,17 @@ ON    H12 M15
 OFF   H11 M45
 ```
 
-That keeps the Pi on for 12 hours and 15 minutes, then off for 11 hours and 45 minutes. This legitimately helps reduce overall power usage with the bonus side-effect of calming the nerves of grandparents who are used to chasing us about leaving the lights on.
+That keeps the Pi on for 12 hours and 15 minutes, then off for 11 hours and 45 minutes. This helps reduce overall power usage with the bonus side-effect of calming the nerves of grandparents who are used to chasing us about leaving the lights on.
+
+Unfortunately, after having migrated to the Raspberry Pi 4B, the small LiPo battery I had chosen is not nearly enough to run this for any significant amount of time. I kept it in as it acts as a short buffer to allow the Pi to properly power off when unplugged, for example. This should help extend the life of the sdcard / filesystem. It can power the whole thing (screen on) for almost an hour, so more than enough to move it around the house at least.
 
 ## Software
 
 ### Client Software
 
-The frame application is a small Go program that runs full-screen on the Pi. It pulls photos from a Cloudflare R2 bucket defined via env vars in the systemd service configuration and presents them as a slideshow. Each image gets a slow Ken Burns-style movement, with a small zoom and alternating diagonal drift, so the display does not feel completely static.
+The frame application is a small Go program that runs full-screen on the Pi. It pulls photos from a Cloudflare R2 bucket defined via env vars in the systemd service and presents them as a slideshow. Each image gets a slow Ken Burns-style movement, with a small zoom and alternating diagonal drift, so the display does not feel completely static.
 
-The screen is touch-enabled, but I did not want visible controls covering the images. Therefore I added transparent "buttons" that covered the entire left and right edges and turned them into tap zones for moving through the slideshow.
+The screen is touch-enabled, but I did not want visible controls covering the images. Therefore I added transparent "buttons" that covered the entire left and right halves of the screen overlaying the image and turned them into tap zones for navigating through the slideshow.
 
 The "firmware" is open source and can be found [here](https://github.com/ndom91/domino-frame).
 
@@ -149,13 +149,13 @@ I knew Web Bluetooth made this local BLE onboarding experience possible from the
 
 ## Summary
 
-I'm very happy with where we landed. The frames look like actual picture frames from the front, while the back has just enough custom hardware to make the project feel like a small product instead of a Pi taped to a display.
+I'm very happy with where we landed. It achieved all of the goals we defined at the beginning. The frame looks like an actual picture frame from the front, while the back has just enough custom hardware to make the project feel like a small product instead of a Pi taped to a display.
 
-The project ended up being just the right amount of challenging and rewarding. The first Pi was underpowered, Bluetooth onboarding was much more work than it had any right to be, and fitting the electronics cleanly into the frame took several rounds of CAD and test prints. None of that was particularly surprising in hindsight, but it was very satisfying to work through it.
+The project ended up being just the right amount of challenging and rewarding. The first Pi was underpowered, Bluetooth onboarding was much more work than it had any right to be, and fitting the electronics cleanly into the frame took several rounds of CAD and test prints. None of that was particularly surprising in hindsight, but it was a lot of fun to work through.
 
-There are still things I would change if I made another batch, of course, but these are now out in the world showing family photos, turning themselves on in the morning, and going to sleep at night.
+There are still things I would change if I made another batch, of course, but my v1 of this frame is now out in the world showing family photos, turning itself on in the morning, and going to sleep at night.
 
-Here are a few more photos of the finished frames.
+Here are a few more photos of the finished frame.
 
 ![Dry-fit of the 3D Printed electronics housing mounted to the frame, from behind](./004.jpg)
 ![Dry-fit of the 3D Printed electronics housing mounted to the frame, from the front](./003.jpg)
