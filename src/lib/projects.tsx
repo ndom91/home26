@@ -58,6 +58,16 @@ const projects: Project[] = [
     tags: ['Next.js', 'Authentication'],
   },
   {
+    title: 'commonwealth',
+    blurb:
+      'A shared, project-scoped knowledge base for AI agents. Connect your agent, your colleagues’ agents, and other MCP clients to the same source of context so they can exchange important decisions, discoveries, and constraints — and stop building past each other.',
+    repo: 'https://github.com/ndom91/commonwealth',
+    demo: 'https://commonwealth.ndo.dev',
+    status: 'live',
+    featured: true,
+    tags: ['TanStack Start', 'MCP Server'],
+  },
+  {
     title: 'ha-voice-rocm',
     blurb:
       "AMD (ROCm) oriented local voice LLM collection. This is an ever growing collection of various TTS and STT models, each of which is also wrapped in a slim Open Home Foundation Wyoming API layer to make it easy to consume said models in Home Assistant's voice assistant pipeline.",
