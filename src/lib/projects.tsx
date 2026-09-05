@@ -101,6 +101,14 @@ const projects: Project[] = [
     tags: ['Frame', 'Go'],
   },
   {
+    title: 'airescue.dev',
+    blurb:
+      'This project is the result of a domain bought on a whim. After it sat dormant for a few months, I decided to do something with it. The result is a marketing page for a hypothetical consulting firm specializing in helping out where, "you shipped fast. [So] we\'ll make it last."',
+    demo: 'https://airescue.dev',
+    status: 'live',
+    tags: ['Landing Page', 'Marketing'],
+  },
+  {
     title: 'jellyfin-random-macos-screensaver',
     blurb:
       'Play a random Jellyfin TV show or movie as your MacOS screensaver. Configurable to play with or without audio, with or without subtitles, and will begin playing at a random point in the media anywhere between 2% and 30% of the way through.',
