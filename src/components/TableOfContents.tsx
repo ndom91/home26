@@ -10,6 +10,7 @@ type TocHeading = {
 // Roughly clears the sticky site header plus a little breathing room.
 const ACTIVE_OFFSET_PX = 128
 const INTRODUCTION_ID = 'article-introduction'
+let scrollFrame = 0
 
 function readHeadingText(heading: HTMLElement): string {
   // rehype-autolink-headings adds an `<a class="heading-anchor">#</a>`;
@@ -29,10 +30,29 @@ function scrollToProgressSection(event: MouseEvent<HTMLAnchorElement>, id: strin
 
   event.preventDefault()
   window.history.pushState(null, '', `#${id}`)
-  target.scrollIntoView({
-    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-    block: 'start',
-  })
+  const top = Math.min(
+    Math.max(0, target.getBoundingClientRect().top + window.scrollY - ACTIVE_OFFSET_PX),
+    document.documentElement.scrollHeight - window.innerHeight
+  )
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    window.scrollTo({ top, behavior: 'auto' })
+    return
+  }
+
+  window.cancelAnimationFrame(scrollFrame)
+  const start = window.scrollY
+  const distance = top - start
+  const duration = Math.min(700, Math.max(250, Math.abs(distance) * 0.25))
+  const startedAt = performance.now()
+
+  const scroll = (now: number) => {
+    const progress = Math.min(1, (now - startedAt) / duration)
+    window.scrollTo({ top: start + distance * (1 - (1 - progress) ** 3), behavior: 'auto' })
+    if (progress < 1) scrollFrame = window.requestAnimationFrame(scroll)
+  }
+
+  scrollFrame = window.requestAnimationFrame(scroll)
 }
 
 export function TableOfContents({
@@ -159,6 +179,7 @@ export function TableOfContents({
                     href={`#${heading.id}`}
                     aria-current={isActive ? 'location' : undefined}
                     data-active={isActive || undefined}
+                    onClick={(event) => scrollToProgressSection(event, heading.id)}
                     className={`block py-1 text-sm leading-snug text-blog-muted transition-colors hover:text-blog-accent data-[active]:text-blog-accent ${
                       heading.level === 3 ? 'pl-3' : ''
                     }`}
