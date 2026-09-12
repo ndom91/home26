@@ -951,10 +951,8 @@ html[data-theme='dark'] .prose .callout[data-callout='caution'] {
 }
 
 .heading-anchor {
-  position: absolute;
-  right: 100%;
-  display: inline-block;
-  margin-right: 0.75ch;
+  display: inline;
+  margin-inline-start: 0.35ch;
   color: color-mix(in oklab, var(--color-blog-accent) 55%, transparent);
   text-decoration: none;
   font-family: var(--font-reading);
@@ -966,10 +964,4 @@ html[data-theme='dark'] .prose .callout[data-callout='caution'] {
 .heading-anchor:hover,
 .heading-anchor:focus-visible {
   color: var(--color-blog-accent);
-}
-
-@media (max-width: 47.999rem) {
-  .heading-anchor {
-    display: none;
-  }
 }

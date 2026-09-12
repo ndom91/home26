@@ -48,7 +48,7 @@ const config = defineConfig({
           [
             rehypeAutolinkHeadings,
             {
-              behavior: 'prepend',
+              behavior: 'append',
               properties: {
                 className: ['heading-anchor'],
                 ariaLabel: 'Permalink to this heading',

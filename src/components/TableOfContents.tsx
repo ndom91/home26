@@ -1,4 +1,4 @@
-import { type RefObject, useEffect, useState } from 'react'
+import { type CSSProperties, type RefObject, useEffect, useState } from 'react'
 
 type TocHeading = {
   id: string
@@ -11,7 +11,7 @@ type TocHeading = {
 const ACTIVE_OFFSET_PX = 128
 
 function readHeadingText(heading: HTMLElement): string {
-  // rehype-autolink-headings prepends an `<a class="heading-anchor">#</a>`;
+  // rehype-autolink-headings adds an `<a class="heading-anchor">#</a>`;
   // drop it so the label is just the heading text.
   const clone = heading.cloneNode(true) as HTMLElement
   clone.querySelector('.heading-anchor')?.remove()
@@ -27,6 +27,7 @@ export function TableOfContents({
 }) {
   const [headings, setHeadings] = useState<TocHeading[]>([])
   const [activeId, setActiveId] = useState<string | null>(null)
+  const [sectionProgress, setSectionProgress] = useState<Record<string, number>>({})
 
   // Collect headings from the rendered article once it exists in the DOM.
   useEffect(() => {
@@ -62,9 +63,25 @@ export function TableOfContents({
 
       if (nodes.length === 0) return
 
-      // Bottom of the page: last heading wins regardless of offsets.
+      // The article can end before its final section crosses the sticky offset.
       const scrolledToBottom =
         window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2
+      const sections = nodes.filter((node) => node.tagName === 'H2')
+      const articleBottom = container.getBoundingClientRect().bottom
+      setSectionProgress(
+        Object.fromEntries(
+          sections.map((section, index) => {
+            const start = section.getBoundingClientRect().top
+            const end = sections[index + 1]?.getBoundingClientRect().top ?? articleBottom
+            const progress = scrolledToBottom
+              ? 1
+              : Math.max(0, Math.min(1, (ACTIVE_OFFSET_PX - start) / (end - start)))
+            return [section.id, progress]
+          })
+        )
+      )
+
+      // Bottom of the page: last heading wins regardless of offsets.
       if (scrolledToBottom) {
         setActiveId(nodes[nodes.length - 1].id)
         return
@@ -100,28 +117,57 @@ export function TableOfContents({
 
   if (headings.length === 0) return null
 
+  const sections = headings.filter((heading) => heading.level === 2)
+
   return (
     <nav aria-label="Table of contents" className={`font-reading ${className ?? ''}`}>
-      <p className="text-[10px] uppercase tracking-[0.28em] text-blog-faint">On this page</p>
-      <ul className="mt-4 space-y-0.5 border-l border-blog-rule">
-        {headings.map((heading) => {
-          const isActive = heading.id === activeId
-          return (
-            <li key={heading.id}>
+      <div className="flex h-full gap-4">
+        <div className="min-w-0 flex-1 overflow-y-auto overscroll-contain">
+          <p className="text-[10px] uppercase tracking-[0.28em] text-blog-faint">On this page</p>
+          <ul className="mt-4 space-y-0.5">
+            {headings.map((heading) => {
+              const isActive = heading.id === activeId
+              return (
+                <li key={heading.id}>
+                  <a
+                    href={`#${heading.id}`}
+                    aria-current={isActive ? 'location' : undefined}
+                    data-active={isActive || undefined}
+                    className={`block py-1 text-sm leading-snug text-blog-muted transition-colors hover:text-blog-accent data-[active]:text-blog-accent ${
+                      heading.level === 3 ? 'pl-3' : ''
+                    }`}
+                  >
+                    {heading.text}
+                  </a>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+        <ol aria-label="Article progress" className="flex w-1 shrink-0 flex-col gap-1">
+          {sections.map((section) => (
+            <li key={section.id} className="min-h-7 flex-1">
               <a
-                href={`#${heading.id}`}
-                aria-current={isActive ? 'location' : undefined}
-                data-active={isActive || undefined}
-                className={`-ml-px block border-l-2 border-transparent py-1 text-sm leading-snug text-blog-muted transition-colors hover:text-blog-accent data-[active]:border-blog-accent data-[active]:text-blog-accent ${
-                  heading.level === 3 ? 'pl-7' : 'pl-4'
-                }`}
+                href={`#${section.id}`}
+                aria-label={`Jump to ${section.text}`}
+                className="block h-full overflow-hidden rounded-full bg-blog-rule outline-offset-4 focus-visible:outline-2 focus-visible:outline-blog-accent"
               >
-                {heading.text}
+                <span className="sr-only">Jump to {section.text}</span>
+                <span
+                  aria-hidden="true"
+                  className="block h-full origin-top bg-blog-accent transition-transform duration-150 ease-out motion-reduce:transition-none"
+                  style={
+                    {
+                      '--section-progress': sectionProgress[section.id] ?? 0,
+                      transform: 'scaleY(var(--section-progress))',
+                    } as CSSProperties
+                  }
+                />
               </a>
             </li>
-          )
-        })}
-      </ul>
+          ))}
+        </ol>
+      </div>
     </nav>
   )
 }
