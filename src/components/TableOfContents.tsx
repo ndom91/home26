@@ -1,4 +1,4 @@
-import { type CSSProperties, type RefObject, useEffect, useState } from 'react'
+import { type CSSProperties, type MouseEvent, type RefObject, useEffect, useState } from 'react'
 
 type TocHeading = {
   id: string
@@ -9,6 +9,7 @@ type TocHeading = {
 // Distance from the viewport top at which a heading is considered "current".
 // Roughly clears the sticky site header plus a little breathing room.
 const ACTIVE_OFFSET_PX = 128
+const INTRODUCTION_ID = 'article-introduction'
 
 function readHeadingText(heading: HTMLElement): string {
   // rehype-autolink-headings adds an `<a class="heading-anchor">#</a>`;
@@ -16,6 +17,22 @@ function readHeadingText(heading: HTMLElement): string {
   const clone = heading.cloneNode(true) as HTMLElement
   clone.querySelector('.heading-anchor')?.remove()
   return clone.textContent?.trim() ?? ''
+}
+
+function scrollToProgressSection(event: MouseEvent<HTMLAnchorElement>, id: string) {
+  if (event.button !== 0 || event.metaKey || event.altKey || event.ctrlKey || event.shiftKey) {
+    return
+  }
+
+  const target = document.getElementById(id)
+  if (!target) return
+
+  event.preventDefault()
+  window.history.pushState(null, '', `#${id}`)
+  target.scrollIntoView({
+    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    block: 'start',
+  })
 }
 
 export function TableOfContents({
@@ -64,12 +81,17 @@ export function TableOfContents({
       if (nodes.length === 0) return
 
       const sections = nodes.filter((node) => node.tagName === 'H2')
+      const sectionIds = [INTRODUCTION_ID, ...sections.map((section) => section.id)]
+      const sectionStarts = [
+        container.getBoundingClientRect().top,
+        ...sections.map((section) => section.getBoundingClientRect().top),
+      ]
       const articleBottom = container.getBoundingClientRect().bottom
       setSectionProgress(
         Object.fromEntries(
-          sections.map((section, index) => {
-            const start = section.getBoundingClientRect().top
-            const nextSection = sections[index + 1]?.getBoundingClientRect().top
+          sectionIds.map((sectionId, index) => {
+            const start = sectionStarts[index]
+            const nextSection = sectionStarts[index + 1]
             // The final section completes when the article has fully entered the viewport.
             const end = nextSection ?? articleBottom - window.innerHeight + ACTIVE_OFFSET_PX
             const distance = end - start
@@ -77,7 +99,7 @@ export function TableOfContents({
               distance <= 0
                 ? Number(start <= ACTIVE_OFFSET_PX)
                 : Math.max(0, Math.min(1, (ACTIVE_OFFSET_PX - start) / distance))
-            return [section.id, progress]
+            return [sectionId, progress]
           })
         )
       )
@@ -118,7 +140,10 @@ export function TableOfContents({
 
   if (headings.length === 0) return null
 
-  const sections = headings.filter((heading) => heading.level === 2)
+  const sections = [
+    { id: INTRODUCTION_ID, text: 'Introduction' },
+    ...headings.filter((heading) => heading.level === 2),
+  ]
 
   return (
     <nav aria-label="Table of contents" className={`font-reading ${className ?? ''}`}>
@@ -151,12 +176,13 @@ export function TableOfContents({
               <a
                 href={`#${section.id}`}
                 aria-label={`Jump to ${section.text}`}
+                onClick={(event) => scrollToProgressSection(event, section.id)}
                 className="block h-full overflow-hidden rounded-full bg-blog-rule outline-offset-4 focus-visible:outline-2 focus-visible:outline-blog-accent"
               >
                 <span className="sr-only">Jump to {section.text}</span>
                 <span
                   aria-hidden="true"
-                  className="block h-full origin-top bg-blog-accent transition-transform duration-150 ease-out motion-reduce:transition-none"
+                  className="block h-full origin-top bg-blog-accent"
                   style={
                     {
                       '--section-progress': sectionProgress[section.id] ?? 0,

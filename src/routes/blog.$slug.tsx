@@ -230,6 +230,7 @@ function BlogPost() {
             className="hidden xl:col-start-1 xl:block xl:h-[calc(100dvh-3rem)] xl:justify-self-end xl:self-start xl:sticky xl:top-6 xl:w-56 xl:overflow-hidden"
           />
           <article
+            id="article-introduction"
             ref={articleRef}
             className="prose mx-auto max-w-2xl font-reading xl:col-start-2 prose-headings:mt-12 prose-headings:text-balance prose-headings:font-heading prose-headings:text-blog-text prose-p:text-pretty prose-p:text-[1.05rem] prose-p:leading-8 prose-p:text-blog-description prose-a:text-blog-accent prose-strong:text-blog-text prose-li:text-pretty prose-li:text-[1.05rem] prose-li:leading-8 prose-li:text-blog-description prose-th:text-blog-text prose-td:text-blog-description prose-code:bg-blog-panel prose-code:px-1 prose-code:py-0.5 prose-code:font-mono prose-code:text-blog-text prose-code:before:content-none prose-code:after:content-none prose-blockquote:text-pretty prose-blockquote:border-blog-accent prose-blockquote:text-blog-description prose-hr:border-blog-rule prose-pre:border prose-pre:border-blog-rule prose-pre:bg-blog-panel!"
           >
