@@ -552,6 +552,28 @@ html[data-theme='dark'] .mermaid-dark {
   }
 }
 
+.prose {
+  /* A compact modular scale keeps article headings and their surrounding rhythm related. */
+  --prose-ratio: 1.3;
+  --prose-s0: clamp(1.05rem, 1rem + 0.3vw, 1.2rem);
+  --prose-s1: calc(var(--prose-s0) * var(--prose-ratio));
+  --prose-s2: calc(var(--prose-s1) * var(--prose-ratio));
+  --prose-s3: calc(var(--prose-s2) * var(--prose-ratio));
+  --prose-s4: calc(var(--prose-s3) * var(--prose-ratio));
+  --prose-s-1: calc(var(--prose-s0) / var(--prose-ratio));
+  --prose-s-2: calc(var(--prose-s-1) / var(--prose-ratio));
+  --prose-s-3: calc(var(--prose-s-2) / var(--prose-ratio));
+  --flow-space: var(--prose-s0);
+}
+
+.prose > * {
+  margin: 0;
+}
+
+.prose > * + * {
+  margin-block-start: var(--flow-space);
+}
+
 .prose :where(h1, h2, h3, h4, h5, h6) {
   position: relative;
   scroll-margin-top: 1.5rem;
@@ -565,23 +587,40 @@ html[data-theme='dark'] .mermaid-dark {
 }
 
 .prose :where(h1) {
-  font-size: clamp(2.75rem, 7vw, 3.75rem);
+  --flow-space: var(--prose-s4);
+  font-size: var(--prose-s4);
 }
 
 .prose :where(h2) {
-  font-size: clamp(2.15rem, 5vw, 2.85rem);
+  --flow-space: var(--prose-s3);
+  font-size: var(--prose-s3);
 }
 
 .prose :where(h3) {
-  font-size: clamp(1.65rem, 4vw, 2.15rem);
+  --flow-space: var(--prose-s2);
+  font-size: var(--prose-s2);
 }
 
 .prose :where(h4) {
-  font-size: clamp(1.35rem, 3vw, 1.65rem);
+  --flow-space: var(--prose-s2);
+  font-size: calc(var(--prose-s0) * sqrt(var(--prose-ratio)));
 }
 
 .prose :where(h5, h6) {
-  font-size: 1.2rem;
+  --flow-space: var(--prose-s1);
+  font-size: var(--prose-s0);
+}
+
+.prose > :is(h2, h3, h4) + * {
+  --flow-space: var(--prose-s-1);
+}
+
+.prose > h5 + * {
+  --flow-space: var(--prose-s-2);
+}
+
+.prose > h6 + * {
+  --flow-space: var(--prose-s-3);
 }
 
 .prose :where(table) {
