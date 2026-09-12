@@ -107,9 +107,12 @@ export function TableOfContents({
         ...sections.map((section) => section.getBoundingClientRect().top),
       ]
       const articleBottom = container.getBoundingClientRect().bottom
+      const articleComplete = articleBottom <= window.innerHeight
       setSectionProgress(
         Object.fromEntries(
           sectionIds.map((sectionId, index) => {
+            if (articleComplete) return [sectionId, 1]
+
             const start = sectionStarts[index]
             const nextSection = sectionStarts[index + 1]
             // The final section completes when the article has fully entered the viewport.
@@ -125,7 +128,7 @@ export function TableOfContents({
       )
 
       // Treat the final heading as current once the article has been fully read.
-      if (articleBottom <= window.innerHeight) {
+      if (articleComplete) {
         setActiveId(nodes[nodes.length - 1].id)
         return
       }
