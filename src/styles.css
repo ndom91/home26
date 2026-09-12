@@ -772,7 +772,7 @@ html[data-theme='dark'] .prose :where([data-rmiz] img.mdx-zoom-image) {
   .prose :where([data-rmiz]) {
     width: calc(100% + 8rem);
     max-width: none;
-    margin-inline: -4rem;
+    margin-inline: 0;
   }
 }
 

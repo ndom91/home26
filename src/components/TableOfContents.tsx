@@ -63,26 +63,27 @@ export function TableOfContents({
 
       if (nodes.length === 0) return
 
-      // The article can end before its final section crosses the sticky offset.
-      const scrolledToBottom =
-        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2
       const sections = nodes.filter((node) => node.tagName === 'H2')
       const articleBottom = container.getBoundingClientRect().bottom
       setSectionProgress(
         Object.fromEntries(
           sections.map((section, index) => {
             const start = section.getBoundingClientRect().top
-            const end = sections[index + 1]?.getBoundingClientRect().top ?? articleBottom
-            const progress = scrolledToBottom
-              ? 1
-              : Math.max(0, Math.min(1, (ACTIVE_OFFSET_PX - start) / (end - start)))
+            const nextSection = sections[index + 1]?.getBoundingClientRect().top
+            // The final section completes when the article has fully entered the viewport.
+            const end = nextSection ?? articleBottom - window.innerHeight + ACTIVE_OFFSET_PX
+            const distance = end - start
+            const progress =
+              distance <= 0
+                ? Number(start <= ACTIVE_OFFSET_PX)
+                : Math.max(0, Math.min(1, (ACTIVE_OFFSET_PX - start) / distance))
             return [section.id, progress]
           })
         )
       )
 
-      // Bottom of the page: last heading wins regardless of offsets.
-      if (scrolledToBottom) {
+      // Treat the final heading as current once the article has been fully read.
+      if (articleBottom <= window.innerHeight) {
         setActiveId(nodes[nodes.length - 1].id)
         return
       }
@@ -121,7 +122,7 @@ export function TableOfContents({
 
   return (
     <nav aria-label="Table of contents" className={`font-reading ${className ?? ''}`}>
-      <div className="flex h-full gap-4">
+      <div className="flex h-full gap-6">
         <div className="min-w-0 flex-1 overflow-y-auto overscroll-contain">
           <p className="text-[10px] uppercase tracking-[0.28em] text-blog-faint">On this page</p>
           <ul className="mt-4 space-y-0.5">
