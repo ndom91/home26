@@ -46,8 +46,8 @@ const projects: Project[] = [
     title: 'next-auth (Auth.js)',
     blurb: (
       <>
-        Go-to Next.js authentication library supporting more social signin providers than you can
-        shake a stick at. Bring your own database. Inactive after transfering the project to{' '}
+        Core-team at the go-to Next.js authentication library. Self-hostable, bring your own
+        database, or don't! Inactive after transfering the project to{' '}
         <ScreenshotLink url="https://better-auth.com">better-auth</ScreenshotLink> in 2025.
       </>
     ),
@@ -64,8 +64,24 @@ const projects: Project[] = [
     repo: 'https://github.com/ndom91/commonwealth',
     demo: 'https://commonwealth.ndo.dev',
     status: 'live',
-    featured: true,
+    featured: false,
     tags: ['TanStack Start', 'MCP Server'],
+  },
+  {
+    title: 'airescue.dev',
+    blurb:
+      'This project is the result of a domain bought on a whim. After it sat dormant for a few months, I decided to do something with it. The result is a marketing page for a hypothetical consulting firm specializing in helping out where, "you shipped fast. [So] we\'ll make it last."',
+    demo: 'https://airescue.dev',
+    status: 'live',
+    tags: ['Landing Page', 'Marketing'],
+  },
+  {
+    title: 'tmux-ai-window-name',
+    blurb:
+      "tmux plugin which leverages a local LLM to automatically rename your tmux windows based on what you're working on in them. Never get lost jumping around tmux again.",
+    repo: 'https://github.com/ndom91/tmux-ai-window-name',
+    status: 'live',
+    tags: ['tmux', 'LLM'],
   },
   {
     title: 'ha-voice-rocm',
@@ -75,14 +91,6 @@ const projects: Project[] = [
     status: 'live',
     featured: true,
     tags: ['Python', 'Home Assistant'],
-  },
-  {
-    title: 'tmux-ai-window-name',
-    blurb:
-      "tmux plugin which leverages a local LLM to automatically rename your tmux windows based on what you're working on in them. Never get lost jumping around tmux again.",
-    repo: 'https://github.com/ndom91/tmux-ai-window-name',
-    status: 'live',
-    tags: ['tmux', 'LLM'],
   },
   {
     title: 'domino-frame-web',
@@ -101,12 +109,13 @@ const projects: Project[] = [
     tags: ['Frame', 'Go'],
   },
   {
-    title: 'airescue.dev',
+    title: 'briefkasten',
     blurb:
-      'This project is the result of a domain bought on a whim. After it sat dormant for a few months, I decided to do something with it. The result is a marketing page for a hypothetical consulting firm specializing in helping out where, "you shipped fast. [So] we\'ll make it last."',
-    demo: 'https://airescue.dev',
-    status: 'live',
-    tags: ['Landing Page', 'Marketing'],
+      'Self-hosted bookmarking and RSS reader web app. Originally written years ago in React, the latest deployed iteration is a SvelteKit rewrite.',
+    repo: 'https://github.com/ndom91/briefkasten',
+    demo: 'https://briefkastenhq.com',
+    status: 'archived',
+    tags: ['Svelte'],
   },
   {
     title: 'jellyfin-random-macos-screensaver',
@@ -116,23 +125,6 @@ const projects: Project[] = [
     status: 'live',
     featured: true,
     tags: ['Swift', 'Jellyfin'],
-  },
-  {
-    title: 'airescue.dev',
-    blurb:
-      'This project is the result of a domain bought on a whim. After it sat dormant for a few months, I decided to do something with it. The result is a marketing page for a hypothetical consulting firm specializing in helping out where, "you shipped fast. [So] we\'ll make it last."',
-    demo: 'https://airescue.dev',
-    status: 'live',
-    tags: ['Landing Page', 'Marketing'],
-  },
-  {
-    title: 'briefkasten',
-    blurb:
-      'Self-hosted bookmarking and RSS reader web app. Originally written years ago in React, the latest deployed iteration is SvelteKit rewrite.',
-    repo: 'https://github.com/ndom91/briefkasten',
-    demo: 'https://briefkastenhq.com',
-    status: 'archived',
-    tags: ['Svelte'],
   },
   {
     title: 'calendar-led-strip',
