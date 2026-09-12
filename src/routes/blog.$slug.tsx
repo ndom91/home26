@@ -227,7 +227,7 @@ function BlogPost() {
           <TableOfContents
             key={meta.slug}
             containerRef={articleRef}
-            className="hidden xl:col-start-1 xl:block xl:h-[calc(100dvh-3rem)] xl:justify-self-end xl:self-start xl:sticky xl:top-6 xl:w-56 xl:overflow-hidden"
+            className="hidden xl:col-start-1 xl:block xl:h-[calc(100dvh-3rem)] xl:justify-self-end xl:self-start xl:sticky xl:top-6 xl:w-56"
           />
           <article
             id="article-introduction"

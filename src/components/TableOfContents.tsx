@@ -196,24 +196,28 @@ export function TableOfContents({
         </div>
         <ol aria-label="Article progress" className="flex w-1 shrink-0 flex-col gap-1">
           {sections.map((section) => (
-            <li key={section.id} className="min-h-7 flex-1">
+            <li key={section.id} className="relative min-h-7 flex-1">
               <a
                 href={`#${section.id}`}
                 aria-label={`Jump to ${section.text}`}
                 onClick={(event) => scrollToProgressSection(event, section.id)}
-                className="block h-full overflow-hidden rounded-full bg-blog-rule outline-offset-4 focus-visible:outline-2 focus-visible:outline-blog-accent"
+                className="absolute -inset-x-3 inset-y-0 flex justify-center outline-offset-4 focus-visible:outline-2 focus-visible:outline-blog-accent"
               >
                 <span className="sr-only">Jump to {section.text}</span>
                 <span
                   aria-hidden="true"
-                  className="block h-full origin-top bg-blog-accent"
-                  style={
-                    {
-                      '--section-progress': sectionProgress[section.id] ?? 0,
-                      transform: 'scaleY(var(--section-progress))',
-                    } as CSSProperties
-                  }
-                />
+                  className="block h-full w-1 overflow-hidden rounded-full bg-blog-rule"
+                >
+                  <span
+                    className="block h-full origin-top bg-blog-accent"
+                    style={
+                      {
+                        '--section-progress': sectionProgress[section.id] ?? 0,
+                        transform: 'scaleY(var(--section-progress))',
+                      } as CSSProperties
+                    }
+                  />
+                </span>
               </a>
             </li>
           ))}
