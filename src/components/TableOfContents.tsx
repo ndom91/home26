@@ -171,7 +171,7 @@ export function TableOfContents({
   return (
     <nav aria-label="Table of contents" className={`font-reading ${className ?? ''}`}>
       <div className="flex h-full gap-6">
-        <div className="min-w-0 flex-1 overflow-y-auto overscroll-contain">
+        <div className="min-w-0 flex-1 overflow-y-auto">
           <p className="text-[10px] uppercase tracking-[0.28em] text-blog-faint">On this page</p>
           <ul className="mt-4 space-y-0.5">
             {headings.map((heading) => {
