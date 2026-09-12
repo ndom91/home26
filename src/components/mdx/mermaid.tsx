@@ -9,7 +9,7 @@
  */
 export function MermaidFigure({ lightSvg, darkSvg }: { lightSvg: string; darkSvg: string }) {
   return (
-    <figure className="not-prose my-8 overflow-hidden rounded-2xl border border-blog-rule bg-blog-panel shadow-[0_18px_50px_color-mix(in_oklab,var(--color-blog-bg)_65%,transparent)]">
+    <figure className="mermaid-figure not-prose my-8 overflow-hidden rounded-2xl border border-blog-rule bg-blog-panel shadow-[0_18px_50px_color-mix(in_oklab,var(--color-blog-bg)_65%,transparent)]">
       <div className="overflow-x-auto px-4 py-6">
         <div className="mermaid-light" dangerouslySetInnerHTML={{ __html: lightSvg }} />
         <div className="mermaid-dark" dangerouslySetInnerHTML={{ __html: darkSvg }} />
