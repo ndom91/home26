@@ -11,9 +11,9 @@ cover:
 
 Most "get Thread/Matter working with Home Assistant" guides end with the same shrug: _"just put all your IoT stuff on the same VLAN as Home Assistant."_ It works, and it is probably easier. It also defeats the reason I segment my network in the first place. My smart home gear is exactly the pile of cheap, chatty, questionably updated devices I want to keep away from my main LAN.
 
-So I did the annoying thing and made it work across VLANs. This is the guide I wish I had while staring at OPNsense firewall logs at midnight. If your Matter device sits forever on **"checking connectivity to thread network…"** before failing, you have probably hit the same problem I did.
+So I did the annoying thing and made it work across VLANs. This is the post I wish I had while staring at OPNsense firewall logs at midnight. If your Matter device sits forever on **"checking connectivity to thread network…"** before failing, you have probably hit the same problem I did.
 
-Fair warning: this is a first-hand troubleshooting log, not a polished tutorial. It assumes you're already comfortable with VLANs, IPv6, and a firewall. If not, the single-VLAN approach is easier.
+Fair warning: this is not a polished tutorial, but more like a first-hand troubleshooting log. It assumes you're already comfortable with VLANs, IPv6, and a firewall. If not, the single-VLAN approach is easier.
 
 ## The setup
 
