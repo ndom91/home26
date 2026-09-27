@@ -12,7 +12,8 @@ export function imageLqip(filePath: string) {
   const lqip = sharp(filePath)
     .rotate()
     .resize({ width: 48, withoutEnlargement: true })
-    .webp({ quality: 35 })
+    .blur(3)
+    .webp({ quality: 40 })
     .toBuffer()
     .then((image) => `data:image/webp;base64,${image.toString('base64')}`)
 

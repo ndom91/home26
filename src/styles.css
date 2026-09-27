@@ -386,17 +386,21 @@
 
 .progressive-image__placeholder {
   position: absolute;
-  inset: -0.5rem;
+  inset: -1rem;
   pointer-events: none;
-  width: calc(100% + 1rem);
-  height: calc(100% + 1rem);
+  width: calc(100% + 2rem);
+  height: calc(100% + 2rem);
   max-width: none;
+  filter: blur(8px);
   object-fit: cover;
 }
 
 .progressive-image__image {
   position: relative;
   z-index: 1;
+  display: block;
+  width: 100%;
+  margin: 0;
   opacity: 0;
   transition: opacity 180ms ease-out;
 }
