@@ -391,7 +391,7 @@
   width: calc(100% + 2rem);
   height: calc(100% + 2rem);
   max-width: none;
-  filter: blur(4px);
+  filter: blur(6px);
   object-fit: cover;
 }
 
