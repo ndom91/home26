@@ -6,6 +6,7 @@ import {
 import type { MDXContent } from 'mdx/types.js'
 import readingTime from 'reading-time'
 import * as v from 'valibot'
+import { imageLqip } from './src/lib/image-lqip'
 import { collectBlogLinkTargets } from './src/lib/link-screenshot-targets'
 import { signLinkScreenshotUrls } from './src/lib/sign-link-screenshot'
 
@@ -47,15 +48,17 @@ function directoryFromPath(path: string) {
   return parts.slice(0, -1).join('/')
 }
 
-function imageImportPath(postPath: string, imageFile: string) {
+function imageFilePath(postPath: string, imageFile: string) {
   if (imageFile.startsWith('./')) {
     const directory = directoryFromPath(postPath)
-    const filePath = [directory, imageFile.slice(2)].filter(Boolean).join('/')
-
-    return `#content/blog/${filePath}`
+    return [directory, imageFile.slice(2)].filter(Boolean).join('/')
   }
 
-  return `#content/blog/${imageFile}`
+  return imageFile
+}
+
+function imageImportPath(postPath: string, imageFile: string) {
+  return `#content/blog/${imageFilePath(postPath, imageFile)}`
 }
 
 function descriptionFromContent(content: string) {
@@ -174,6 +177,11 @@ const posts = defineCollection({
       linkScreenshotUrls: await linkScreenshotUrlsFromContent(post.content),
       coverImageUrl: post.cover
         ? createDefaultImport<string>(imageImportPath(post._meta.filePath, post.cover.imageFile))
+        : null,
+      coverImageLqip: post.cover
+        ? await imageLqip(
+            `${process.cwd()}/content/blog/${imageFilePath(post._meta.filePath, post.cover.imageFile)}`
+          )
         : null,
       Component: createDefaultImport<MDXContent>(`#content/blog/${post._meta.filePath}`),
     }

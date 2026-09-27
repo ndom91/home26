@@ -33,6 +33,7 @@ export function FeaturedPostCard({ post }: { post: PostListItem }) {
         <div className="relative overflow-hidden border-t border-blog-rule lg:border-l lg:border-t-0">
           <ProgressiveImage
             src={post.coverImageUrl}
+            placeholderSrc={post.coverImageLqip}
             alt=""
             className="image-outline h-full min-h-72 w-full scale-[1.01] object-cover transition-transform duration-500 group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             fetchPriority="high"

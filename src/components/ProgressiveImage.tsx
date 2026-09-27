@@ -1,14 +1,8 @@
 import type { ImgHTMLAttributes } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
-const placeholderOptions = 'width=48,quality=35,blur=8,format=auto'
-
-function placeholderUrl(src: string) {
-  if (!src.startsWith('/') || src.startsWith('/api/') || src.startsWith('/cdn-cgi/')) {
-    return null
-  }
-
-  return `/cdn-cgi/image/${placeholderOptions}${src}`
+type ProgressiveImageProps = ImgHTMLAttributes<HTMLImageElement> & {
+  placeholderSrc?: string | null
 }
 
 export function ProgressiveImage({
@@ -16,19 +10,18 @@ export function ProgressiveImage({
   className,
   onError,
   onLoad,
+  placeholderSrc,
   src,
   ...props
-}: ImgHTMLAttributes<HTMLImageElement>) {
+}: ProgressiveImageProps) {
   const imageRef = useRef<HTMLImageElement>(null)
   const [isLoaded, setIsLoaded] = useState(false)
-  const placeholder = src ? placeholderUrl(src) : null
-
   useEffect(() => {
     const image = imageRef.current
     setIsLoaded(image?.getAttribute('src') === src && image?.complete === true)
   }, [src])
 
-  if (!src || !placeholder) {
+  if (!src || !placeholderSrc) {
     return (
       <img src={src} alt={alt} className={className} onError={onError} onLoad={onLoad} {...props} />
     )
@@ -52,7 +45,7 @@ export function ProgressiveImage({
         {...props}
       />
       <img
-        src={placeholder}
+        src={placeholderSrc}
         alt=""
         aria-hidden="true"
         loading={props.loading}

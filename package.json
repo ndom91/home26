@@ -82,6 +82,7 @@
     "@vitejs/plugin-react": "6.0.3",
     "jsdom": "29.1.1",
     "rehype-mdx-import-media": "1.4.0",
+    "sharp": "0.34.5",
     "vite": "8.1.0",
     "vitest": "4.1.9",
     "wrangler": "4.104.0"

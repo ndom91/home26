@@ -14,6 +14,7 @@ import { normalizeLinkScreenshotTarget } from './lib/link-screenshot'
 
 type MDXComponent = ComponentType<Record<string, unknown>> | keyof React.JSX.IntrinsicElements
 type MDXComponents = Record<string, MDXComponent>
+type MdxImageProps = ImgHTMLAttributes<HTMLImageElement> & { dataLqip?: string }
 
 const ImageZoomDisabledContext = createContext(false)
 const ImageCaptionHandledContext = createContext(false)
@@ -29,13 +30,18 @@ function getMDXComponents(components: MDXComponents): MDXComponents {
   }
 }
 
-function MdxImage({ alt = '', className, ...props }: ImgHTMLAttributes<HTMLImageElement>) {
+function MdxImage({ alt = '', className, dataLqip: placeholderSrc, ...props }: MdxImageProps) {
   const isZoomDisabled = useContext(ImageZoomDisabledContext)
   const isCaptionHandled = useContext(ImageCaptionHandledContext)
   const imageClassName = ['mdx-zoom-image', className].filter(Boolean).join(' ')
 
   const image = isZoomDisabled ? (
-    <ProgressiveImage alt={alt} className={imageClassName} {...props} />
+    <ProgressiveImage
+      alt={alt}
+      className={imageClassName}
+      placeholderSrc={placeholderSrc}
+      {...props}
+    />
   ) : (
     <Zoom
       a11yNameButtonUnzoom="Close expanded image"
@@ -44,7 +50,12 @@ function MdxImage({ alt = '', className, ...props }: ImgHTMLAttributes<HTMLImage
       wrapElement="span"
       zoomMargin={24}
     >
-      <ProgressiveImage alt={alt} className={imageClassName} {...props} />
+      <ProgressiveImage
+        alt={alt}
+        className={imageClassName}
+        placeholderSrc={placeholderSrc}
+        {...props}
+      />
     </Zoom>
   )
 

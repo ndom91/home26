@@ -16,6 +16,7 @@ import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import { defineConfig } from 'vite'
 import { mermaidPlugin } from './src/lib/mermaid-vite'
 import { rehypeImageCaptions } from './src/lib/rehype-image-captions'
+import { rehypeImageLqip } from './src/lib/rehype-image-lqip'
 import { remarkMermaid } from './src/lib/remark-mermaid'
 
 function useFilenameAsCodeTitle(meta: string) {
@@ -67,6 +68,7 @@ const config = defineConfig({
             },
           ],
           rehypeImageCaptions,
+          rehypeImageLqip,
           rehypeMdxImportMedia,
         ],
       }),

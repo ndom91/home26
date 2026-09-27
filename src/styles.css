@@ -378,6 +378,10 @@
   position: relative;
   display: block;
   overflow: hidden;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
 }
 
 .progressive-image__placeholder {
