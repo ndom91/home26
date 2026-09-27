@@ -387,7 +387,6 @@
   width: calc(100% + 1rem);
   height: calc(100% + 1rem);
   max-width: none;
-  image-rendering: pixelated;
   object-fit: cover;
 }
 
