@@ -1,7 +1,7 @@
 import type { ImgHTMLAttributes } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
-const placeholderOptions = 'width=32,quality=35,blur=20,format=auto'
+const placeholderOptions = 'width=24,quality=35,blur=4,format=auto'
 
 function placeholderUrl(src: string) {
   if (!src.startsWith('/') || src.startsWith('/api/') || src.startsWith('/cdn-cgi/')) {
