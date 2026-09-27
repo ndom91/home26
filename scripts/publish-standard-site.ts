@@ -64,7 +64,7 @@ const options = {
   omitOversizedCovers: process.argv.includes('--omit-oversized-covers'),
   post: optionValue('--post'),
 }
-const PUBLICATION_RKEY = 'ndo-dev'
+const TID_CHARS = '234567abcdefghijklmnopqrstuvwxyz'
 
 const pdsHost = process.env.ATP_PDS_HOST ?? DEFAULT_PDS_HOST
 const identifier = process.env.ATP_IDENTIFIER
@@ -134,8 +134,9 @@ async function upsertPublication() {
     return existingUri
   }
 
-  const uri = recordUri('site.standard.publication', PUBLICATION_RKEY)
-  await putRecordByKey('site.standard.publication', PUBLICATION_RKEY, publicationRecord)
+  const rkey = nextTid()
+  const uri = recordUri('site.standard.publication', rkey)
+  await putRecordByKey('site.standard.publication', rkey, publicationRecord)
   writeGeneratedPublicationUri(uri)
   console.log(`Created publication ${uri}`)
 
@@ -170,8 +171,9 @@ async function publishPost(post: FrontmatterPost, publicationUri: string) {
     return
   }
 
-  const uri = recordUri('site.standard.document', post.slug)
-  await putRecordByKey('site.standard.document', post.slug, record)
+  const rkey = nextTid()
+  const uri = recordUri('site.standard.document', rkey)
+  await putRecordByKey('site.standard.document', rkey, record)
   writeStandardSiteUri(post.contentPath, post.frontmatter, post.body, uri)
   console.log(`Created ${post.slug}: ${uri}`)
 }
@@ -229,6 +231,9 @@ async function putRecordByKey(collection: string, rkey: string, record: Publicat
     repo: requireSession().did,
     rkey,
     record,
+    // Newer PDS versions validate site.standard.* records, which require TID
+    // rkeys. Older records use slug rkeys, so skip validation only for those.
+    validate: isTid(rkey) ? undefined : false,
   })
 }
 
@@ -455,6 +460,23 @@ function readGeneratedPublicationUri() {
 
 function writeGeneratedPublicationUri(uri: string) {
   writeFileSync(GENERATED_PUBLICATION_FILE, `export const standardSitePublicationUri = '${uri}'\n`)
+}
+
+// TID: microsecond timestamp plus a 10-bit clock id, base32-sortable encoded.
+function nextTid() {
+  let value = ((BigInt(Date.now()) * 1000n) << 10n) | BigInt(Math.floor(Math.random() * 1024))
+  let tid = ''
+
+  for (let i = 0; i < 13; i++) {
+    tid = TID_CHARS[Number(value & 31n)] + tid
+    value >>= 5n
+  }
+
+  return tid
+}
+
+function isTid(rkey: string) {
+  return /^[234567abcdefghij][234567abcdefghijklmnopqrstuvwxyz]{12}$/.test(rkey)
 }
 
 function recordUri(collection: string, rkey: string) {
