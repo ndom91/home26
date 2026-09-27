@@ -43,6 +43,15 @@ const projects: Project[] = [
     tags: ['TanStack', 'Local LLM', 'Observability'],
   },
   {
+    title: 'pve-agents',
+    blurb:
+      'Self-hosted coding agent sandboxes on your own Proxmox host. Designed as a self-hostable cloud agent alternative, like those offered from my of the labs. Supports claude-code (including via subscription) and opencode2 as your harness.',
+    repo: 'https://github.com/ndom91/pve-agents',
+    demo: 'https://pve-agents.sh',
+    status: 'live',
+    tags: ['Proxmox', 'Sandboxes', 'Coding Agents'],
+  },
+  {
     title: 'next-auth (Auth.js)',
     blurb: (
       <>
@@ -66,14 +75,6 @@ const projects: Project[] = [
     status: 'live',
     featured: false,
     tags: ['TanStack Start', 'MCP Server'],
-  },
-  {
-    title: 'airescue.dev',
-    blurb:
-      'This project is the result of a domain bought on a whim. After it sat dormant for a few months, I decided to do something with it. The result is a marketing page for a hypothetical consulting firm specializing in helping out where, "you shipped fast. [So] we\'ll make it last."',
-    demo: 'https://airescue.dev',
-    status: 'live',
-    tags: ['Landing Page', 'Marketing'],
   },
   {
     title: 'tmux-ai-window-name',
@@ -133,6 +134,14 @@ const projects: Project[] = [
     repo: 'https://github.com/ndom91/calendar-led-strip',
     status: 'live',
     tags: ['wled', 'eletronics'],
+  },
+  {
+    title: 'airescue.dev',
+    blurb:
+      'This project is the result of a domain bought on a whim. After it sat dormant for a few months, I decided to do something with it. The result is a marketing page for a hypothetical consulting firm specializing in helping out where, "you shipped fast. [So] we\'ll make it last."',
+    demo: 'https://airescue.dev',
+    status: 'live',
+    tags: ['Landing Page', 'Marketing'],
   },
   {
     title: 'react-timezone-select',
