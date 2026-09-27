@@ -374,6 +374,39 @@
   outline-offset: -1px;
 }
 
+.progressive-image {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+.progressive-image__placeholder {
+  position: absolute;
+  inset: -0.5rem;
+  pointer-events: none;
+  width: calc(100% + 1rem);
+  height: calc(100% + 1rem);
+  max-width: none;
+  object-fit: cover;
+}
+
+.progressive-image__image {
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 180ms ease-out;
+}
+
+.progressive-image__image--loaded {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progressive-image__image {
+    transition: none;
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   html:not([data-theme='light']) .image-outline {
     outline-color: rgb(255 255 255 / 0.1);

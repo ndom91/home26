@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 import type { PostListItem } from '../lib/blog'
 import { FieldNoteBadge } from './FieldNoteBadge'
 import { PostCardMeta } from './PostCardMeta'
+import { ProgressiveImage } from './ProgressiveImage'
 
 export function PostCard({ post, eager = false }: { post: PostListItem; eager?: boolean }) {
   return (
@@ -12,7 +13,7 @@ export function PostCard({ post, eager = false }: { post: PostListItem; eager?: 
     >
       {post.coverImageUrl ? (
         <div className="relative overflow-hidden border-b border-blog-rule">
-          <img
+          <ProgressiveImage
             src={post.coverImageUrl}
             alt=""
             className="aspect-4/3 w-full object-cover transition-transform duration-500 group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"

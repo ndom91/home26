@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { type CSSProperties, useRef } from 'react'
 import { BlueskyComments } from '../components/BlueskyComments'
 import { LinkScreenshotProvider } from '../components/mdx/link-screenshot-context'
+import { ProgressiveImage } from '../components/ProgressiveImage'
 import { SiteFooter } from '../components/SiteFooter'
 import { SiteHeader } from '../components/SiteHeader'
 import { TableOfContents } from '../components/TableOfContents'
@@ -201,7 +202,7 @@ function BlogPost() {
                   aria-hidden="true"
                 />
                 <div className="relative overflow-hidden border-y border-blog-rule bg-blog-panel shadow-[0_1.5rem_4rem_color-mix(in_oklab,var(--color-blog-accent)_18%,transparent)] sm:border">
-                  <img
+                  <ProgressiveImage
                     src={meta.coverImageUrl}
                     alt=""
                     width="1448"

@@ -2,6 +2,7 @@ import { BookOpen, ExternalLink, type LucideIcon, Star } from 'lucide-react'
 import type { Project, ProjectStatus } from '../lib/projects'
 import { usePointerSweep } from '../lib/use-pointer-sweep'
 import { GitHub } from './GitHubLogo'
+import { ProgressiveImage } from './ProgressiveImage'
 
 const cardFlairClass =
   'group relative z-0 flex h-full flex-col bg-paper [--detail-accent:var(--globe-accent)] [--hover-color-strength:1] [--sweep-int:calc(var(--hover-color-strength)*var(--sweep-dampen))] [--hover-tilt:2.5deg] [--hover-x:50%] hover:z-20 focus-within:z-20'
@@ -36,7 +37,7 @@ export function ProjectCard({ project }: { project: Project }) {
       <div aria-hidden="true" className={cardFlairOverlayClass} />
       {project.image ? (
         <div className="relative z-1 overflow-hidden border-b border-rule">
-          <img
+          <ProgressiveImage
             src={project.image}
             alt=""
             className="image-outline aspect-16/10 w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"

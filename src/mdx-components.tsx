@@ -9,6 +9,7 @@ import Zoom from 'react-medium-image-zoom'
 import { CodeFigure } from './components/mdx/code-block'
 import { MermaidFigure } from './components/mdx/mermaid'
 import { ScreenshotLink } from './components/mdx/screenshot-link'
+import { ProgressiveImage } from './components/ProgressiveImage'
 import { normalizeLinkScreenshotTarget } from './lib/link-screenshot'
 
 type MDXComponent = ComponentType<Record<string, unknown>> | keyof React.JSX.IntrinsicElements
@@ -34,7 +35,7 @@ function MdxImage({ alt = '', className, ...props }: ImgHTMLAttributes<HTMLImage
   const imageClassName = ['mdx-zoom-image', className].filter(Boolean).join(' ')
 
   const image = isZoomDisabled ? (
-    <img alt={alt} className={imageClassName} {...props} />
+    <ProgressiveImage alt={alt} className={imageClassName} {...props} />
   ) : (
     <Zoom
       a11yNameButtonUnzoom="Close expanded image"
@@ -43,7 +44,7 @@ function MdxImage({ alt = '', className, ...props }: ImgHTMLAttributes<HTMLImage
       wrapElement="span"
       zoomMargin={24}
     >
-      <img alt={alt} className={imageClassName} {...props} />
+      <ProgressiveImage alt={alt} className={imageClassName} {...props} />
     </Zoom>
   )
 
