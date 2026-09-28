@@ -8,7 +8,6 @@ const homeBarClass =
 const homeBarCellClass = 'px-5 py-4 max-[520px]:px-4 max-[520px]:py-5'
 const themeIconClass =
   'absolute top-1/2 left-1/2 size-[0.95rem] -translate-x-1/2 -translate-y-1/2 origin-center stroke-[2.2] transition-[opacity,scale,filter] duration-300 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:duration-[1ms]'
-const THEME_REVEAL_DELAY = 140
 const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect
 
 function getCurrentTheme() {
@@ -36,7 +35,6 @@ type ViewTransitionDocument = Document & {
 export function SiteHeader() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const themeRevealSequence = useRef(0)
-  const themeRevealTimeout = useRef<number | null>(null)
   const isDark = theme === 'dark'
 
   useIsomorphicLayoutEffect(() => {
@@ -45,14 +43,6 @@ export function SiteHeader() {
     document.documentElement.dataset.theme = currentTheme
     document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', currentTheme)
     setTheme(currentTheme)
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      if (themeRevealTimeout.current !== null) {
-        window.clearTimeout(themeRevealTimeout.current)
-      }
-    }
   }, [])
 
   function toggleTheme(event: MouseEvent<HTMLButtonElement>) {
@@ -91,26 +81,19 @@ export function SiteHeader() {
     themeRevealSequence.current += 1
     const revealSequence = themeRevealSequence.current
 
-    if (themeRevealTimeout.current !== null) {
-      window.clearTimeout(themeRevealTimeout.current)
-    }
+    root.style.setProperty('--theme-transition-x', `${transitionX}px`)
+    root.style.setProperty('--theme-transition-y', `${transitionY}px`)
+    root.style.setProperty('--theme-transition-radius', `${transitionRadius}px`)
 
-    themeRevealTimeout.current = window.setTimeout(() => {
-      themeRevealTimeout.current = null
-      root.style.setProperty('--theme-transition-x', `${transitionX}px`)
-      root.style.setProperty('--theme-transition-y', `${transitionY}px`)
-      root.style.setProperty('--theme-transition-radius', `${transitionRadius}px`)
+    viewTransitionDocument.startViewTransition(updateDocumentTheme).finished.finally(() => {
+      if (themeRevealSequence.current !== revealSequence) {
+        return
+      }
 
-      viewTransitionDocument.startViewTransition(updateDocumentTheme).finished.finally(() => {
-        if (themeRevealSequence.current !== revealSequence) {
-          return
-        }
-
-        root.style.removeProperty('--theme-transition-x')
-        root.style.removeProperty('--theme-transition-y')
-        root.style.removeProperty('--theme-transition-radius')
-      })
-    }, THEME_REVEAL_DELAY)
+      root.style.removeProperty('--theme-transition-x')
+      root.style.removeProperty('--theme-transition-y')
+      root.style.removeProperty('--theme-transition-radius')
+    })
   }
 
   return (
