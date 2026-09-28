@@ -9,97 +9,96 @@ cover:
   imageFile: "./cover.png"
 ---
 
-Support teams talk to customers in whatever language their customers use. If you only read English, a message in Japanese or Portuguese is not much use. Earlier this year, we added an experimental translation feature to Plain. Turn it on in your personal preferences, and translated messages appear automatically alongside the original.
+Support teams talk to customers in whatever language those customers use. If you only read English, a message in Japanese or Portuguese is not much use to you. Earlier this year, we added an experimental translation feature to Plain. Turn it on in your personal preferences, and translated messages appear automatically alongside the original.
 
-There are two obvious ways to build this. First, run the model in the cloud where each translation is a request we pay for. Or run it in the browser, where a small model gets downloaded once to the user’s computer and does the work locally. The second option looked compelling and a small self-contained feature like this was perfect to experiment with a small local language model.
+There are two obvious ways to build this. The first is to run the model in the cloud, where each translation is a request we pay for. The second is to run it in the browser, where a small model is downloaded once to the user's computer and does the work locally. The second option looked compelling, and a small, self-contained feature like this seemed like the perfect place to try a local language model.
 
-So we started with the browser. The small open-source model worked surprisingly well on clean, single-language text. However, that was only about 80% of the job. Getting to 90% took a dozen PR’s of workarounds. We never quite got the remaining 10% of the way to the quality level we were happy with in order to remove the “beta” label. So we moved translation to the cloud.
+So we started with the browser. The small open-source model worked surprisingly well on clean, single-language text. But that was only about 80% of the job. Getting to 90% took a dozen PRs of workarounds. We never closed the last 10% to the point where we were comfortable removing the "beta" label. So we moved translation to the cloud.
 
 ## The setup: Opus-MT in a web worker
 
 Our on-device stack was:
 
-- **Models:** the Opus-MT family from Helsinki-NLP, converted to ONNX by Xenova (transformers.js author) and quantized to 8-bit. These are small single language-pair models.
+- **Models:** the Opus-MT family from Helsinki-NLP, converted to ONNX by Xenova (the author of Transformers.js) and quantized to 8-bit. These are small models, each trained on a single language pair.
 - **Runtime:** Transformers.js running on WASM.
-- **Isolation:** everything runs in a dedicated web worker, so inference never blocks the UI thread.
-- **Language detection:** eld, a fast n-gram based detector, to decide which model to use and whether a message needs translating at all.
+- **Isolation:** everything ran in a dedicated web worker, so inference never blocked the UI thread.
+- **Language detection:** eld, a fast n-gram based detector, to decide which model to use and whether a message needed translating at all.
 
-We shipped dedicated models for 14 languages: Arabic, Chinese, Dutch, Finnish, French, German, Hindi, Italian, Japanese, Portuguese, Russian, Spanish, Swedish, and Vietnamese. Based on the detected language of your message, we would download the appropriate language pair model (i.e. en-fr, en-de, etc.). For every other language, there was a fallback model (`opus-mt-mul-en`) designed to try its best on any input language → English.
+We shipped dedicated models for 14 languages: Arabic, Chinese, Dutch, Finnish, French, German, Hindi, Italian, Japanese, Portuguese, Russian, Spanish, Swedish, and Vietnamese. Based on the detected language of a message, we downloaded the matching language-pair model (for example, en-fr or en-de). For every other language, a fallback model (`opus-mt-mul-en`) did its best to translate any input language into English.
 
 This gave us:
 
 - No marginal inference cost.
-- Customer messages stay in the browser.
-- It works offline once the model was downloaded once and cached.
+- Customer messages that never left the browser.
+- Offline support, once a model had been downloaded and cached.
 
 The first prototype was a few dozen lines: load a pipeline, pass in text, get English back. On clean input, the translations were genuinely good.
 
 ## The other 10%
 
-However, support messages are often not clean, single-language input. They contain quoted replies, signatures, URLs, code snippets, form headers, and sometimes a change of language halfway through a sentence. The model translated whatever we gave it. It did not know where to stop.
+Support messages are rarely clean, single-language input. They contain quoted replies, signatures, URLs, code snippets, form headers, and sometimes a switch of language halfway through a sentence.
 
 Here are some of the things we had to build around it.
 
 ### 1. Deciding if a message is foreign at all
 
-We first had to decide whether a message was foreign at all. `eld` is fast and accurate on long text. The shorter the input, the less likely it will accurately identify the language. We ran into situations where it mis-identified English as another language and we ended up translating English into worse English.
+Before translating anything, we had to decide whether a message was in a foreign language. `eld` is fast and accurate on long text, but the shorter the input, the less reliably it identifies the language. Sometimes it misidentified English as another language and we ended up translating English into worse English.
 
 We added a few guardrails:
 
-- A confidence gate before auto-translation. The top language had to clearly beat the runner-up, and English had to score well below the winner. If two languages were close, we did nothing.
-- Different length thresholds by script. We needed 40 characters of Latin text before we trusted detection. Chinese, Japanese, and Korean pack more meaning into each character, so their threshold was 12. A single threshold would skip exactly the messages agents could not read.
-- An English stopword fallback for when eld gave up. If more than half the words were things like "the", "and", "please", and "thanks", it was probably English. The threshold was strictly greater than half, so a two-word Spanish reply such as "A ti" did not count as English.
+- **A confidence gate before auto-translation:** The top language had to clearly beat the runner-up, and English had to score well below the winner. If two languages were close, we did nothing.
+- **Different length thresholds by script:** We needed 40 characters of Latin text before we trusted detection. Chinese, Japanese, and Korean pack more meaning into each character, so their threshold was 12. A single threshold would have skipped exactly the messages agents could not read.
+- **An English stopword fallback for when eld gave up:** If more than half the words were things like "the", "and", "please", and "thanks", the message was probably English. The threshold was strictly greater than half, so a two-word Spanish reply such as "A ti" did not count as English.
 
 ### 2. Mixed-language messages
 
-This was the big one. A customer might write three sentences in German, then paste an English error message. Or reply in Spanish above a quoted English email. Opus-MT would translate the English parts too. English sent through a German-to-English model comes back mangled.
+This was the big one. A customer might write three sentences in German and then paste an English error message. Or reply in Spanish above a quoted English email. Opus-MT would translate the English parts too, and you can imagine what comes out when you force a model try and translate English-to-English..
 
-We stopped translating messages and started translating *sentences*. The worker split text into paragraphs, lines, and then sentences. CJK punctuation needed separate handling because it does not need a trailing space. We checked every sentence's language and only sent foreign ones to the model.
+So we stopped translating messages and started translating *sentences*. The worker split text into paragraphs, then lines, then sentences. CJK punctuation needed separate handling because it isn’t followed by a space. We checked the language of every sentence and only sent the foreign ones to the model.
 
-Quoted blocks needed their own treatment. In support threads, a `>` quote is often the English template a customer is replying to. We detected the whole group as one unit and left it alone when it was English.
+Quoted blocks needed their own treatment. In support threads, a `>` quote is often the English template a customer is replying to. We detected the whole quoted block as one unit and left it alone when it was English.
 
 ### 3. Things that must never be translated
 
-The model did not know that `support@acme.com` was not a sentence. Before sending text to it, we removed:
+The model did not know that `support@example.com` was not a sentence. Before sending text to it, we removed:
 
 - URLs, email addresses, and bare domains.
-- Inline code and fenced code blocks, preserved byte for byte.
+- Inline code and fenced code blocks, which we preserved byte for byte.
 - Email header lines such as `From:` and `Subject:` in forwarded emails and embedded forms, which confused language detection.
-- Markdown syntax the model invented. It would sometimes put  or `#` at the start of a translated line when the source did not have one, so we stripped those prefixes.
+
+We also had to clean up after it. The model would sometimes invent markdown, putting `[CHECK: missing character]` or `#` at the start of a translated line when the source had neither, so we stripped those prefixes from the output.
 
 ### 4. Hallucination
 
-On degenerate input, such as emoji, short fragments, or anything outside the training distribution, the model could ignore the source and loop. One memorable bug turned a customer message into something that read like song lyrics.
+On degenerate input, such as emoji, short fragments, or anything outside its training distribution, the model could ignore the source entirely and start looping. One memorable bug turned a customer message into something that read like song lyrics.
 
-We tuned generation with `no_repeat_ngram_size: 3`, `repetition_penalty: 1.3`, `early_stopping`, two-beam search instead of greedy decoding, and a max-token budget based on the input length. It helped, but "mostly" is not a useful quality bar for a feature like this.
+We tuned generation with `no_repeat_ngram_size: 3`, `repetition_penalty: 1.3`, `early_stopping`, two-beam search instead of greedy decoding, and a max-token budget based on the input length. It mostly worked, but "mostly" is not a useful quality bar for a feature like this.
 
 ### 5. The runtime itself
 
 Some of the problems had nothing to do with translation quality:
 
-- A regex that froze the tab. eld's built-in URL cleanup regex backtracked catastrophically on partial URL patterns, such as stray dots and slashes. It locked the main thread on a few non-English messages, so we turned it off.
-- eld's weight. Its n-gram table is about 2 MB. Translation is off by default, so we lazy-loaded it rather than add it to everyone else's bundle.
-- ONNX in a worker with a strict CSP. onnxruntime-web reads `location.origin` at startup, which fails under the `blob:` origin used by a bundled worker. Transformers.js also tried to serve its WASM loader from a `blob:` URL, which our Content Security Policy blocked. We served the ONNX runtime from our own origin and imported the library lazily, allowing us to set the WASM paths first.
-- Model swapping. Each language pair has its own model. A thread containing French and German meant disposing one model and downloading another in the middle of a session.
+- **A regex that froze the tab:** eld's built-in URL cleanup regex backtracked catastrophically on partial URL patterns, such as stray dots and slashes. It locked the main thread on a few non-English messages, so we turned it off.
+- **eld's weight:** Its n-gram table is about 2 MB. Translation is off by default, so we lazy-loaded it rather than add it to everyone else's bundle.
+- **ONNX in a worker with a strict CSP:** onnxruntime-web reads `location.origin` at startup, which fails under the `blob:` origin used by a bundled worker. Transformers.js also tried to serve its WASM loader from a `blob:` URL, which our Content Security Policy blocked. We served the ONNX runtime from our own origin and imported the library lazily, so we could set the WASM paths first.
+- **Model swapping:** Each language pair has its own model. A thread containing French and German meant disposing of one model and downloading another in the middle of a session.
 
-None of these fixes was unreasonable in isolation. Together, the few-dozen-line prototype became a 600-line worker and a language detection module, both full of thresholds with comments pointing to values that could be tuned at a later date if necessary.
+None of these fixes was unreasonable on its own. However, together they turned a few-dozen-line prototype into a 600-line worker and a separate language detection module, both full of thresholds and comments noting values we might tune later.
 
-That got us to roughly 90%.
+That got us to roughly 90%, but was still from from the quality we wanted to achieve to be able to remove the “beta” label.
 
 ## What we couldn't fix
 
-The remaining gap was not another set of bugs we could fix.
+The remaining gap was not another set of bugs. It was the limits of the approach.
 
-- Long-tail languages. Anything outside our 14 pairs used `opus-mt-mul-en`, which was not good enough to translate automatically. Korean, Thai, Polish, and Turkish customers had a noticeably worse experience.
-- No context. Translating sentence by sentence fixed mixed-language input, but lost pronouns, tone, and references across sentences.
-- No visibility. Our other AI features use our internal inference pipeline, with logging, evals, and cost tracking. Translation ran in thousands of browsers we could not inspect. If it was bad, we only knew when someone told us. We could not measure quality or reproduce what a particular agent saw.
-- The user's computer did the work. Every agent downloaded tens of megabytes of model weights (~60mb for DE→EN for example) and ran inference on their own CPU. Fine on a new MacBook. Less fine on an older laptop with 40 tabs open.
+- **Long-tail languages:** Anything outside our 14 pairs went through `opus-mt-mul-en`, which was not good enough to translate automatically. Messages in Korean, Thai, Polish, and Turkish got noticeably worse translations.
+- **No context:** Translating sentence by sentence fixed mixed-language input, but it lost pronouns, tone, and references that span sentences.
+- **No visibility:** Our other AI features run on our internal inference pipeline, with logging, evals, and cost tracking. Translation ran in thousands of browsers we could not inspect. If a translation was bad, we only found out when someone told us. We could not measure quality or reproduce what a particular agent saw.
+- **The user's computer did the work:** Every agent downloaded tens of megabytes of model weights (about 60 MB for German to English, for example) and ran inference on their own CPU. Fine on a new MacBook. Less fine on an older laptop with 40 tabs open.
 
 ## Moving to the cloud
 
-We rebuilt translation on top of the same inference pipeline as the rest of our AI features. It will soon be the only translation path in Plain.
-
-Moving to a modern LLM removed a surprising amount of code. It can:
+We rebuilt translation on the same inference pipeline as the rest of our AI features. Moving to a modern LLM removed a surprising amount of code. In our testing, it can:
 
 - Handle mixed-language input. It leaves the English error message in a German email alone.
 - Preserve URLs, email addresses, and code.
@@ -108,11 +107,11 @@ Moving to a modern LLM removed a surprising amount of code. It can:
 - Translate the whole message with its context.
 - Detect the source language itself.
 
-The client got simpler, though paid requests introduced a few constraints:
+The client got simpler, but paying for every request introduced a few new constraints:
 
-- Caching. Translations are keyed by message text and cached for 24 hours. Scrolling away and back, or rendering the same message twice, should not create another request.
-- No accidental refetches. React Query will retry an errored query on every window focus by default. That was harmless with a local model, but not with a paid endpoint, so we disabled it explicitly.
-- Concurrency limits. We allow at most three translations at once, so opening a long thread in another language does not create a burst of requests.
+- Caching: Translations are keyed by message text and cached for 24 hours. Scrolling away and back, or rendering the same message twice, should not create another request.
+- No accidental refetches: React Query will retry an errored query on every window focus by default. That was harmless with a local model, but not with a paid endpoint, so we disabled it explicitly.
+- Concurrency limits: We allow at most three translations at once, so opening a long thread in another language does not create a burst of requests.
 
 ## Cleaning up
 
@@ -127,22 +126,22 @@ We deleted the on-device path entirely:
 - the sentence-level language checks, the English stopword list, and the other helpers only the worker needed
 - the old on-device preference and its feature flag
 
-That PR was **+510 / -2,283 lines** and almost every workaround above went with it.
+That PR was **+510 / -2,283 lines**, and almost every workaround above went with it.
 
 ### A 16x smaller language detector
 
-One job stays on the device: deciding whether a message is worth translating. Every automatic translation now costs us money, so we do not send English messages to the endpoint. The client only asks whether the message is confidently non-English. If it is not, no request goes out.
+One job stays on the device: deciding whether a message is worth translating. Every automatic translation now costs us money, so we don’t send English messages to the endpoint. The client only asks one question: is this message confidently non-English? If not, no request goes out.
 
-That is much less work than eld used to do. It no longer selects one of 14 models or decides, sentence by sentence, what to skip. We replaced it with franc-min, a trigram-based detector covering the 82 most widely spoken languages. eld's n-gram table alone was about 2 MB. The whole franc-min package is about 127 KB unpacked, roughly 16 times smaller.
+That is much less work than eld used to do. The detector no longer picks one of 14 models or decides, sentence by sentence, what to skip. We replaced eld with franc-min, a trigram-based detector covering the 82 most widely spoken languages. eld's n-gram table alone was about 2 MB. The whole franc-min package is about 127 KB unpacked, roughly 16 times smaller.
 
-The gate now checks two things: whether the text is long enough for its script, and whether English scores well below the top guess. Automatic translation is no longer limited to the 14 languages for which we had models. Any language franc-min recognizes can trigger it.
+The gate now checks two things: whether the text is long enough for its script, and whether English scores well below the top guess. Automatic translation is no longer limited to the 14 languages we had models for. Any language franc-min recognizes can trigger it.
 
 ## The trade-off
 
 |  | On-device | Cloud |
 | --- | --- | --- |
 | Inference cost | Free | Per message |
-| Quality on clean input | Good | Great |
+| Quality on clean input | Good | Better in our testing |
 | Mixed-language, URLs, code | Custom code for each | Handled by the model |
 | Language coverage | 14 pairs, weak fallback | Broad |
 | Visibility and evals | None | Our standard AI pipeline |
@@ -151,10 +150,12 @@ The gate now checks two things: whether the text is long enough for its script, 
 
 ## In short
 
-We wanted translation with additional user privacy and without an inference bill, so we put a small model in the browser. It was easy to get started and it worked well on simple messages.
+We wanted translation that kept messages on the user's device and came without an inference bill, so we put a small model in the browser. It was easy to get started, and it worked well on simple messages.
 
-Real customer messages, however, are messier. They mix languages, quote old emails, and contain links, email addresses, and code. The model tried to translate all of it, and we spent months adding rules for what to leave alone. Each rule fixed a problem and exposed another one. Because the model ran in thousands of browsers, we also had no reliable way to measure translation quality or reproduce a bad result.
+But real customer messages are messier, they mix languages, quote old emails, and contain links, email addresses, and code. The model tried to translate all of it, and we spent months adding rules for what to leave alone. Each rule fixed one problem and exposed another. And because the model ran in thousands of browsers, we had no reliable way to measure translation quality or reproduce a bad result.
 
 Cloud models handle the messy cases well enough that we could delete more than 2,000 lines of workarounds. What remains in the browser is a small language check. Translation now costs us money for every message, but agents get better results in more languages, their laptops do less work, and we can measure quality.
 
-The lesson for us was that on-device inference is not free. It moves the cost into engineering time, edge cases, and users' computers. It can still be a good fit when inputs are predictable, the task is narrow, and 80% quality is enough. Support messages are none of those things. That being said, we still look forward to the day when small models that can be run on-device will be good enough to meet our high quality bar and are keeping our eyes peeled for that ~~day~~ release.
+The lesson for us was that on-device inference is not free. It moves the cost into engineering time, edge cases, and users' computers. It can still be a good fit when inputs are predictable, the task is narrow, and 80% quality is enough. Support messages are none of those things.
+
+We're still watching for the day a small on-device model can meet our quality bar. When one does, we'll be ready to try again.
