@@ -43,7 +43,7 @@ function Projects() {
               {projects.map((project) => (
                 <div
                   key={project.title}
-                  className={project.featured ? 'sm:col-span-2 xl:col-span-2' : ''}
+                  className={`min-w-0 ${project.featured ? 'sm:col-span-2 xl:col-span-2' : ''}`}
                 >
                   <ProjectCard project={project} />
                 </div>

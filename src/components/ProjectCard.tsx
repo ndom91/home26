@@ -53,7 +53,7 @@ export function ProjectCard({ project }: { project: Project }) {
           <span>{status.label}</span>
         </div>
 
-        <h2 className="text-balance font-heading text-[clamp(3rem,3vw,3rem)] font-bold uppercase tracking-wide leading-[0.92]">
+        <h2 className="text-balance font-heading text-[clamp(2.25rem,10vw,3rem)] font-bold uppercase tracking-wide leading-[0.92]">
           {titleHref ? (
             <a
               href={titleHref}
