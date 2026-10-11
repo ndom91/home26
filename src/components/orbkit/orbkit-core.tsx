@@ -402,7 +402,7 @@ const svgLayer: CSSProperties = {
 }
 
 /** Glass's overfill, shared by its inset and the mask derived from it. */
-const GLASS_INSET = -4
+const GLASS_INSET = 4
 
 const WRAPPER_SPECS: Record<Exclude<OrbWrapper, 'none'>, WrapperSpec> = {
   /*
@@ -429,7 +429,7 @@ const WRAPPER_SPECS: Record<Exclude<OrbWrapper, 'none'>, WrapperSpec> = {
     */
     inset: GLASS_INSET,
     mask: rimMask(GLASS_INSET),
-    shadow: '0 24px 48px -26px rgba(0,0,0,0.55)',
+    shadow: '0 24px 48px -26px rgba(0,0,0,0.15)',
     over: (
       <>
         <Layer
@@ -495,7 +495,7 @@ const WRAPPER_SPECS: Record<Exclude<OrbWrapper, 'none'>, WrapperSpec> = {
     over: (
       <>
         <Layer style={{ ...DISC, border: '1px solid currentColor', opacity: 0.22 }} />
-        <Layer inset="5%" style={{ ...DISC, border: '1px solid currentColor', opacity: 0.1 }} />
+        <Layer inset="-5%" style={{ ...DISC, border: '1px solid currentColor', opacity: 0.1 }} />
       </>
     ),
   },

@@ -8,10 +8,10 @@ type OrbColors = { ink: string; paper: string }
 // as a shaded sphere instead of a flat pattern.
 const ORB_PARAMS = {
   radius: 0.98,
-  levels: 5,
-  light: 1.5,
-  plasma: 0.5,
-  rim: 0.12,
+  levels: 3,
+  light: 1.25,
+  plasma: 0.65,
+  rim: 0.5,
   scale: 1.1,
   contrast: 1.25,
   spin: 0.12,
@@ -89,6 +89,9 @@ export function OrbGlobe() {
           className="absolute inset-0 size-full"
           params={{ ...ORB_PARAMS, cells }}
           colors={colors}
+          // Content is quantized to 2px cells, so a 1x backing store loses no
+          // detail and keeps the layered surface noise cheap on retina.
+          maxDpr={1}
         />
       ) : null}
     </div>
