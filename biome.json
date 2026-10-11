@@ -87,5 +87,11 @@
         "organizeImports": "on"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["**/src/components/orbkit/**"],
+      "linter": { "enabled": false }
+    }
+  ]
 }
