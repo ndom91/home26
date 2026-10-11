@@ -6,7 +6,13 @@ import { shdr14Orb } from './shdr-14'
 // as the plasma: continents with relief and detail, darker oceans, and a cloud
 // shell that turns at its own rate so the two layers parallax.
 const MAIN_ANCHOR = 'void main() {'
+const LIGHT_ANCHOR = 'float lambert = clamp(dot(n, normalize(vec3(-0.45, 0.55, 0.7))), 0.0, 1.0);'
 const LUM_ANCHOR = 'lum = pow(clamp(lum * gainNow, 0.0, 1.0), uP_contrast);'
+
+// lightX/lightY shift SHDR-14's fixed upper-left key light, so the pointer or
+// device tilt can steer it.
+const LIGHT = `vec3 keyL = normalize(vec3(-0.45 + uP_lightX, 0.55 + uP_lightY, 0.7));
+  float lambert = clamp(dot(n, keyL), 0.0, 1.0);`
 
 // The helpers only ship 2D fbm, so project it triplanar: blending the three
 // axis-aligned planes by the normal avoids the seam a lon/lat mapping has.
@@ -29,8 +35,7 @@ const SURFACE = `
   // Relief: re-sample the height nudged toward the key light (rotated into
   // the surface frame) and shade by the difference, an emboss that makes
   // the land read as raised.
-  vec3 surfL = normalize(vec3(-0.45, 0.55, 0.7));
-  surfL = vec3(surfL.x * cr - surfL.z * sr, surfL.y, surfL.x * sr + surfL.z * cr);
+  vec3 surfL = vec3(keyL.x * cr - keyL.z * sr, keyL.y, keyL.x * sr + keyL.z * cr);
   float surfH2 = sphereFbm(surfP + surfL * 0.06, surfW);
   float relief = clamp((surfH - surfH2) * 12.0, -1.0, 1.0);
 
@@ -53,7 +58,7 @@ const SURFACE = `
   lum = mix(lum, 0.25 + lambert, uP_clouds * cloudMask);
   ${LUM_ANCHOR}`
 
-for (const anchor of [MAIN_ANCHOR, LUM_ANCHOR]) {
+for (const anchor of [MAIN_ANCHOR, LIGHT_ANCHOR, LUM_ANCHOR]) {
   if (!shdr14Orb.frag.includes(anchor)) {
     throw new Error(`globe-orb: SHDR-14 shader changed, anchor not found: ${anchor}`)
   }
@@ -62,9 +67,14 @@ for (const anchor of [MAIN_ANCHOR, LUM_ANCHOR]) {
 export const globeOrb: OrbVariant = {
   ...shdr14Orb,
   key: 'shdr-14-globe',
-  frag: shdr14Orb.frag.replace(MAIN_ANCHOR, HELPERS).replace(LUM_ANCHOR, SURFACE),
+  frag: shdr14Orb.frag
+    .replace(MAIN_ANCHOR, HELPERS)
+    .replace(LIGHT_ANCHOR, LIGHT)
+    .replace(LUM_ANCHOR, SURFACE),
   params: [
     ...shdr14Orb.params,
+    { key: 'lightX', label: 'Light X', min: -1.5, max: 1.5, step: 0.01, default: 0 },
+    { key: 'lightY', label: 'Light Y', min: -1.5, max: 1.5, step: 0.01, default: 0 },
     { key: 'land', label: 'Land amount', min: 0, max: 1, step: 0.01, default: 0.3 },
     { key: 'landScale', label: 'Land scale', min: 0.5, max: 8, step: 0.1, default: 2.2 },
     { key: 'landLevel', label: 'Land level', min: 0, max: 1, step: 0.01, default: 0.47 },
