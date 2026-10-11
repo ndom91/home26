@@ -542,6 +542,12 @@ html[data-theme='dark'] .mermaid-dark {
   display: block;
 }
 
+@property --theme-reveal-radius {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 560ms;
@@ -556,6 +562,12 @@ html[data-theme='dark'] .mermaid-dark {
 
 ::view-transition-new(root) {
   animation-name: theme-snapshot-reveal;
+  /* A 1px soft edge avoids aliasing without animating Chromium's clip-path path. */
+  mask-image: radial-gradient(
+    circle at var(--theme-transition-x, 50vw) var(--theme-transition-y, 50vh),
+    #000 var(--theme-reveal-radius),
+    transparent calc(var(--theme-reveal-radius) + 1px)
+  );
 }
 
 ::view-transition-group(disabled),
@@ -572,16 +584,11 @@ html[data-theme='dark'] .mermaid-dark {
 
 @keyframes theme-snapshot-reveal {
   from {
-    clip-path: circle(0 at var(--theme-transition-x, 50vw) var(--theme-transition-y, 50vh));
-    filter: saturate(0.78) contrast(0.94);
+    --theme-reveal-radius: 0px;
   }
 
   to {
-    clip-path: circle(
-      var(--theme-transition-radius, 150vmax) at var(--theme-transition-x, 50vw)
-        var(--theme-transition-y, 50vh)
-    );
-    filter: none;
+    --theme-reveal-radius: var(--theme-transition-radius, 150vmax);
   }
 }
 
