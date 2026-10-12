@@ -30,7 +30,7 @@ export function FeaturedPostCard({ post }: { post: PostListItem }) {
         <PostCardMeta post={post} className="mt-8" />
       </div>
       {post.coverImageUrl ? (
-        <div className="relative flex flex-col overflow-hidden border-t border-blog-rule *:flex-1 lg:border-l lg:border-t-0">
+        <div className="relative mb-px flex flex-col overflow-hidden border-t border-blog-rule *:flex-1 lg:mt-px lg:border-l lg:border-t-0">
           <ProgressiveImage
             src={post.coverImageUrl}
             placeholderSrc={post.coverImageLqip}
