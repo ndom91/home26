@@ -9,7 +9,7 @@ export function PostCard({ post, eager = false }: { post: PostListItem; eager?: 
     <Link
       to="/blog/$slug"
       params={{ slug: post.slug }}
-      className="blog-paper-card group flex h-full flex-col overflow-hidden border border-blog-rule bg-blog-panel transition-[border-color,background-color,translate,scale] duration-300 hover:-translate-y-0.5 hover:border-blog-accent hover:bg-blog-hover active:scale-[0.96] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+      className="blog-paper-card group flex h-full flex-col overflow-hidden border border-blog-rule bg-blog-panel transition-[border-color,background-color,translate,scale] duration-250 ease-smooth-out hover:-translate-y-0.5 hover:border-blog-accent hover:bg-blog-hover active:scale-[0.96] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
     >
       {post.coverImageUrl ? (
         <div className="relative overflow-hidden border-b border-blog-rule">
@@ -17,7 +17,7 @@ export function PostCard({ post, eager = false }: { post: PostListItem; eager?: 
             src={post.coverImageUrl}
             placeholderSrc={post.coverImageLqip}
             alt=""
-            className="aspect-4/3 w-full object-cover transition-transform duration-500 group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+            className="aspect-4/3 w-full object-cover transition-transform duration-400 ease-smooth-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             loading={eager ? 'eager' : 'lazy'}
             decoding="async"
           />
@@ -34,7 +34,7 @@ export function PostCard({ post, eager = false }: { post: PostListItem; eager?: 
         </p>
         <div className="font-mono mt-auto flex items-center justify-between border-t border-blog-rule pt-3 text-[10px] uppercase tracking-widest text-blog-muted transition-colors group-hover:text-blog-accent">
           <span>{post.type === 'field-notes' ? 'Read note' : 'Read post'}</span>
-          <span className="transition-transform group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0">
+          <span className="transition-transform duration-250 ease-smooth-out group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0">
             →
           </span>
         </div>

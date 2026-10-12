@@ -80,6 +80,7 @@
   --color-blog-accent: var(--blog-accent);
 
   --ease-spring-toggle: cubic-bezier(0.2, 0.9, 0.15, 1.15);
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @layer base {
@@ -291,7 +292,7 @@
   .theme-toggle-moon {
     opacity: 0;
     scale: 0.25;
-    filter: blur(4px);
+    filter: blur(2px);
   }
 
   @media (prefers-color-scheme: dark) {
@@ -302,7 +303,7 @@
     html:not([data-theme='light']) .theme-toggle-sun {
       opacity: 0;
       scale: 0.25;
-      filter: blur(4px);
+      filter: blur(2px);
     }
 
     html:not([data-theme='light']) .theme-toggle-moon {
@@ -343,7 +344,7 @@
   html[data-theme='dark'] .theme-toggle-sun {
     opacity: 0;
     scale: 0.25;
-    filter: blur(4px);
+    filter: blur(2px);
   }
 
   html[data-theme='dark'] .theme-toggle-moon {
@@ -365,7 +366,7 @@
   html[data-theme='light'] .theme-toggle-moon {
     opacity: 0;
     scale: 0.25;
-    filter: blur(4px);
+    filter: blur(2px);
   }
 }
 
@@ -402,7 +403,10 @@
   width: 100%;
   margin: 0;
   opacity: 0;
-  transition: opacity 180ms ease-out;
+  /* Unlayered, so this beats Tailwind transition utilities. Include scale for card hover zoom. */
+  transition:
+    opacity 180ms ease-out,
+    scale 400ms var(--ease-smooth-out);
 }
 
 .progressive-image__image--loaded {

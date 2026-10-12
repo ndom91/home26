@@ -7,7 +7,7 @@ const homeBarClass =
   'relative z-10 grid min-h-16 grid-cols-[auto_1fr] items-center border-b border-rule bg-paper text-[0.7rem] uppercase tracking-[0.16em] text-ink max-[820px]:grid-cols-[minmax(0,1fr)_auto] max-[520px]:text-[0.72rem] max-[520px]:tracking-[0.17em]'
 const homeBarCellClass = 'px-5 py-4 max-[520px]:px-4 max-[520px]:py-5'
 const themeIconClass =
-  'absolute top-1/2 left-1/2 size-[0.95rem] -translate-x-1/2 -translate-y-1/2 origin-center stroke-[2.2] transition-[opacity,scale,filter] duration-300 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:duration-[1ms]'
+  'absolute top-1/2 left-1/2 size-[0.95rem] -translate-x-1/2 -translate-y-1/2 origin-center stroke-[2.2] transition-[opacity,scale,filter] duration-250 ease-in-out motion-reduce:duration-[1ms]'
 const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect
 
 function getCurrentTheme() {

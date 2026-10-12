@@ -40,7 +40,7 @@ export function ProjectCard({ project }: { project: Project }) {
           <ProgressiveImage
             src={project.image}
             alt=""
-            className="image-outline aspect-16/10 w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+            className="image-outline aspect-16/10 w-full object-cover transition-transform duration-400 ease-smooth-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             loading="lazy"
             decoding="async"
           />
