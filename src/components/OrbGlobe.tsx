@@ -165,7 +165,10 @@ export function OrbGlobe() {
   return (
     <div
       ref={rootRef}
-      className="absolute top-[max(-19rem,-24vw)] right-[max(-18rem,-22vw)] aspect-square w-[clamp(32rem,58vw,56rem)] overflow-hidden rounded-full bg-[image:var(--globe-background)] opacity-[0.96] min-[821px]:max-[1150px]:top-[-10rem] min-[821px]:max-[1150px]:right-[-17rem] min-[821px]:max-[1150px]:w-[clamp(42rem,70vw,50rem)] max-[820px]:top-[-6.25rem] max-[820px]:right-[-7rem] max-[820px]:w-[24rem] max-[520px]:top-[-5rem] max-[520px]:right-[-5.5rem] max-[520px]:w-[16.5rem]"
+      // On desktop the panel is a size container. When it is short (wide but
+      // low laptop viewports) the globe lifts so its bottom stays above the
+      // bottom-anchored text, roughly --globe-clear tall, instead of covering it.
+      className="absolute top-[min(var(--globe-top),calc(100cqh-var(--globe-clear)-var(--globe-w)))] right-[max(-18rem,-22vw)] aspect-square w-(--globe-w) overflow-hidden rounded-full bg-[image:var(--globe-background)] opacity-[0.96] [--globe-clear:clamp(7.5rem,12vw,11rem)] [--globe-top:max(-19rem,-24vw)] [--globe-w:clamp(32rem,58vw,56rem)] min-[821px]:max-[1150px]:right-[-17rem] min-[821px]:max-[1150px]:[--globe-top:-10rem] min-[821px]:max-[1150px]:[--globe-w:clamp(42rem,70vw,50rem)] max-[820px]:top-[-6.25rem] max-[820px]:right-[-7rem] max-[820px]:w-[24rem] max-[520px]:top-[-5rem] max-[520px]:right-[-5.5rem] max-[520px]:w-[16.5rem]"
       aria-hidden="true"
     >
       {colors && measured ? (

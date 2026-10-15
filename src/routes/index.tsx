@@ -57,7 +57,7 @@ function Home() {
           className="grid grid-rows-[1fr_auto] border-l border-rule max-[820px]:border-l-0 max-[820px]:border-t"
           aria-label="Profile summary"
         >
-          <section className="relative grid min-h-112 content-end overflow-hidden bg-ink p-[clamp(1.25rem,3vw,3rem)] text-paper max-[820px]:min-h-80 max-[520px]:min-h-60 max-[520px]:p-5">
+          <section className="relative grid min-h-112 content-end overflow-hidden bg-ink p-[clamp(1.25rem,3vw,3rem)] text-paper min-[821px]:[container-type:size] max-[820px]:min-h-80 max-[520px]:min-h-60 max-[520px]:p-5">
             <OrbGlobe />
             <p className="font-extralight relative m-0 max-w-140 text-pretty text-[clamp(1.25rem,2.1vw,2.3rem)] leading-[1.16] tracking-[-0.04em] max-[520px]:max-w-[18rem] max-[520px]:text-[1.04rem] max-[520px]:leading-[1.16]">
               I like building web tools, developer systems, and the occasional over-engineered side
