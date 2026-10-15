@@ -1,6 +1,7 @@
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import { fontPreload } from '../lib/font-preload'
 import { personId, serializeJsonLd, siteLanguage, siteUrl, websiteId } from '../lib/structured-data'
 import appCss from '../styles.css?url'
 
@@ -74,22 +75,9 @@ export const Route = createRootRoute({
       { rel: 'alternate icon', href: '/favicon.ico' },
       { rel: 'apple-touch-icon', href: '/apple-touch-icon.png', sizes: '180x180' },
       { rel: 'manifest', href: '/manifest.json' },
-      { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-      { rel: 'preconnect', href: 'https://fonts.gstatic.com' },
-      {
-        rel: 'preload',
-        href: '/manuka-bold.woff2',
-        as: 'font',
-        type: 'font/woff2',
-        crossOrigin: 'anonymous',
-      },
-      {
-        rel: 'preload',
-        href: '/PPNeueMontreal-Variable.woff2',
-        as: 'font',
-        type: 'font/woff2',
-        crossOrigin: 'anonymous',
-      },
+      // Route-specific fonts are preloaded from their own routes' head().
+      fontPreload('/fonts/ibm-plex-mono-400.woff2'),
+      fontPreload('/manuka-bold.woff2'),
       {
         rel: 'stylesheet',
         href: appCss,

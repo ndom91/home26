@@ -5,12 +5,14 @@ import { PageHero } from '../components/PageHero'
 import { ProjectCard } from '../components/ProjectCard'
 import { SiteFooter } from '../components/SiteFooter'
 import { SiteHeader } from '../components/SiteHeader'
+import { fontPreload } from '../lib/font-preload'
 import { linkScreenshotUrls } from '../lib/link-screenshots.generated'
 import { getProjects } from '../lib/projects'
 
 export const Route = createFileRoute('/projects')({
   head: () => ({
     meta: [{ title: 'Projects — ndom91' }],
+    links: [fontPreload('/PPNeueMontreal-Variable.woff2')],
   }),
   component: Projects,
 })
