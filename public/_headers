@@ -1,0 +1,13 @@
+# Vite emits content-hashed filenames here, so they never change in place.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Fonts are not hashed: rename the file when replacing a font.
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+/manuka-bold.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/PPNeueMontreal-Variable.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/the-future-regular.woff2
+  Cache-Control: public, max-age=31536000, immutable
