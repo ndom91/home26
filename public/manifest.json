@@ -3,26 +3,16 @@
   "name": "ndo.dev",
   "icons": [
     {
-      "src": "favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
-    },
-    {
-      "src": "favicon.ico",
-      "sizes": "48x48 32x32",
-      "type": "image/x-icon"
-    },
-    {
       "src": "web-app-manifest-192x192.png",
       "type": "image/png",
       "sizes": "192x192",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "web-app-manifest-512x512.png",
       "type": "image/png",
       "sizes": "512x512",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ],
   "start_url": ".",
