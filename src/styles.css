@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "react-medium-image-zoom/dist/styles.css";
-@plugin "@tailwindcss/typography";
 
 @font-face {
   font-family: 'Manuka';
@@ -603,6 +602,134 @@ html[data-theme='dark'] .mermaid-dark {
   }
 }
 
+/* Article base styles, formerly @tailwindcss/typography plus the prose-*
+   modifiers on <article>. Kept in the utilities layer with the plugin's
+   (0,1,0) specificity so the cascade is unchanged; the unlayered .prose rules
+   below (modular scale, flow spacing) still override them. @scope excludes
+   .not-prose subtrees, as the plugin did. */
+@layer utilities {
+  .prose {
+    --prose-body: oklch(37.3% 0.034 259.733);
+    --prose-captions: oklch(55.1% 0.027 264.364);
+    --prose-pre-code: oklch(92.8% 0.006 264.531);
+    --prose-th-borders: oklch(87.2% 0.01 258.338);
+    --prose-td-borders: oklch(92.8% 0.006 264.531);
+    color: var(--prose-body);
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+
+  @scope (.prose) to (.not-prose) {
+    /* Base (from the plugin). */
+    :scope :where(p) { margin-block: 1.25em; }
+    :scope :where(a) { font-weight: 500; text-decoration: underline; }
+    :scope :where(strong) { font-weight: 600; }
+    :scope :where(ol, ul) { margin-block: 1.25em; padding-inline-start: 1.625em; }
+    :scope :where(ol > li)::marker { font-weight: 400; }
+    :scope :where(ol) { list-style-type: decimal; }
+    :scope :where(ul) { list-style-type: disc; }
+    :scope :where(blockquote) {
+      border-inline-start-width: 0.25rem;
+      margin-block: 1.6em;
+      padding-inline-start: 1em;
+      font-style: italic;
+      font-weight: 500;
+    }
+    :scope :where(h1) { margin-bottom: 0.888889em; font-size: 2.25em; font-weight: 800; line-height: 1.11111; }
+    :scope :where(h1 strong) { font-weight: 900; }
+    :scope :where(h2) { margin-bottom: 1em; font-size: 1.5em; font-weight: 700; line-height: 1.33333; }
+    :scope :where(h2 strong) { font-weight: 800; }
+    :scope :where(h3) { margin-bottom: 0.6em; font-size: 1.25em; font-weight: 600; line-height: 1.6; }
+    :scope :where(h3 strong, h4 strong) { font-weight: 700; }
+    :scope :where(h4) { margin-bottom: 0.5em; font-weight: 600; line-height: 1.5; }
+    :scope :where(img) { margin-block: 2em; }
+    :scope :where(code) { font-size: 0.875em; font-weight: 600; }
+    :scope :where(h2 code) { font-size: 0.875em; }
+    :scope :where(h3 code) { font-size: 0.9em; }
+    :scope :where(pre) {
+      color: var(--prose-pre-code);
+      padding: 0.857143em 1.14286em;
+      border-radius: 0.375rem;
+      margin-block: 1.71429em;
+      font-size: 0.875em;
+      font-weight: 400;
+      line-height: 1.71429;
+      overflow-x: auto;
+    }
+    :scope :where(pre code) {
+      font-weight: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      border-width: 0;
+      border-radius: 0;
+    }
+    :scope :where(table) {
+      table-layout: auto;
+      width: 100%;
+      margin-block: 2em;
+      font-size: 0.875em;
+      line-height: 1.71429;
+    }
+    :scope :where(thead) { border-bottom-width: 1px; border-bottom-color: var(--prose-th-borders); }
+    :scope :where(thead th) {
+      vertical-align: bottom;
+      padding-inline: 0.571429em;
+      padding-bottom: 0.571429em;
+      font-weight: 600;
+    }
+    :scope :where(tbody tr) { border-bottom-width: 1px; border-bottom-color: var(--prose-td-borders); }
+    :scope :where(tbody tr:last-child) { border-bottom-width: 0; }
+    :scope :where(tbody td) { vertical-align: baseline; padding: 0.571429em; }
+    :scope :where(th, td) { text-align: start; }
+    :scope :where(thead th:first-child, tbody td:first-child) { padding-inline-start: 0; }
+    :scope :where(thead th:last-child, tbody td:last-child) { padding-inline-end: 0; }
+    :scope :where(figcaption) { color: var(--prose-captions); margin-top: 0.857143em; font-size: 0.875em; line-height: 1.42857; }
+    :scope :where(figure > *) { margin-block: 0; }
+    :scope :where(li) { margin-block: 0.5em; }
+    :scope :where(ol > li, ul > li) { padding-inline-start: 0.375em; }
+    :scope :where(:scope > ul > li p) { margin-block: 0.75em; }
+    :scope :where(:scope > ul > li > p:first-child, :scope > ol > li > p:first-child) { margin-top: 1.25em; }
+    :scope :where(:scope > ul > li > p:last-child, :scope > ol > li > p:last-child) { margin-bottom: 1.25em; }
+    :scope :where(ul ul, ul ol, ol ul, ol ol) { margin-block: 0.75em; }
+    :scope :where(figure) { margin-block: 2em; }
+    :scope :where(h2 + *, h3 + *, h4 + *) { margin-top: 0; }
+    :scope :where(:scope > :first-child) { margin-top: 0; }
+    :scope :where(:scope > :last-child) { margin-bottom: 0; }
+
+    /* Site overrides (the former prose-* modifiers); later, so they win. */
+    :scope :where(h1, h2, h3, h4, h5, h6, th) {
+      margin-top: 3rem;
+      font-family: var(--font-heading);
+      text-wrap: balance;
+      color: var(--color-blog-text);
+    }
+    :scope :where(p, li) {
+      font-size: 1.05rem;
+      line-height: 2rem;
+      text-wrap: pretty;
+      color: var(--color-blog-description);
+    }
+    :scope :where(a) { color: var(--color-blog-accent); }
+    :scope :where(blockquote) {
+      border-color: var(--color-blog-accent);
+      text-wrap: pretty;
+      color: var(--color-blog-description);
+    }
+    :scope :where(strong, th) { color: var(--color-blog-text); }
+    :scope :where(td) { color: var(--color-blog-description); }
+    :scope :where(code) {
+      background-color: var(--color-blog-panel);
+      padding: 0.125rem 0.25rem;
+      font-family: var(--font-mono);
+      color: var(--color-blog-text);
+    }
+    :scope :where(pre) {
+      border: 1px solid var(--color-blog-rule);
+      background-color: var(--color-blog-panel) !important;
+    }
+  }
+}
+
 .prose {
   /* A compact modular scale keeps article headings and their surrounding rhythm related. */
   --prose-ratio: 1.3;
@@ -809,10 +936,6 @@ html[data-theme='dark'] .prose :where([data-rmiz] img.mdx-zoom-image) {
   font-style: normal;
 }
 
-.prose blockquote p:first-of-type::before,
-.prose blockquote p:last-of-type::after {
-  content: none;
-}
 
 /* Plain <details>/<summary> — Tailwind Typography doesn't theme summary.
    Callout summaries keep their accent via the higher-specificity .callout-title. */
