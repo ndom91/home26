@@ -41,11 +41,13 @@
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "1.42.2",
+    "@mdx-js/mdx": "3.1.1",
     "@mdx-js/rollup": "3.1.1",
     "@tailwindcss/vite": "4.3.1",
     "@tanstack/react-router": "1.170.16",
     "@tanstack/react-start": "1.168.26",
     "@tanstack/router-plugin": "1.168.18",
+    "hast-util-to-string": "3.0.1",
     "lucide-react": "1.21.0",
     "react": "19.2.7",
     "react-dom": "19.2.7",
@@ -60,7 +62,8 @@
     "remark-mdx-frontmatter": "5.2.0",
     "shiki": "4.2.0",
     "tailwindcss": "4.3.1",
-    "valibot": "1.4.1"
+    "valibot": "1.4.1",
+    "yaml": "2.8.4"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.1",

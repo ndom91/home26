@@ -228,6 +228,7 @@ function BlogPost() {
         <div className="xl:grid xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-x-12">
           <TableOfContents
             key={meta.slug}
+            headings={meta.headings}
             containerRef={articleRef}
             className="hidden xl:col-start-1 xl:block xl:h-[calc(100dvh-3rem)] xl:justify-self-end xl:self-start xl:sticky xl:top-6 xl:w-56"
           />

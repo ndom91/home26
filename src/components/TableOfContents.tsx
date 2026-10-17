@@ -1,17 +1,5 @@
-import {
-  type CSSProperties,
-  type MouseEvent,
-  type RefObject,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
-
-type TocHeading = {
-  id: string
-  text: string
-  level: 2 | 3
-}
+import { type MouseEvent, type RefObject, useEffect, useRef, useState } from 'react'
+import type { PostHeading } from '../lib/post-headings'
 
 // Distance from the viewport top at which a heading is considered "current".
 // Roughly clears the sticky site header plus a little breathing room.
@@ -19,15 +7,10 @@ const ACTIVE_OFFSET_PX = 128
 const INTRODUCTION_ID = 'article-introduction'
 const MARKER_GAP_PX = 12
 const MARKER_SIZE_PX = 6
+// Matches the `xl:block` breakpoint the TOC is shown at; below it the TOC is
+// hidden, so scroll tracking is skipped entirely.
+const VISIBLE_QUERY = '(min-width: 80rem)'
 let scrollFrame = 0
-
-function readHeadingText(heading: HTMLElement): string {
-  // rehype-autolink-headings adds an `<a class="heading-anchor">#</a>`;
-  // drop it so the label is just the heading text.
-  const clone = heading.cloneNode(true) as HTMLElement
-  clone.querySelector('.heading-anchor')?.remove()
-  return clone.textContent?.trim() ?? ''
-}
 
 function scrollToProgressSection(
   event: MouseEvent<HTMLAnchorElement>,
@@ -74,37 +57,24 @@ function scrollToProgressSection(
 }
 
 export function TableOfContents({
+  headings,
   containerRef,
   className,
 }: {
+  /** Extracted at build time (src/lib/post-headings.ts), so the TOC prerenders. */
+  headings: PostHeading[]
   containerRef: RefObject<HTMLElement | null>
   className?: string
 }) {
-  const [headings, setHeadings] = useState<TocHeading[]>([])
   const [activeId, setActiveId] = useState<string | null>(null)
-  const [sectionProgress, setSectionProgress] = useState<Record<string, number>>({})
+  // Progress bars are written straight to a CSS var: scroll fires every frame
+  // and a React state update there would re-render the whole TOC.
+  const progressRefs = useRef(new Map<string, HTMLSpanElement>())
   const markerRef = useRef<HTMLSpanElement>(null)
   const headingRefs = useRef(new Map<string, HTMLLIElement>())
   const markerPosition = useRef<{ x: number; y: number } | null>(null)
   const markerAnimation = useRef<Animation | null>(null)
   const pendingHeadingId = useRef<string | null>(null)
-
-  // Collect headings from the rendered article once it exists in the DOM.
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    const found = Array.from(container.querySelectorAll<HTMLElement>('h2, h3'))
-      .filter((heading) => heading.id)
-      .map((heading) => ({
-        id: heading.id,
-        text: readHeadingText(heading),
-        level: (heading.tagName === 'H3' ? 3 : 2) as 2 | 3,
-      }))
-      .filter((heading) => heading.text.length > 0)
-
-    setHeadings(found)
-  }, [containerRef])
 
   // Track which heading the reader is currently under as they scroll.
   useEffect(() => {
@@ -113,6 +83,7 @@ export function TableOfContents({
     const container = containerRef.current
     if (!container) return
 
+    const visible = window.matchMedia(VISIBLE_QUERY)
     let frame = 0
 
     const updateActive = () => {
@@ -134,24 +105,21 @@ export function TableOfContents({
       ]
       const articleBottom = container.getBoundingClientRect().bottom
       const articleComplete = articleBottom <= window.innerHeight
-      setSectionProgress(
-        Object.fromEntries(
-          sectionIds.map((sectionId, index) => {
-            if (articleComplete) return [sectionId, 1]
-
-            const start = sectionStarts[index]
-            const nextSection = sectionStarts[index + 1]
-            // The final section completes when the article has fully entered the viewport.
-            const end = nextSection ?? articleBottom - window.innerHeight + activeOffset
-            const distance = end - start
-            const progress =
-              distance <= 0
-                ? Number(start <= ACTIVE_OFFSET_PX)
-                : Math.max(0, Math.min(1, (activeOffset - start) / distance))
-            return [sectionId, progress]
-          })
-        )
-      )
+      sectionIds.forEach((sectionId, index) => {
+        let progress = 1
+        if (!articleComplete) {
+          const start = sectionStarts[index]
+          const nextSection = sectionStarts[index + 1]
+          // The final section completes when the article has fully entered the viewport.
+          const end = nextSection ?? articleBottom - window.innerHeight + activeOffset
+          const distance = end - start
+          progress =
+            distance <= 0
+              ? Number(start <= ACTIVE_OFFSET_PX)
+              : Math.max(0, Math.min(1, (activeOffset - start) / distance))
+        }
+        progressRefs.current.get(sectionId)?.style.setProperty('--section-progress', `${progress}`)
+      })
 
       // Keep a clicked heading selected until the controlled scroll reaches it.
       if (pendingHeadingId.current) return
@@ -179,14 +147,26 @@ export function TableOfContents({
       frame = window.requestAnimationFrame(updateActive)
     }
 
-    updateActive()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll, { passive: true })
-
-    return () => {
+    const stop = () => {
       if (frame) window.cancelAnimationFrame(frame)
+      frame = 0
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
+    }
+    const sync = () => {
+      stop()
+      if (!visible.matches) return
+      updateActive()
+      window.addEventListener('scroll', onScroll, { passive: true })
+      window.addEventListener('resize', onScroll, { passive: true })
+    }
+
+    sync()
+    visible.addEventListener('change', sync)
+
+    return () => {
+      stop()
+      visible.removeEventListener('change', sync)
     }
   }, [headings, containerRef])
 
@@ -357,13 +337,14 @@ export function TableOfContents({
                   className="block h-full w-1 overflow-hidden rounded-full bg-blog-rule"
                 >
                   <span
-                    className="block h-full origin-top bg-blog-accent"
-                    style={
-                      {
-                        '--section-progress': sectionProgress[section.id] ?? 0,
-                        transform: 'scaleY(var(--section-progress))',
-                      } as CSSProperties
-                    }
+                    ref={(element) => {
+                      if (element) {
+                        progressRefs.current.set(section.id, element)
+                      } else {
+                        progressRefs.current.delete(section.id)
+                      }
+                    }}
+                    className="block h-full origin-top bg-blog-accent [scale:1_var(--section-progress,0)]"
                   />
                 </span>
               </a>

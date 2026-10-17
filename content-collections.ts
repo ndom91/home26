@@ -7,6 +7,7 @@ import readingTime from 'reading-time'
 import * as v from 'valibot'
 import { imageLqip } from './src/lib/image-lqip'
 import { imageVariants, srcsetQuery, variantQuery } from './src/lib/image-variants'
+import { extractHeadings } from './src/lib/post-headings'
 import { collectBlogLinkTargets } from './src/lib/link-screenshot-targets'
 import { signLinkScreenshotUrls } from './src/lib/sign-link-screenshot'
 
@@ -178,6 +179,7 @@ const posts = defineCollection({
       standardSiteUri: post.standardSiteUri ?? null,
       slug: slugFromPath(post._meta.filePath),
       readTimeSeconds: readTimeSecondsFromContent(post.content),
+      headings: await extractHeadings(post.content),
       linkScreenshotUrls: await linkScreenshotUrlsFromContent(post.content),
       coverImageUrl:
         coverImport && coverVariants
