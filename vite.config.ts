@@ -35,6 +35,8 @@ function useFilenameAsCodeTitle(meta: string) {
 
 const config = defineConfig({
   resolve: { tsconfigPaths: true },
+  // Read by scripts/preload-post-bodies.ts after the build, then deleted.
+  environments: { client: { build: { manifest: true } } },
   plugins: [
     mermaidPlugin(),
     devtools(),

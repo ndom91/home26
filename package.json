@@ -27,7 +27,7 @@
     "refresh-generated": "pnpm run stars && pnpm run sign-screenshots",
     "warm": "node scripts/warm-link-screenshots.ts",
     "atproto:publish": "node scripts/publish-standard-site.ts",
-    "build": "content-collections build && pnpm run sign-screenshots && vite build",
+    "build": "content-collections build && pnpm run sign-screenshots && vite build && node scripts/preload-post-bodies.ts",
     "preview": "vite preview",
     "deploy": "wrangler deploy && (pnpm run warm || true)",
     "cf:typegen": "wrangler types",
