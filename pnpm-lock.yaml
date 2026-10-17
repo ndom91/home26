@@ -35,6 +35,9 @@ importers:
       lucide-react:
         specifier: 1.21.0
         version: 1.21.0(react@19.2.7)
+      pele:
+        specifier: 1.3.0
+        version: 1.3.0
       react:
         specifier: 19.2.7
         version: 19.2.7
@@ -2754,6 +2757,10 @@ packages:
 
   pathe@2.0.3:
     resolution: {integrity: sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w==}
+
+  pele@1.3.0:
+    resolution: {integrity: sha512-Jz3SW2OYo4yLkrrNuQwfg93el1SEGsFVTd7c/XVvZEry6UfR8ncvxoZqAefEpXOFpJRwhmXwWq17aGHg8W0vuA==}
+    engines: {node: '>=20'}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -5998,6 +6005,8 @@ snapshots:
   path-to-regexp@6.3.0: {}
 
   pathe@2.0.3: {}
+
+  pele@1.3.0: {}
 
   picocolors@1.1.1: {}
 

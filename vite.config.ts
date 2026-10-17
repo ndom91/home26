@@ -15,7 +15,6 @@ import remarkGfm from 'remark-gfm'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import { defineConfig } from 'vite'
 import { imagetools } from 'vite-imagetools'
-import { mermaidPlugin } from './src/lib/mermaid-vite'
 import { rehypeCodeTitle } from './src/lib/rehype-code-title'
 import { rehypeImageCaptions } from './src/lib/rehype-image-captions'
 import { rehypeImageLqip } from './src/lib/rehype-image-lqip'
@@ -38,7 +37,6 @@ const config = defineConfig({
   // Read by scripts/preload-post-bodies.ts after the build, then deleted.
   environments: { client: { build: { manifest: true } } },
   plugins: [
-    mermaidPlugin(),
     devtools(),
     cloudflare({ viteEnvironment: { name: 'ssr' } }),
     contentCollections({ environment: 'ssr' }),

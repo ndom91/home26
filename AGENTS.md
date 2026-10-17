@@ -108,24 +108,21 @@ Notes:
 
 ## Mermaid Diagrams
 
-` ```mermaid ` fenced code blocks in MDX render as theme-matched diagrams. Rendering happens **locally at author time**, not in CI: the build only reads committed SVGs, so no browser/playwright is ever needed in the Cloudflare build.
+` ```mermaid ` fenced code blocks in MDX render as theme-matched diagrams at build time with [pele](https://github.com/obsidianmd/pele), a zero-dependency, synchronous mermaid → SVG renderer. No browser, binary, or committed SVG cache is involved.
 
 Pipeline:
 
-- `mmdr` (the `mermaid-rs-renderer` Rust binary) renders mermaid → SVG with no browser. Install locally once: `cargo install mermaid-rs-renderer` (must be on PATH).
-- `pnpm mermaid` (`scripts/render-mermaid.ts`) scans `content/blog/**/*.mdx`, hashes each diagram, and renders a light + dark SVG per diagram into `content/.mermaid/<hash>.{light,dark}.svg`. These SVGs are **committed** and are the source of truth. The step is incremental (skips unchanged diagrams) and is intentionally **not** part of `pnpm build`.
-- `remarkMermaid` (`src/lib/remark-mermaid.ts`) runs in the remark phase (before `rehype-pretty-code`, so fences aren't syntax-highlighted), looks up the committed SVGs by hash, and replaces the fence with `<MermaidFigure>` (`src/components/mdx/mermaid.tsx`). If a diagram's SVGs are missing it throws, telling you to run `pnpm mermaid`.
-- Light/dark theming: two `themeVariables` configs (`scripts/mermaid-theme.{light,dark}.json`) mapped to the site blog palette; CSS in `src/styles.css` shows the variant matching the active theme. Hashing/cache-path helpers live in `src/lib/mermaid.ts` (shared by the script and the plugin).
+- `remarkMermaid` (`src/lib/remark-mermaid.ts`) runs in the remark phase (before `rehype-pretty-code`, so fences aren't syntax-highlighted), renders each fence with pele's `render()`, and replaces it with `<MermaidFigure>` (`src/components/mdx/mermaid.tsx`). A diagram that fails to parse fails the build.
+- Theming: pele SVGs take every color and font from `--pele-*` CSS variables. `.mermaid-figure` in `src/styles.css` maps them to the `--blog-*` palette, so one SVG follows light/dark with no re-render.
+- Dev HMR re-renders diagrams on save because the MDX module re-transforms.
 
-Authoring workflow: write a ` ```mermaid ` block → run `pnpm mermaid` → commit the post and the new `content/.mermaid/*.svg`.
-
-During `pnpm dev` the vite plugin auto-renders diagrams on save (no restart needed), but it only adds SVGs — it does not delete superseded ones. `pnpm mermaid` prunes orphaned cache SVGs (any not referenced by current content), so run it before committing to avoid committing stale files.
+Authoring workflow: write a ` ```mermaid ` block and commit the post. Nothing else.
 
 Notes:
 
-- mmdr layout is fixed — `--nodeSpacing`/`--rankSpacing` and `%%{init}%%` spacing are currently no-ops. Improve cramped diagrams structurally (multiline `<br/>` labels, subgraphs) rather than via spacing knobs.
-- mmdr fidelity is strongest for flowchart and sequence diagrams; exotic types may render imperfectly.
-- `linkStyle` (per-edge colors) and `subgraph ... direction` are honored. `linkStyle` indices are edge-declaration order across the whole graph — reordering edges shifts them.
+- pele targets Mermaid 12.1.0 syntax but uses its own layout and visual style.
+- In Node, pele estimates text widths from built-in font metrics, not the site fonts. Very long labels may fit slightly loose or tight; prefer multiline `<br/>` labels.
+- `linkStyle` (per-edge colors) and `subgraph ... direction` are honored. `linkStyle` indices are edge-declaration order across the whole graph, so reordering edges shifts them.
 
 ## Commands
 

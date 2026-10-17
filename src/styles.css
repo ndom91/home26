@@ -519,29 +519,24 @@ html[data-theme='dark'] :where([data-rehype-pretty-code-figure]) span {
   color: var(--shiki-dark);
 }
 
-/* Mermaid: show the theme-matched SVG. */
-.mermaid-dark {
-  display: none;
+/* Mermaid: pele SVGs read these, so the --blog-* theme flip recolors them. */
+.mermaid-figure {
+  --pele-bg: var(--blog-panel);
+  --pele-fg: var(--blog-text);
+  --pele-muted: var(--blog-muted);
+  --pele-line: var(--blog-muted);
+  --pele-surface: var(--blog-bg);
+  --pele-surface-alt: var(--blog-hover);
+  --pele-border: var(--blog-rule);
+  --pele-accent: var(--blog-accent);
+  --pele-font: 'Neue Montreal', sans-serif;
+  --pele-font-mono: 'IBM Plex Mono', monospace;
+  --pele-radius: 10px;
 }
 
-.mermaid-light {
-  display: block;
-}
-
-.mermaid-light svg,
-.mermaid-dark svg {
+.mermaid-figure svg {
   width: 100%;
   height: auto;
-}
-
-
-
-html[data-theme='dark'] .mermaid-light {
-  display: none;
-}
-
-html[data-theme='dark'] .mermaid-dark {
-  display: block;
 }
 
 @property --theme-reveal-radius {

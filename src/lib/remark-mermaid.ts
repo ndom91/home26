@@ -1,10 +1,5 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
-import { cachePaths, hashMermaid } from './mermaid'
-
-// Anchor to the repo root. The plugin module is bundled into the vite config,
-// so import.meta.url is unreliable; vite always runs from the project root.
-const repoRoot = process.cwd()
+import { createHash } from 'node:crypto'
+import { PeleError, render } from 'pele'
 
 interface MdastNode {
   type: string
@@ -26,29 +21,28 @@ interface MdxJsxFlowElement {
   children: never[]
 }
 
-function readCachedSvg(relativePath: string, diagram: string): string {
+function renderSvg(diagram: string): string {
+  // Unique per diagram so two figures on one page never share SVG ids.
+  const idPrefix = `m${createHash('sha256').update(diagram).digest('hex').slice(0, 8)}-`
+
   try {
-    return readFileSync(join(repoRoot, relativePath), 'utf8')
-  } catch {
+    return render(diagram, {
+      idPrefix,
+      fontFamily: "'Neue Montreal', sans-serif",
+      fontFamilyMono: "'IBM Plex Mono', monospace",
+    }).svg
+  } catch (error) {
+    if (!(error instanceof PeleError)) throw error
     const preview = diagram.split('\n', 1)[0]?.slice(0, 60) ?? ''
-    throw new Error(
-      `Missing pre-rendered Mermaid SVG: ${relativePath} (diagram "${preview}…").\n` +
-        'Run `pnpm mermaid` to (re)render Mermaid diagrams, then commit content/.mermaid.'
-    )
+    throw new Error(`Failed to render Mermaid diagram "${preview}…": ${error.message}`)
   }
 }
 
 function toMermaidFigure(code: string): MdxJsxFlowElement {
-  const diagram = code.trim()
-  const paths = cachePaths(hashMermaid(diagram))
-
   return {
     type: 'mdxJsxFlowElement',
     name: 'MermaidFigure',
-    attributes: [
-      { type: 'mdxJsxAttribute', name: 'lightSvg', value: readCachedSvg(paths.light, diagram) },
-      { type: 'mdxJsxAttribute', name: 'darkSvg', value: readCachedSvg(paths.dark, diagram) },
-    ],
+    attributes: [{ type: 'mdxJsxAttribute', name: 'svg', value: renderSvg(code.trim()) }],
     children: [],
   }
 }
@@ -66,9 +60,10 @@ function transformChildren(node: MdastNode): void {
 }
 
 /**
- * Replaces ```mermaid fences with a <MermaidFigure> element carrying the two
- * pre-rendered (light/dark) SVGs. Runs in the remark phase so the fence is gone
- * before rehype-pretty-code would otherwise try to highlight it.
+ * Replaces ```mermaid fences with a <MermaidFigure> carrying a pele-rendered
+ * SVG. Colors and fonts come from `--pele-*` CSS variables, so one SVG serves
+ * both themes. Runs in the remark phase so the fence is gone before
+ * rehype-pretty-code would otherwise try to highlight it.
  */
 export function remarkMermaid() {
   return (tree: MdastNode) => {

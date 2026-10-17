@@ -21,7 +21,6 @@
   ],
   "scripts": {
     "dev": "vite dev",
-    "mermaid": "node scripts/render-mermaid.ts",
     "stars": "node scripts/fetch-stars.ts",
     "sign-screenshots": "node scripts/sign-link-screenshots.ts",
     "refresh-generated": "pnpm run stars && pnpm run sign-screenshots",
@@ -49,6 +48,7 @@
     "@tanstack/router-plugin": "1.168.18",
     "hast-util-to-string": "3.0.1",
     "lucide-react": "1.21.0",
+    "pele": "1.3.0",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "react-medium-image-zoom": "5.4.8",
