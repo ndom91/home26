@@ -1,5 +1,6 @@
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
-import { extname, join, relative } from 'node:path'
+import { join, relative } from 'node:path'
+import sharp from 'sharp'
 import { descriptionFromContent, parseFrontmatter, slugFromPath } from '../src/lib/post-meta.ts'
 
 const BLOG_ROOT = 'content/blog'
@@ -8,6 +9,9 @@ const DID = 'did:plc:nmwj6xne7mdpkry5pzvfendv'
 const SITE_URL = 'https://ndo.dev'
 const DEFAULT_PDS_HOST = 'https://pds.ndo.dev'
 const MAX_COVER_IMAGE_BYTES = 1_000_000
+// Matches the largest responsive variant the site serves (src/lib/image-variants.ts).
+const COVER_WIDTH = 1600
+const COVER_QUALITIES = [80, 70, 60, 50]
 
 type Session = {
   accessJwt: string
@@ -62,7 +66,6 @@ type UploadBlobResponse = {
 
 const options = {
   dryRun: process.argv.includes('--dry-run'),
-  omitOversizedCovers: process.argv.includes('--omit-oversized-covers'),
   post: optionValue('--post'),
 }
 const TID_CHARS = '234567abcdefghijklmnopqrstuvwxyz'
@@ -179,22 +182,25 @@ async function publishPost(post: FrontmatterPost, publicationUri: string) {
   console.log(`Created ${post.slug}: ${uri}`)
 }
 
-async function uploadCoverImage(imagePath: string): Promise<BlobRef | undefined> {
-  const stats = statSync(imagePath)
-
-  if (stats.size > MAX_COVER_IMAGE_BYTES) {
-    if (!options.omitOversizedCovers) {
-      throw new Error(
-        `Cover image is too large for AT Protocol upload: ${imagePath} is ${stats.size} bytes; max is ${MAX_COVER_IMAGE_BYTES}. Compress it, remove cover.imageFile, or pass --omit-oversized-covers.`
-      )
-    }
-
-    console.log(`Omitting cover over 1 MB: ${imagePath}`)
-    return undefined
+// Re-encodes the cover as WebP so it fits AT Protocol's 1 MB blob limit; the
+// source PNG/JPEG covers are all larger than that.
+async function coverWebp(imagePath: string) {
+  for (const quality of COVER_QUALITIES) {
+    const bytes = await sharp(imagePath)
+      .rotate()
+      .resize({ width: COVER_WIDTH, withoutEnlargement: true })
+      .webp({ quality })
+      .toBuffer()
+    if (bytes.length <= MAX_COVER_IMAGE_BYTES) return bytes
   }
+  throw new Error(`Cover still over ${MAX_COVER_IMAGE_BYTES} bytes as WebP: ${imagePath}`)
+}
+
+async function uploadCoverImage(imagePath: string): Promise<BlobRef | undefined> {
+  const bytes = await coverWebp(imagePath)
 
   if (options.dryRun) {
-    console.log(`Would upload cover ${imagePath}`)
+    console.log(`Would upload cover ${imagePath} (${Math.round(bytes.length / 1024)} KB WebP)`)
     return undefined
   }
 
@@ -202,9 +208,9 @@ async function uploadCoverImage(imagePath: string): Promise<BlobRef | undefined>
     method: 'POST',
     headers: {
       Authorization: `Bearer ${requireSession().accessJwt}`,
-      'Content-Type': mimeType(imagePath),
+      'Content-Type': 'image/webp',
     },
-    body: readFileSync(imagePath),
+    body: new Uint8Array(bytes),
   })
 
   if (!response.ok) {
@@ -360,22 +366,6 @@ function toTextContent(content: string) {
 
 function toDatetime(date: string) {
   return /^\d{4}-\d{2}-\d{2}$/.test(date) ? `${date}T00:00:00.000Z` : date
-}
-
-function mimeType(filePath: string) {
-  switch (extname(filePath).toLowerCase()) {
-    case '.jpg':
-    case '.jpeg':
-      return 'image/jpeg'
-    case '.png':
-      return 'image/png'
-    case '.webp':
-      return 'image/webp'
-    case '.gif':
-      return 'image/gif'
-    default:
-      throw new Error(`Unsupported cover image type for ${filePath}`)
-  }
 }
 
 function isBlobRef(value: unknown): value is BlobRef {
