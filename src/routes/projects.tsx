@@ -8,11 +8,26 @@ import { SiteHeader } from '../components/SiteHeader'
 import { fontPreload } from '../lib/font-preload'
 import { linkScreenshotUrls } from '../lib/link-screenshots.generated'
 import { getProjects } from '../lib/projects'
+import { canonicalLink, socialMeta } from '../lib/social-meta'
+
+const projectsDescription =
+  'Some experiments survived contact with production. These are those — the tools, side quests, and libraries that earned a spot.'
 
 export const Route = createFileRoute('/projects')({
   head: () => ({
-    meta: [{ title: 'Projects — ndom91' }],
-    links: [fontPreload('/manuka-bold.woff2'), fontPreload('/PPNeueMontreal-Variable.woff2')],
+    meta: [
+      { title: 'Projects — ndom91' },
+      ...socialMeta({
+        title: 'Projects — ndom91',
+        description: projectsDescription,
+        path: '/projects',
+      }),
+    ],
+    links: [
+      canonicalLink('/projects'),
+      fontPreload('/manuka-bold.woff2'),
+      fontPreload('/PPNeueMontreal-Variable.woff2'),
+    ],
   }),
   component: Projects,
 })
@@ -29,7 +44,7 @@ function Projects() {
 
       <PageHero
         title="BUILD"
-        description="Some experiments survived contact with production. These are those — the tools, side quests, and libraries that earned a spot."
+        description={projectsDescription}
         eyebrow={<EyebrowBars className="mb-4" />}
         meta={`${projects.length} ${projects.length === 1 ? 'project' : 'projects'}`}
       />

@@ -6,6 +6,7 @@ import { SiteFooter } from '../components/SiteFooter'
 import { SiteHeader } from '../components/SiteHeader'
 import type { PostListItem } from '../lib/blog'
 import { getPublishedPosts } from '../lib/blog'
+import { canonicalLink, socialMeta } from '../lib/social-meta'
 import {
   blogId,
   blogWebPageId,
@@ -17,12 +18,20 @@ import {
   websiteId,
 } from '../lib/structured-data'
 
+const blogDescription =
+  'Field notes, server rituals, UI experiments, and open-source side projects.'
+
 export const Route = createFileRoute('/blog/')({
   loader: (): PostListItem[] => getPublishedPosts(),
   head: ({ loaderData }) => {
     const latestPost = loaderData?.[0]
 
     return {
+      meta: [
+        { title: 'Blog — ndom91' },
+        ...socialMeta({ title: 'Blog — ndom91', description: blogDescription, path: '/blog' }),
+      ],
+      links: [canonicalLink('/blog')],
       scripts: [
         {
           type: 'application/ld+json',
@@ -37,8 +46,7 @@ export const Route = createFileRoute('/blog/')({
               '@id': blogWebPageId,
             },
             name: "Nico's Blog",
-            description:
-              'Field notes, server rituals, UI experiments, and open-source side projects.',
+            description: blogDescription,
             inLanguage: siteLanguage,
             dateModified: latestPost ? isoDateToUtcDateTime(latestPost.publishedAt) : undefined,
             publisher: {

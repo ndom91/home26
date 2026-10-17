@@ -9,6 +9,7 @@ import { TableOfContents } from '../components/TableOfContents'
 import type { BlogPost as BlogPostType } from '../lib/blog'
 import { getPublishedPosts, longestWordEm } from '../lib/blog'
 import { getPostBody, preloadPostBody } from '../lib/post-body'
+import { canonicalLink, SOCIAL_IMAGE, socialMeta } from '../lib/social-meta'
 import {
   absoluteSiteUrl,
   blogId,
@@ -64,11 +65,30 @@ export const Route = createFileRoute('/blog/$slug')({
     meta: loaderData
       ? [
           { title: `${loaderData.title} — ndom91` },
-          { name: 'description', content: loaderData.description },
+          ...socialMeta({
+            title: loaderData.title,
+            description: loaderData.description,
+            path: `/blog/${loaderData.slug}`,
+            type: 'article',
+            publishedAt: loaderData.publishedAt,
+            image: loaderData.coverImageSocialUrl
+              ? {
+                  url: loaderData.coverImageSocialUrl,
+                  ...SOCIAL_IMAGE,
+                  alt: loaderData.title,
+                  type: 'image/jpeg',
+                }
+              : undefined,
+          }),
         ]
       : [],
-    links: loaderData?.standardSiteUri
-      ? [{ rel: 'site.standard.document', href: loaderData.standardSiteUri }]
+    links: loaderData
+      ? [
+          canonicalLink(`/blog/${loaderData.slug}`),
+          ...(loaderData.standardSiteUri
+            ? [{ rel: 'site.standard.document', href: loaderData.standardSiteUri }]
+            : []),
+        ]
       : [],
     scripts: loaderData
       ? [

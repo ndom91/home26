@@ -4,11 +4,13 @@ import { LifeField } from '../components/LifeField'
 import { OrbGlobe } from '../components/OrbGlobe'
 import { SiteHeader } from '../components/SiteHeader'
 import { fontPreload } from '../lib/font-preload'
+import { canonicalLink } from '../lib/social-meta'
 import { usePointerSweep } from '../lib/use-pointer-sweep'
 
 export const Route = createFileRoute('/')({
   head: () => ({
     links: [
+      canonicalLink('/'),
       fontPreload('/the-future-regular.woff2'),
       fontPreload('/fonts/ibm-plex-mono-200.woff2'),
     ],

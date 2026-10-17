@@ -6,7 +6,7 @@ import {
 import readingTime from 'reading-time'
 import * as v from 'valibot'
 import { imageLqip } from './src/lib/image-lqip'
-import { imageVariants, srcsetQuery, variantQuery } from './src/lib/image-variants'
+import { imageVariants, socialImageQuery, srcsetQuery, variantQuery } from './src/lib/image-variants'
 import { extractHeadings } from './src/lib/post-headings'
 import { descriptionFromContent, slugFromPath } from './src/lib/post-meta'
 import { collectBlogLinkTargets } from './src/lib/link-screenshot-targets'
@@ -106,6 +106,9 @@ const posts = defineCollection({
         coverImport && coverVariants
           ? createDefaultImport<string>(`${coverImport}${srcsetQuery(coverVariants.widths)}`)
           : null,
+      coverImageSocialUrl: coverImport
+        ? createDefaultImport<string>(`${coverImport}${socialImageQuery()}`)
+        : null,
       coverImageLqip: coverPath ? await imageLqip(coverPath) : null,
       bodyPath: post._meta.filePath,
     }

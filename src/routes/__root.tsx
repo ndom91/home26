@@ -2,6 +2,7 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { fontPreload } from '../lib/font-preload'
+import { siteDescription, siteName, socialMeta } from '../lib/social-meta'
 import { personId, serializeJsonLd, siteLanguage, siteUrl, websiteId } from '../lib/structured-data'
 import appCss from '../styles.css?url'
 
@@ -66,8 +67,9 @@ export const Route = createRootRoute({
         content: 'light dark',
       },
       {
-        title: 'ndom91',
+        title: siteName,
       },
+      ...socialMeta({ title: siteName, description: siteDescription, path: '/' }),
     ],
     links: [
       { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },

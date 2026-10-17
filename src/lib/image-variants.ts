@@ -1,4 +1,5 @@
 import sharp from 'sharp'
+import { SOCIAL_IMAGE } from './social-meta'
 
 // Responsive WebP widths for build-time image variants (vite-imagetools).
 // 1600 covers the widest render (42rem prose / half-width covers) at 2x.
@@ -16,6 +17,11 @@ export function variantQuery(width: number) {
 
 export function srcsetQuery(widths: number[]) {
   return `?w=${widths.join(';')}&format=webp&as=srcset`
+}
+
+// JPEG because LinkedIn and some Slack/iMessage unfurlers still choke on WebP.
+export function socialImageQuery() {
+  return `?w=${SOCIAL_IMAGE.width}&h=${SOCIAL_IMAGE.height}&fit=cover&allowUpscale=true&format=jpg&quality=82`
 }
 
 const metadataCache = new Map<
