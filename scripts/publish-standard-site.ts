@@ -1,5 +1,6 @@
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { extname, join, relative } from 'node:path'
+import { descriptionFromContent, parseFrontmatter, slugFromPath } from '../src/lib/post-meta.ts'
 
 const BLOG_ROOT = 'content/blog'
 const GENERATED_PUBLICATION_FILE = 'src/lib/standard-site.generated.ts'
@@ -295,88 +296,46 @@ function walk(directory: string): string[] {
 }
 
 function readPost(contentPath: string): FrontmatterPost {
-  const source = readFileSync(contentPath, 'utf8')
-  const match = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/.exec(source)
+  const parsed = parseFrontmatter(readFileSync(contentPath, 'utf8'))
 
-  if (!match) {
+  if (!parsed) {
     throw new Error(`Missing frontmatter: ${contentPath}`)
   }
 
-  const frontmatter = match[1]
-  const body = match[2]
-  const publishedAt = scalar(frontmatter, 'publishedAt') ?? scalar(frontmatter, 'date')
+  const { raw, data, body } = parsed
+  const publishedAt = string(data.publishedAt) ?? string(data.date)
 
   if (!publishedAt) {
     throw new Error(`Missing publishedAt/date: ${contentPath}`)
   }
 
+  const cover = data.cover as { imageFile?: unknown } | undefined
+  const imageFile = string(cover?.imageFile)
+
   return {
     body,
     contentPath,
-    date: scalar(frontmatter, 'date') ?? publishedAt,
-    description: scalar(frontmatter, 'description') ?? descriptionFromContent(body),
-    draft: scalar(frontmatter, 'draft') === 'true',
-    frontmatter,
+    date: string(data.date) ?? publishedAt,
+    // Same derivation as the site (content-collections.ts), so ATproto and
+    // ndo.dev always show the same description.
+    description: string(data.description) ?? descriptionFromContent(body),
+    draft: data.draft === true,
+    frontmatter: raw,
     publishedAt,
-    slug: slugFromPath(contentPath),
-    standardSiteUri: scalar(frontmatter, 'standardSiteUri'),
-    tags: tags(frontmatter),
-    title: scalar(frontmatter, 'title') ?? fail(`Missing title: ${contentPath}`),
-    coverImagePath: coverImagePath(contentPath, frontmatter),
+    slug: slugFromPath(relative(BLOG_ROOT, contentPath)),
+    standardSiteUri: string(data.standardSiteUri),
+    tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
+    title: string(data.title) ?? fail(`Missing title: ${contentPath}`),
+    coverImagePath: imageFile
+      ? imageFile.startsWith('./')
+        ? join(contentPath, '..', imageFile)
+        : join(BLOG_ROOT, imageFile)
+      : null,
   }
 }
 
-function scalar(frontmatter: string, key: string) {
-  const match = new RegExp(`^${key}:\\s*(?:"([^"]*)"|'([^']*)'|([^\\n]+))\\s*$`, 'm').exec(
-    frontmatter
-  )
-
-  return match ? (match[1] ?? match[2] ?? match[3]).trim() : null
-}
-
-function tags(frontmatter: string) {
-  const inline = /^tags:\s*\[([^\]]*)\]\s*$/m.exec(frontmatter)
-
-  if (inline) {
-    return inline[1]
-      .split(',')
-      .map((tag) => tag.trim().replace(/^['"]|['"]$/g, ''))
-      .filter(Boolean)
-  }
-
-  const block = /^tags:\s*\n((?:\s+-\s*[^\n]+\n?)*)/m.exec(frontmatter)
-
-  if (!block) return []
-
-  return block[1]
-    .split('\n')
-    .map((line) => line.replace(/^\s+-\s*/, '').trim().replace(/^['"]|['"]$/g, ''))
-    .filter(Boolean)
-}
-
-function coverImagePath(contentPath: string, frontmatter: string) {
-  const match = /(?:^|\n)cover:\s*\n(?:\s+[^\n]*\n)*?\s+imageFile:\s*(?:"([^"]*)"|'([^']*)'|([^\n]+))/m.exec(
-    frontmatter
-  )
-  const imageFile = match ? (match[1] ?? match[2] ?? match[3]).trim() : null
-
-  if (!imageFile) return null
-
-  return imageFile.startsWith('./')
-    ? join(contentPath, '..', imageFile)
-    : join(BLOG_ROOT, imageFile)
-}
-
-function slugFromPath(contentPath: string) {
-  const relativePath = relative(BLOG_ROOT, contentPath)
-  const parts = relativePath.split(/[/\\]/)
-  const fileName = parts.at(-1)
-
-  if (fileName === 'index.mdx') {
-    return parts.at(-2) ?? fail(`Unable to derive slug: ${contentPath}`)
-  }
-
-  return fileName?.replace(/\.mdx$/, '') ?? fail(`Unable to derive slug: ${contentPath}`)
+function string(value: unknown) {
+  return typeof value === 'string' && value.trim() ? value.trim() : null
 }
 
 function ensurePortableMarkdown(post: FrontmatterPost) {
@@ -385,22 +344,6 @@ function ensurePortableMarkdown(post: FrontmatterPost) {
   if (/^import\s/m.test(withoutCodeBlocks) || /<[A-Z][A-Za-z0-9_.]*(\s|\/|>)/.test(withoutCodeBlocks)) {
     throw new Error(`Post still contains live MDX syntax: ${post.contentPath}`)
   }
-}
-
-function descriptionFromContent(content: string) {
-  const firstParagraph = content
-    .split(/\n{2,}/)
-    .map((block) => block.trim())
-    .find(
-      (block) =>
-        block.length > 0 &&
-        !block.startsWith('import ') &&
-        !block.startsWith('#') &&
-        !block.startsWith('```') &&
-        !block.startsWith('<')
-    )
-
-  return toTextContent(firstParagraph ?? 'Notes from the archive.').slice(0, 3000)
 }
 
 function toTextContent(content: string) {

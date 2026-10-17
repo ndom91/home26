@@ -21,6 +21,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { buildLinkScreenshotUrl } from '../src/lib/link-screenshot.ts'
 import { signLinkScreenshotUrl } from '../src/lib/link-screenshot-crypto.ts'
+import { parseFrontmatter } from '../src/lib/post-meta.ts'
 import {
   collectBlogLinkTargets,
   collectProjectLinkTargets,
@@ -47,15 +48,8 @@ function sleep(ms: number) {
 // Epoch ms of a post's publishedAt (legacy `date` fallback), 0 if absent. Used
 // only to order warming, so undated posts simply sort last.
 function publishedAtFromFrontmatter(content: string): number {
-  const frontmatter = content.match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1]
-
-  if (!frontmatter) {
-    return 0
-  }
-
-  const match =
-    frontmatter.match(/^\s*publishedAt:\s*(.+)$/m) ?? frontmatter.match(/^\s*date:\s*(.+)$/m)
-  const parsed = match ? Date.parse(match[1].trim().replace(/^["']|["']$/g, '')) : Number.NaN
+  const data = parseFrontmatter(content)?.data
+  const parsed = Date.parse(String(data?.publishedAt ?? data?.date ?? ''))
 
   return Number.isNaN(parsed) ? 0 : parsed
 }
