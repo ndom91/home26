@@ -6,6 +6,7 @@ import {
 import readingTime from 'reading-time'
 import * as v from 'valibot'
 import { imageLqip } from './src/lib/image-lqip'
+import { imageVariants, srcsetQuery, variantQuery } from './src/lib/image-variants'
 import { collectBlogLinkTargets } from './src/lib/link-screenshot-targets'
 import { signLinkScreenshotUrls } from './src/lib/sign-link-screenshot'
 
@@ -162,6 +163,14 @@ const posts = defineCollection({
       throw new Error(`Missing publishedAt/date frontmatter for post: ${post._meta.filePath}`)
     }
 
+    const coverPath = post.cover
+      ? `${process.cwd()}/content/blog/${imageFilePath(post._meta.filePath, post.cover.imageFile)}`
+      : null
+    const coverVariants = coverPath ? await imageVariants(coverPath) : null
+    const coverImport = post.cover
+      ? imageImportPath(post._meta.filePath, post.cover.imageFile)
+      : null
+
     return {
       title: post.title,
       description: post.description ?? descriptionFromContent(post.content),
@@ -174,14 +183,15 @@ const posts = defineCollection({
       slug: slugFromPath(post._meta.filePath),
       readTimeSeconds: readTimeSecondsFromContent(post.content),
       linkScreenshotUrls: await linkScreenshotUrlsFromContent(post.content),
-      coverImageUrl: post.cover
-        ? createDefaultImport<string>(imageImportPath(post._meta.filePath, post.cover.imageFile))
-        : null,
-      coverImageLqip: post.cover
-        ? await imageLqip(
-            `${process.cwd()}/content/blog/${imageFilePath(post._meta.filePath, post.cover.imageFile)}`
-          )
-        : null,
+      coverImageUrl:
+        coverImport && coverVariants
+          ? createDefaultImport<string>(`${coverImport}${variantQuery(coverVariants.widths.at(-1) ?? coverVariants.width)}`)
+          : null,
+      coverImageSrcSet:
+        coverImport && coverVariants
+          ? createDefaultImport<string>(`${coverImport}${srcsetQuery(coverVariants.widths)}`)
+          : null,
+      coverImageLqip: coverPath ? await imageLqip(coverPath) : null,
       bodyPath: post._meta.filePath,
     }
   },

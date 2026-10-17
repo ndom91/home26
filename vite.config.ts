@@ -14,6 +14,7 @@ import remarkFrontmatter from 'remark-frontmatter'
 import remarkGfm from 'remark-gfm'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import { defineConfig } from 'vite'
+import { imagetools } from 'vite-imagetools'
 import { mermaidPlugin } from './src/lib/mermaid-vite'
 import { rehypeImageCaptions } from './src/lib/rehype-image-captions'
 import { rehypeImageLqip } from './src/lib/rehype-image-lqip'
@@ -39,6 +40,7 @@ const config = defineConfig({
     cloudflare({ viteEnvironment: { name: 'ssr' } }),
     contentCollections({ environment: 'ssr' }),
     tailwindcss(),
+    imagetools(),
     {
       enforce: 'pre',
       ...mdx({

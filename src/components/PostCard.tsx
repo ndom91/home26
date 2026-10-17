@@ -15,6 +15,8 @@ export function PostCard({ post, eager = false }: { post: PostListItem; eager?: 
         <div className="relative overflow-hidden border-b border-blog-rule">
           <ProgressiveImage
             src={post.coverImageUrl}
+            srcSet={post.coverImageSrcSet ?? undefined}
+            sizes="(min-width: 96rem) 25vw, (min-width: 80rem) 33vw, (min-width: 40rem) 50vw, 100vw"
             placeholderSrc={post.coverImageLqip}
             alt=""
             className="aspect-4/3 w-full object-cover transition-transform duration-400 ease-smooth-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"

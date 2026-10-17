@@ -48,6 +48,9 @@ function MdxImage({ alt = '', className, dataLqip: placeholderSrc, ...props }: M
       a11yNameButtonZoom="Expand image"
       classDialog="mdx-image-zoom-dialog"
       wrapElement="span"
+      // The inline image picks a column-sized srcset candidate; zoom to the
+      // largest variant (`src`) instead so the expanded view stays sharp.
+      zoomImg={props.src ? { src: props.src, sizes: undefined, srcSet: undefined } : undefined}
       zoomMargin={24}
     >
       <ProgressiveImage

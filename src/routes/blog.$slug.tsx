@@ -202,6 +202,8 @@ function BlogPost() {
                 <div className="relative overflow-hidden border-y border-blog-rule bg-blog-panel shadow-[0_1.5rem_4rem_color-mix(in_oklab,var(--color-blog-accent)_18%,transparent)] sm:border">
                   <ProgressiveImage
                     src={meta.coverImageUrl}
+                    srcSet={meta.coverImageSrcSet ?? undefined}
+                    sizes="(min-width: 64rem) 50vw, 100vw"
                     placeholderSrc={meta.coverImageLqip}
                     alt=""
                     width="1448"
