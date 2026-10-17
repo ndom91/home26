@@ -14,6 +14,7 @@
       "**/index.html",
       "**/vite.config.ts",
       "!**/src/routeTree.gen.ts",
+      "!**/src/lib/standard-site.generated.ts",
       "!**/src/styles.css"
     ]
   },
