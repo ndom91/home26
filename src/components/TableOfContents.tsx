@@ -7,6 +7,7 @@ const ACTIVE_OFFSET_PX = 128
 const INTRODUCTION_ID = 'article-introduction'
 const MARKER_GAP_PX = 12
 const MARKER_SIZE_PX = 6
+const ARC_STEPS = 16
 // Matches the `xl:block` breakpoint the TOC is shown at; below it the TOC is
 // hidden, so scroll tracking is skipped entirely.
 const VISIBLE_QUERY = '(min-width: 80rem)'
@@ -229,11 +230,14 @@ export function TableOfContents({
       return
     }
 
-    const arcOffset = Math.min(16, 5 + Math.abs(distance) * 0.08)
+    // A quadratic curve bulges half as far as its control point, so this
+    // swings the dot up to ~44px left of the list on long jumps.
+    const arcOffset = Math.min(88, 12 + Math.abs(distance) * 0.3)
     const controlX = Math.min(currentPosition.x, nextPosition.x) - arcOffset
     markerAnimation.current = marker.animate(
-      Array.from({ length: 5 }, (_, index) => {
-        const progress = index / 4
+      // Enough keyframes that the wide arc reads as a curve, not a polyline.
+      Array.from({ length: ARC_STEPS + 1 }, (_, index) => {
+        const progress = index / ARC_STEPS
         const remaining = 1 - progress
         const x =
           remaining ** 2 * currentPosition.x +
@@ -279,7 +283,8 @@ export function TableOfContents({
   return (
     <nav aria-label="Table of contents" className={`font-reading ${className ?? ''}`}>
       <div className="flex h-full gap-6">
-        <div className="min-w-0 flex-1 overflow-y-auto">
+        {/* -ml/pl gives the marker arc room: overflow-y-auto also clips horizontally. */}
+        <div className="-ml-12 min-w-0 flex-1 overflow-y-auto pl-12">
           <p className="text-[10px] uppercase tracking-[0.28em] text-blog-faint">On this page</p>
           <ul className="relative mt-4 space-y-0.5 pl-6">
             {activeId ? (
