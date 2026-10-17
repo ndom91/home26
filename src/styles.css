@@ -449,15 +449,10 @@
   display: block;
   width: 100%;
   margin: 0;
-  opacity: 0;
-  /* Unlayered, so this beats Tailwind transition utilities. Include scale for card hover zoom. */
-  transition:
-    opacity 180ms ease-out,
-    scale 400ms var(--ease-smooth-out);
-}
-
-.progressive-image__image--loaded {
-  opacity: 1;
+  /* Always visible: the blurred placeholder underneath shows through only
+     while the image is still loading, so no JS is needed to reveal it.
+     Unlayered, so this beats Tailwind transition utilities (card hover zoom). */
+  transition: scale 400ms var(--ease-smooth-out);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,49 +1,23 @@
 import type { ImgHTMLAttributes } from 'react'
-import { useEffect, useRef, useState } from 'react'
 
 type ProgressiveImageProps = ImgHTMLAttributes<HTMLImageElement> & {
   placeholderSrc?: string | null
 }
 
+/** Image layered over its blurred LQIP; CSS-only, so it renders without JS. */
 export function ProgressiveImage({
   alt = '',
   className,
-  onError,
-  onLoad,
   placeholderSrc,
-  src,
   ...props
 }: ProgressiveImageProps) {
-  const imageRef = useRef<HTMLImageElement>(null)
-  const [isLoaded, setIsLoaded] = useState(false)
-  useEffect(() => {
-    const image = imageRef.current
-    setIsLoaded(image?.getAttribute('src') === src && image?.complete === true)
-  }, [src])
-
-  if (!src || !placeholderSrc) {
-    return (
-      <img src={src} alt={alt} className={className} onError={onError} onLoad={onLoad} {...props} />
-    )
+  if (!props.src || !placeholderSrc) {
+    return <img alt={alt} className={className} {...props} />
   }
 
   return (
     <span className="progressive-image">
-      <img
-        ref={imageRef}
-        src={src}
-        alt={alt}
-        className={`progressive-image__image${isLoaded ? ' progressive-image__image--loaded' : ''} ${className ?? ''}`}
-        onError={(event) => {
-          setIsLoaded(true)
-          onError?.(event)
-        }}
-        onLoad={(event) => {
-          setIsLoaded(true)
-          onLoad?.(event)
-        }}
-        {...props}
-      />
+      <img alt={alt} className={`progressive-image__image ${className ?? ''}`} {...props} />
       <img
         src={placeholderSrc}
         alt=""
