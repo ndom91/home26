@@ -10,20 +10,9 @@ const themeIconClass =
   'absolute top-1/2 left-1/2 size-[0.95rem] -translate-x-1/2 -translate-y-1/2 origin-center stroke-[2.2] transition-[opacity,scale,filter] duration-250 ease-in-out motion-reduce:duration-[1ms]'
 const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect
 
+// The inline script in __root.tsx always resolves data-theme before paint.
 function getCurrentTheme() {
-  const documentTheme = document.documentElement.dataset.theme
-
-  if (documentTheme === 'light' || documentTheme === 'dark') {
-    return documentTheme
-  }
-
-  const storedTheme = localStorage.getItem('theme')
-
-  if (storedTheme === 'light' || storedTheme === 'dark') {
-    return storedTheme
-  }
-
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
 }
 
 type ViewTransitionDocument = Document & {
@@ -38,11 +27,7 @@ export function SiteHeader() {
   const isDark = theme === 'dark'
 
   useIsomorphicLayoutEffect(() => {
-    const currentTheme = getCurrentTheme()
-
-    document.documentElement.dataset.theme = currentTheme
-    document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', currentTheme)
-    setTheme(currentTheme)
+    setTheme(getCurrentTheme())
   }, [])
 
   function toggleTheme(event: MouseEvent<HTMLButtonElement>) {

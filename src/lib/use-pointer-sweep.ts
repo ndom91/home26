@@ -3,7 +3,7 @@ import type { PointerEvent } from 'react'
 // Pointer-driven accent sweep + tilt shared by the home detail cards
 // (src/routes/index.tsx) and the project cards (src/components/ProjectCard.tsx).
 //
-// It drives CSS custom properties the consuming element's `before:` gradient
+// It drives CSS custom properties the `pointer-sweep` utility (styles.css)
 // reads: `--hover-x` (sweep position), `--hover-tilt` (sweep angle, follows
 // pointer velocity), and `--hover-color-strength` (sweep intensity). A rAF loop
 // eases the live values toward their targets for a trailing feel. Honors

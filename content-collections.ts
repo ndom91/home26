@@ -41,10 +41,6 @@ function directoryFromPath(path: string) {
     throw new Error(`Unable to derive directory from path: ${path}`)
   }
 
-  if (fileName === 'index.mdx') {
-    return parts.slice(0, -1).join('/')
-  }
-
   return parts.slice(0, -1).join('/')
 }
 

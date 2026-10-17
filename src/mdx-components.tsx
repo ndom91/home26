@@ -19,15 +19,12 @@ type MdxImageProps = ImgHTMLAttributes<HTMLImageElement> & { dataLqip?: string }
 const ImageZoomDisabledContext = createContext(false)
 const ImageCaptionHandledContext = createContext(false)
 
-function getMDXComponents(components: MDXComponents): MDXComponents {
-  return {
-    a: MdxAnchor as unknown as MDXComponent,
-    figure: MdxFigure as unknown as MDXComponent,
-    img: MdxImage as unknown as MDXComponent,
-    MermaidFigure: MermaidFigure as unknown as MDXComponent,
-    ScreenshotLink: ScreenshotLink as unknown as MDXComponent,
-    ...components,
-  }
+export const mdxComponents: MDXComponents = {
+  a: MdxAnchor as unknown as MDXComponent,
+  figure: MdxFigure as unknown as MDXComponent,
+  img: MdxImage as unknown as MDXComponent,
+  MermaidFigure: MermaidFigure as unknown as MDXComponent,
+  ScreenshotLink: ScreenshotLink as unknown as MDXComponent,
 }
 
 function MdxImage({ alt = '', className, dataLqip: placeholderSrc, ...props }: MdxImageProps) {
@@ -109,9 +106,3 @@ function MdxAnchor({ children, href, ...props }: AnchorHTMLAttributes<HTMLAnchor
     </a>
   )
 }
-
-export function useMDXComponents(components: MDXComponents): MDXComponents {
-  return getMDXComponents(components)
-}
-
-export const mdxComponents = getMDXComponents({})

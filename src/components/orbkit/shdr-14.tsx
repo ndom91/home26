@@ -4,7 +4,7 @@
  * Note for editors: the shader lives in a template literal, so its comments
  * must not contain backticks.
  */
-import { type OrbVariant, ShaderOrb, type ShaderOrbProps } from './orbkit-core'
+import type { OrbVariant } from './orbkit-core'
 
 /* ----------------------------------------------------------------------------
    SHDR-14 — demoscene sine-plasma on a rolling dome, quantized to chunky
@@ -201,11 +201,3 @@ export const shdr14Orb: OrbVariant = {
     speaking: { ink: '#2a1410', paper: '#ffd9a4' },
   },
 }
-
-export type Shdr14Props = Omit<ShaderOrbProps, 'variant'>
-
-export function Shdr14({ size = 280, ...rest }: Shdr14Props) {
-  return <ShaderOrb variant={shdr14Orb} size={size} {...rest} />
-}
-
-export default Shdr14

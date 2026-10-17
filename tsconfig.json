@@ -5,9 +5,7 @@
     "jsx": "react-jsx",
     "module": "ESNext",
     "paths": {
-      "#/*": ["./src/*"],
       "#content/*": ["./content/*"],
-      "@/*": ["./src/*"],
       "content-collections": ["./.content-collections/generated"]
     },
     "lib": ["ES2022", "DOM", "DOM.Iterable"],

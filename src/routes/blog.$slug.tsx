@@ -178,9 +178,9 @@ function BlogPost() {
                     {formatReadTime(meta.readTimeSeconds)}
                   </span>
                 </div>
-                {(meta.tags ?? []).length > 0 && (
+                {meta.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2 pt-1.5">
-                    {(meta.tags ?? []).map((tag) => (
+                    {meta.tags.map((tag) => (
                       <span
                         key={tag}
                         className="font-mono border border-blog-rule bg-blog-panel px-2 py-0.5 text-xs uppercase tracking-widest text-blog-muted"

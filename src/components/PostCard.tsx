@@ -1,31 +1,23 @@
 import { Link } from '@tanstack/react-router'
 import type { PostListItem } from '../lib/blog'
-import { FieldNoteBadge } from './FieldNoteBadge'
 import { PostCardMeta } from './PostCardMeta'
-import { ProgressiveImage } from './ProgressiveImage'
+import { PostCover, postCardShellClass } from './PostCover'
 
 export function PostCard({ post, eager = false }: { post: PostListItem; eager?: boolean }) {
   return (
     <Link
       to="/blog/$slug"
       params={{ slug: post.slug }}
-      className="blog-paper-card group flex h-full flex-col overflow-hidden border border-blog-rule bg-blog-panel transition-[border-color,background-color,translate,scale] duration-250 ease-smooth-out hover:-translate-y-0.5 hover:border-blog-accent hover:bg-blog-hover active:scale-[0.96] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+      className={`${postCardShellClass} flex h-full flex-col`}
     >
-      {post.coverImageUrl ? (
-        <div className="relative overflow-hidden border-b border-blog-rule">
-          <ProgressiveImage
-            src={post.coverImageUrl}
-            srcSet={post.coverImageSrcSet ?? undefined}
-            sizes="(min-width: 96rem) 25vw, (min-width: 80rem) 33vw, (min-width: 40rem) 50vw, 100vw"
-            placeholderSrc={post.coverImageLqip}
-            alt=""
-            className="aspect-4/3 w-full object-cover transition-transform duration-400 ease-smooth-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-            loading={eager ? 'eager' : 'lazy'}
-            decoding="async"
-          />
-          {post.type === 'field-notes' ? <FieldNoteBadge /> : null}
-        </div>
-      ) : null}
+      <PostCover
+        post={post}
+        className="relative overflow-hidden border-b border-blog-rule"
+        imageClassName="aspect-4/3 w-full object-cover transition-transform duration-400 ease-smooth-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+        sizes="(min-width: 96rem) 25vw, (min-width: 80rem) 33vw, (min-width: 40rem) 50vw, 100vw"
+        loading={eager ? 'eager' : 'lazy'}
+        decoding="async"
+      />
       <div className="flex flex-1 flex-col p-4">
         <PostCardMeta post={post} />
         <h2 className="mt-4 text-balance font-heading font-extrabold text-[2rem] tracking-[0.005em] leading-[0.9] text-blog-text transition-colors group-hover:text-blog-accent">

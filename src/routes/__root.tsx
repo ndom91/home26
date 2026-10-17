@@ -77,7 +77,6 @@ export const Route = createRootRoute({
       { rel: 'manifest', href: '/manifest.json' },
       // Route-specific fonts are preloaded from their own routes' head().
       fontPreload('/fonts/ibm-plex-mono-400.woff2'),
-      fontPreload('/manuka-bold.woff2'),
       {
         rel: 'stylesheet',
         href: appCss,
@@ -102,11 +101,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           dangerouslySetInnerHTML={{
             __html: `
 {
-  const theme = localStorage.getItem('theme');
-  if (theme === 'light' || theme === 'dark') {
-    document.documentElement.dataset.theme = theme;
-    document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', theme);
+  // Always resolve a theme before first paint: CSS only styles data-theme.
+  let theme = null;
+  try { theme = localStorage.getItem('theme'); } catch {}
+  if (theme !== 'light' && theme !== 'dark') {
+    theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
+  document.documentElement.dataset.theme = theme;
+  document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', theme);
 }
 `,
           }}
@@ -122,17 +124,19 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+        {import.meta.env.DEV ? (
+          <TanStackDevtools
+            config={{
+              position: 'bottom-right',
+            }}
+            plugins={[
+              {
+                name: 'Tanstack Router',
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+            ]}
+          />
+        ) : null}
         <Scripts />
       </body>
     </html>

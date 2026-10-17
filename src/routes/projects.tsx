@@ -12,7 +12,7 @@ import { getProjects } from '../lib/projects'
 export const Route = createFileRoute('/projects')({
   head: () => ({
     meta: [{ title: 'Projects — ndom91' }],
-    links: [fontPreload('/PPNeueMontreal-Variable.woff2')],
+    links: [fontPreload('/manuka-bold.woff2'), fontPreload('/PPNeueMontreal-Variable.woff2')],
   }),
   component: Projects,
 })
