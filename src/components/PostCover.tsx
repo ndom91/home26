@@ -5,7 +5,7 @@ import { ProgressiveImage } from './ProgressiveImage'
 
 // Shared shell for post list cards (PostCard, FeaturedPostCard).
 export const postCardShellClass =
-  'blog-paper-card group overflow-hidden border border-blog-rule bg-blog-panel transition-[border-color,background-color,translate,scale] duration-250 ease-smooth-out hover:-translate-y-0.5 hover:border-blog-accent hover:bg-blog-hover active:scale-[0.96] motion-reduce:transition-none motion-reduce:hover:translate-y-0'
+  'group overflow-hidden border border-blog-rule bg-blog-panel transition-[border-color,background-color,translate,scale] duration-250 ease-smooth-out hover:-translate-y-0.5 hover:border-blog-accent hover:bg-blog-hover active:scale-[0.96] motion-reduce:transition-none motion-reduce:hover:translate-y-0'
 
 type PostCoverProps = Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' | 'srcSet'> & {
   post: PostListItem

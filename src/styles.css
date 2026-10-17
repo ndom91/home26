@@ -385,18 +385,6 @@
     filter: blur(2px);
   }
 
-  html[data-theme='dark'] .blog-paper-card {
-    --blog-bg: #1a1218;
-    --blog-panel: #261a23;
-    --blog-hover: #2d202a;
-    --blog-text: #efe4ea;
-    --blog-rule: #4a3441;
-    --blog-muted: #b8a6b1;
-    --blog-description: #d5c4ce;
-    --blog-tag-hover: #efe4ea;
-    --blog-accent: #e093b0;
-  }
-
   html[data-theme='dark'] .theme-toggle-thumb {
     translate: 100% 0;
   }
