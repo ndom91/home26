@@ -3,7 +3,6 @@ import {
   defineCollection,
   defineConfig,
 } from '@content-collections/core'
-import type { MDXContent } from 'mdx/types.js'
 import readingTime from 'reading-time'
 import * as v from 'valibot'
 import { imageLqip } from './src/lib/image-lqip'
@@ -183,7 +182,7 @@ const posts = defineCollection({
             `${process.cwd()}/content/blog/${imageFilePath(post._meta.filePath, post.cover.imageFile)}`
           )
         : null,
-      Component: createDefaultImport<MDXContent>(`#content/blog/${post._meta.filePath}`),
+      bodyPath: post._meta.filePath,
     }
   },
 })

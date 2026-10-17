@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
-import { type CSSProperties, useRef } from 'react'
+import { type CSSProperties, Suspense, useRef } from 'react'
 import { BlueskyComments } from '../components/BlueskyComments'
 import { LinkScreenshotProvider } from '../components/mdx/link-screenshot-context'
 import { ProgressiveImage } from '../components/ProgressiveImage'
@@ -7,7 +7,8 @@ import { SiteFooter } from '../components/SiteFooter'
 import { SiteHeader } from '../components/SiteHeader'
 import { TableOfContents } from '../components/TableOfContents'
 import type { BlogPost as BlogPostType } from '../lib/blog'
-import { getPublishedPost, getPublishedPosts, longestWordEm } from '../lib/blog'
+import { getPublishedPosts, longestWordEm } from '../lib/blog'
+import { getPostBody, preloadPostBody } from '../lib/post-body'
 import {
   absoluteSiteUrl,
   blogId,
@@ -20,9 +21,8 @@ import {
 } from '../lib/structured-data'
 import { mdxComponents } from '../mdx-components'
 
-type PostMeta = Omit<BlogPostType, 'Component'>
-type ArticleNavPost = Pick<PostMeta, 'description' | 'publishedAt' | 'slug' | 'title'>
-type PostLoaderData = PostMeta & {
+type ArticleNavPost = Pick<BlogPostType, 'description' | 'publishedAt' | 'slug' | 'title'>
+type PostLoaderData = BlogPostType & {
   nextPost: ArticleNavPost | null
   previousPost: ArticleNavPost | null
 }
@@ -43,7 +43,7 @@ function toArticleNavPost(post: BlogPostType): ArticleNavPost {
 }
 
 export const Route = createFileRoute('/blog/$slug')({
-  loader: ({ params }): PostLoaderData => {
+  loader: async ({ params }): Promise<PostLoaderData> => {
     const posts = getPublishedPosts()
     const postIndex = posts.findIndex((post) => post.slug === params.slug)
     const post = posts[postIndex]
@@ -52,10 +52,10 @@ export const Route = createFileRoute('/blog/$slug')({
       throw notFound()
     }
 
-    const { Component: _c, ...meta } = post
+    await preloadPostBody(post.bodyPath)
 
     return {
-      ...meta,
+      ...post,
       nextPost: posts[postIndex + 1] ? toArticleNavPost(posts[postIndex + 1]) : null,
       previousPost: posts[postIndex - 1] ? toArticleNavPost(posts[postIndex - 1]) : null,
     }
@@ -116,10 +116,8 @@ export const Route = createFileRoute('/blog/$slug')({
 
 function BlogPost() {
   const meta = Route.useLoaderData()
-  const post = getPublishedPost(meta.slug)
   const articleRef = useRef<HTMLElement>(null)
-  if (!post) return null
-  const { Component } = post
+  const PostBody = getPostBody(meta.bodyPath)
 
   return (
     <div className="flex min-h-screen flex-col bg-blog-bg text-blog-text">
@@ -237,7 +235,9 @@ function BlogPost() {
             className="prose mx-auto max-w-2xl font-reading xl:col-start-2 prose-headings:mt-12 prose-headings:text-balance prose-headings:font-heading prose-headings:text-blog-text prose-p:text-pretty prose-p:text-[1.05rem] prose-p:leading-8 prose-p:text-blog-description prose-a:text-blog-accent prose-strong:text-blog-text prose-li:text-pretty prose-li:text-[1.05rem] prose-li:leading-8 prose-li:text-blog-description prose-th:text-blog-text prose-td:text-blog-description prose-code:bg-blog-panel prose-code:px-1 prose-code:py-0.5 prose-code:font-mono prose-code:text-blog-text prose-code:before:content-none prose-code:after:content-none prose-blockquote:text-pretty prose-blockquote:border-blog-accent prose-blockquote:text-blog-description prose-hr:border-blog-rule prose-pre:border prose-pre:border-blog-rule prose-pre:bg-blog-panel!"
           >
             <LinkScreenshotProvider urls={meta.linkScreenshotUrls}>
-              <Component components={mdxComponents} />
+              <Suspense>
+                <PostBody components={mdxComponents} />
+              </Suspense>
             </LinkScreenshotProvider>
           </article>
         </div>

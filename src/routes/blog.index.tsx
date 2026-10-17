@@ -18,7 +18,7 @@ import {
 } from '../lib/structured-data'
 
 export const Route = createFileRoute('/blog/')({
-  loader: () => getPublishedPosts().map(({ Component: _c, ...post }): PostListItem => post),
+  loader: (): PostListItem[] => getPublishedPosts(),
   head: ({ loaderData }) => {
     const latestPost = loaderData?.[0]
 
