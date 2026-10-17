@@ -16,6 +16,7 @@ import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import { defineConfig } from 'vite'
 import { imagetools } from 'vite-imagetools'
 import { mermaidPlugin } from './src/lib/mermaid-vite'
+import { rehypeCodeTitle } from './src/lib/rehype-code-title'
 import { rehypeImageCaptions } from './src/lib/rehype-image-captions'
 import { rehypeImageLqip } from './src/lib/rehype-image-lqip'
 import { remarkMermaid } from './src/lib/remark-mermaid'
@@ -69,6 +70,7 @@ const config = defineConfig({
               filterMetaString: useFilenameAsCodeTitle,
             },
           ],
+          rehypeCodeTitle,
           rehypeImageCaptions,
           rehypeImageLqip,
           rehypeMdxImportMedia,
