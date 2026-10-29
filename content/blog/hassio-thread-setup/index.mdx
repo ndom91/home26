@@ -168,6 +168,18 @@ My phone had the Ikea app installed, and it had set Ikea's Thread network as the
 
 Home Assistant's Thread 1.4 support provides a proper fix: create a one-time credential for another border router to join its Thread network, then use it to add the DIRIGERA hub's border router to the Home Assistant network. Once both border routers were on the same Thread network, I synced Thread credentials again in the Android Home Assistant app. I could then add Matter-over-Thread devices through that app without issue, and they were provisioned onto the Home Assistant Thread network as expected.
 
+### Follow-up: the OMR prefix can change
+
+Later, a new Ikea GRILLPLATS failed at the same connectivity check. The mesh's favored OMR prefix had changed from `fd01:7e50:6f0d:1::/64` to `fd74:5b15:3645:1::/64`, but my OPNsense static route and AP router advertisement still pointed to the old prefix. Joining DIRIGERA to the HA Thread network may have triggered the change.
+
+The HA OTBR can have a different **local** prefix from the mesh's **favored** one. Check both on HAOS (the container name may differ on older versions):
+
+```bash
+docker exec -i app_core_openthread_border_router ot-ctl br omrprefix
+```
+
+If the favored prefix has changed, make sure OPNsense has a static route and an AP router advertisement for it, and that the firewall rules cover it in both directions. I added the new route and RA entry while keeping the old ones, toggled WiFi on my phone, and commissioning worked again. The existing firewall rules already covered the new prefix.
+
 ## TL;DR
 
 Matter over Thread across VLANs with a ULA OMR needs **five** things. Missing any one fails silently at a different step:
