@@ -93,17 +93,9 @@ export function ProjectCard({ project }: { project: Project }) {
               target="_blank"
               rel="noreferrer"
               aria-label={label}
-              className={`${iconLinkClass} group/action`}
+              className={`${iconLinkClass} project-action`}
             >
-              <Icon
-                className={
-                  Icon === ExternalLink
-                    ? 'size-4 transition-transform duration-250 ease-smooth-out group-hover/action:translate-x-0.5 group-hover/action:-translate-y-0.5 group-focus-visible/action:translate-x-0.5 group-focus-visible/action:-translate-y-0.5 motion-reduce:transition-none motion-reduce:group-hover/action:translate-x-0 motion-reduce:group-hover/action:translate-y-0 motion-reduce:group-focus-visible/action:translate-x-0 motion-reduce:group-focus-visible/action:translate-y-0'
-                    : 'size-4'
-                }
-                strokeWidth={2}
-                aria-hidden="true"
-              />
+              <Icon className="size-4" strokeWidth={2} aria-hidden="true" />
             </a>
           ))}
           {project.stars !== undefined ? (
@@ -112,7 +104,7 @@ export function ProjectCard({ project }: { project: Project }) {
               target="_blank"
               rel="noreferrer"
               aria-label={`${project.title} GitHub stars: ${project.stars}`}
-              className="ml-auto flex min-h-10 items-center gap-1.5 text-[0.72rem] tabular-nums text-muted transition-[color,scale] hover:text-accent active:scale-[0.96] motion-reduce:transition-none"
+              className="project-star ml-auto flex min-h-10 items-center gap-1.5 text-[0.72rem] tabular-nums text-muted transition-[color,scale] hover:text-accent active:scale-[0.96] motion-reduce:transition-none"
             >
               <Star className="size-3.5" strokeWidth={2} aria-hidden="true" />
               {project.stars.toLocaleString('en-US')}

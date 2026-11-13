@@ -1080,6 +1080,52 @@ html[data-theme='dark'] .prose :where([data-rmiz] img.mdx-zoom-image) {
   }
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .project-action .lucide-external-link path:nth-child(-n + 2),
+  .project-action .lucide-book-open path,
+  .project-star .lucide-star {
+    transition: transform 250ms var(--ease-smooth-out);
+  }
+
+  .project-action:is(:hover, :focus-visible) .lucide-external-link path:nth-child(-n + 2) {
+    transform: translate(2px, -2px);
+  }
+
+  .project-action .lucide-book-open path {
+    transform-origin: 12px 12px;
+  }
+
+  .project-action:is(:hover, :focus-visible) .lucide-book-open path {
+    transform: scaleX(0.88);
+  }
+
+  .project-action .github-arm {
+    transform-origin: 9px 18px;
+  }
+
+  .project-action:is(:hover, :focus-visible) .github-arm {
+    animation: github-wave 550ms ease-in-out;
+  }
+
+  .project-star .lucide-star {
+    transform-origin: center;
+  }
+
+  .project-star:is(:hover, :focus-visible) .lucide-star {
+    transform: rotate(18deg) scale(1.1);
+  }
+}
+
+@keyframes github-wave {
+  30%, 70% {
+    transform: rotate(12deg);
+  }
+
+  50% {
+    transform: rotate(-4deg);
+  }
+}
+
 .prose .callout-fold-icon svg {
   width: 1em;
   height: 1em;
