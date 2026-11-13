@@ -26,7 +26,18 @@ export function FeaturedPostCard({ post }: { post: PostListItem }) {
             {post.description}
           </p>
         </div>
-        <PostCardMeta post={post} className="mt-8" />
+        <div className="mt-8">
+          <PostCardMeta post={post} />
+          <div className="font-mono mt-4 flex items-center justify-between border-t border-blog-rule pt-3 text-[10px] uppercase tracking-widest text-blog-muted transition-colors group-hover:text-blog-accent">
+            <span>{post.type === 'field-notes' ? 'Read note' : 'Read post'}</span>
+            <span
+              aria-hidden="true"
+              className="transition-transform duration-250 ease-smooth-out group-hover:translate-x-1 group-focus-visible:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0 motion-reduce:group-focus-visible:translate-x-0"
+            >
+              →
+            </span>
+          </div>
+        </div>
       </div>
       <PostCover
         post={post}

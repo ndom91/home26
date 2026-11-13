@@ -124,7 +124,7 @@ export function BlueskyComments({ discussionAtprotoUri }: { discussionAtprotoUri
       ) : null}
 
       {state.status === 'loaded' ? (
-        <div className="space-y-6">
+        <div className="comments-reveal space-y-6">
           <p className="font-mono text-[10px] tabular-nums uppercase tracking-widest text-blog-muted">
             {formatStat(rootPost?.replyCount ?? replies.length, 'reply')}
           </p>

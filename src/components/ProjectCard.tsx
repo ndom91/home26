@@ -93,9 +93,17 @@ export function ProjectCard({ project }: { project: Project }) {
               target="_blank"
               rel="noreferrer"
               aria-label={label}
-              className={iconLinkClass}
+              className={`${iconLinkClass} group/action`}
             >
-              <Icon className="size-4" strokeWidth={2} aria-hidden="true" />
+              <Icon
+                className={
+                  Icon === ExternalLink
+                    ? 'size-4 transition-transform duration-250 ease-smooth-out group-hover/action:translate-x-0.5 group-hover/action:-translate-y-0.5 group-focus-visible/action:translate-x-0.5 group-focus-visible/action:-translate-y-0.5 motion-reduce:transition-none motion-reduce:group-hover/action:translate-x-0 motion-reduce:group-hover/action:translate-y-0 motion-reduce:group-focus-visible/action:translate-x-0 motion-reduce:group-focus-visible/action:translate-y-0'
+                    : 'size-4'
+                }
+                strokeWidth={2}
+                aria-hidden="true"
+              />
             </a>
           ))}
           {project.stars !== undefined ? (

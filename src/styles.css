@@ -1039,6 +1039,47 @@ html[data-theme='dark'] .prose :where([data-rmiz] img.mdx-zoom-image) {
   rotate: -90deg;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .prose details:not(.callout) > summary::before,
+  .prose .callout-fold-icon {
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .copy-state {
+    display: inline-block;
+    animation: micro-reveal 150ms ease-out both;
+  }
+
+  .comments-reveal {
+    animation: micro-reveal 250ms ease-out both;
+  }
+
+  @supports (interpolate-size: allow-keywords) and selector(details::details-content) {
+    .prose details {
+      interpolate-size: allow-keywords;
+    }
+
+    .prose details::details-content {
+      block-size: 0;
+      overflow: clip;
+      transition: block-size 250ms var(--ease-smooth-out), content-visibility 250ms allow-discrete;
+    }
+
+    .prose details[open]::details-content {
+      block-size: auto;
+    }
+  }
+}
+
+@keyframes micro-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
 .prose .callout-fold-icon svg {
   width: 1em;
   height: 1em;
