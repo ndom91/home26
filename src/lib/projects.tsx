@@ -25,31 +25,29 @@ export type Project = {
 
 const projects: Project[] = [
   {
+    title: 'domino-news',
+    blurb:
+      'Domino Wire brings reporting from different publishers together, groups articles into stories, and links related stories into narratives. Compare coverage, follow how events unfold, and find stories you may have missed.',
+    repo: 'https://github.com/ndom91/domino-news',
+    demo: 'https://domino-wire.ndo.dev',
+    status: 'live',
+    tags: ['News', 'RSS', 'Aggregator'],
+    featured: true,
+  },
+  {
     title: 'open-plan-annotator',
     blurb:
       "A fully local agentic coding plugin that intercepts plan mode and opens an annotation UI in your browser. Mark up the plan, send structured feedback to the agent, and receive a revised version — iterate as many times as you need until you're ready to approve.",
     repo: 'https://github.com/ndom91/open-plan-annotator',
     status: 'live',
     tags: ['TypeScript', 'Agent Plugin'],
-    featured: true,
   },
   {
-    title: 'llama-dash',
-    blurb:
-      'llama-dash turns a self-hosted local inference box into an observable, policy-controlled AI gateway: one UI for model state, request history, API keys, routing rules, proxy metrics, and client setup.',
-    repo: 'https://github.com/ndom91/llama-dash',
-    demo: 'https://llama-dash.dev',
+    title: 'ESP32 e-ink Homelab Dashboard',
+    blurb: 'ESPHome-based LVGL UI for displaying homelab stats on a 5.79" e-ink display.',
+    repo: 'https://github.com/ndom91/crowpanel-homelab-dashboard',
     status: 'live',
-    tags: ['TanStack', 'Local LLM', 'Observability'],
-  },
-  {
-    title: 'pve-agents',
-    blurb:
-      'Self-hosted coding agent sandboxes on your own Proxmox host. Designed as a self-hostable cloud agent alternative, like those offered from my of the labs. Supports claude-code (including via subscription) and opencode2 as your harness.',
-    repo: 'https://github.com/ndom91/pve-agents',
-    demo: 'https://pve-agents.sh',
-    status: 'live',
-    tags: ['Proxmox', 'Sandboxes', 'Coding Agents'],
+    tags: ['ESP32', 'Smart Home'],
   },
   {
     title: 'next-auth (Auth.js)',
@@ -67,22 +65,19 @@ const projects: Project[] = [
     tags: ['Next.js', 'Authentication'],
   },
   {
-    title: 'commonwealth',
-    blurb:
-      'A shared, project-scoped knowledge base for AI agents. Connect your agent, your colleagues’ agents, and other MCP clients to the same source of context so they can exchange important decisions, discoveries, and constraints — and stop building past each other.',
-    repo: 'https://github.com/ndom91/commonwealth',
-    demo: 'https://commonwealth.ndo.dev',
-    status: 'live',
-    featured: false,
-    tags: ['TanStack Start', 'MCP Server'],
-  },
-  {
-    title: 'tmux-ai-window-name',
-    blurb:
-      "tmux plugin which leverages a local LLM to automatically rename your tmux windows based on what you're working on in them. Never get lost jumping around tmux again.",
+    title: 'ai-window-name',
+    blurb: (
+      <>
+        <ScreenshotLink url="https://github.com/ndom91/tmux-ai-window-name">tmux</ScreenshotLink>{' '}
+        and <ScreenshotLink url="https://github.com/ndom91/herdr-ai-tab-name">herdr</ScreenshotLink>{' '}
+        plugins which leverage a local LLM to automatically rename your tmux/herdr
+        windows/panes/workspaces based on what you're working on in them. Never get lost jumping
+        around your multiplexer again.
+      </>
+    ),
     repo: 'https://github.com/ndom91/tmux-ai-window-name',
     status: 'live',
-    tags: ['tmux', 'LLM'],
+    tags: ['tmux', 'herdr', 'LLM'],
   },
   {
     title: 'ha-voice-rocm',
@@ -90,8 +85,35 @@ const projects: Project[] = [
       "AMD (ROCm) oriented local voice LLM collection. This is an ever growing collection of various TTS and STT models, each of which is also wrapped in a slim Open Home Foundation Wyoming API layer to make it easy to consume said models in Home Assistant's voice assistant pipeline.",
     repo: 'https://github.com/ndom91/ha-voice-rocm',
     status: 'live',
-    featured: true,
     tags: ['Python', 'Home Assistant'],
+  },
+  {
+    title: 'llama-dash',
+    blurb:
+      'llama-dash turns a self-hosted local inference box into an observable, policy-controlled AI gateway: one UI for model state, request history, API keys, routing rules, proxy metrics, and client setup.',
+    repo: 'https://github.com/ndom91/llama-dash',
+    demo: 'https://llama-dash.dev',
+    status: 'live',
+    featured: true,
+    tags: ['TanStack', 'Local LLM', 'Observability'],
+  },
+  {
+    title: 'ai-infra-monitoring',
+    blurb:
+      'Tracking the balance sheet behind the AI build-out: GPU pricing, credit, and capex risk, with source-level provenance.',
+    repo: 'https://github.com/ndom91/ai-infra-monitoring',
+    demo: 'https://artificialliabilities.com',
+    status: 'live',
+    tags: ['AI', 'Economics', 'Data Vis'],
+  },
+  {
+    title: 'briefkasten',
+    blurb:
+      'Self-hosted bookmarking and RSS reader web app. Originally written years ago in React, the latest deployed iteration is a SvelteKit rewrite.',
+    repo: 'https://github.com/ndom91/briefkasten',
+    demo: 'https://briefkastenhq.com',
+    status: 'archived',
+    tags: ['Svelte'],
   },
   {
     title: 'domino-frame-web',
@@ -110,24 +132,6 @@ const projects: Project[] = [
     tags: ['Frame', 'Go'],
   },
   {
-    title: 'briefkasten',
-    blurb:
-      'Self-hosted bookmarking and RSS reader web app. Originally written years ago in React, the latest deployed iteration is a SvelteKit rewrite.',
-    repo: 'https://github.com/ndom91/briefkasten',
-    demo: 'https://briefkastenhq.com',
-    status: 'archived',
-    tags: ['Svelte'],
-  },
-  {
-    title: 'jellyfin-random-macos-screensaver',
-    blurb:
-      'Play a random Jellyfin TV show or movie as your MacOS screensaver. Configurable to play with or without audio, with or without subtitles, and will begin playing at a random point in the media anywhere between 2% and 30% of the way through.',
-    repo: 'https://github.com/ndom91/jellyfin-random-macos-screensaver',
-    status: 'live',
-    featured: true,
-    tags: ['Swift', 'Jellyfin'],
-  },
-  {
     title: 'calendar-led-strip',
     blurb:
       'Sync your GCal events to any WLED strip for a visual indicator of your daily schedule. See photo in linked repo below for my example use-case.',
@@ -142,6 +146,15 @@ const projects: Project[] = [
     demo: 'https://airescue.dev',
     status: 'live',
     tags: ['Landing Page', 'Marketing'],
+  },
+  {
+    title: 'jellyfin-random-macos-screensaver',
+    blurb:
+      'Play a random Jellyfin TV show or movie as your MacOS screensaver. Configurable to play with or without audio, with or without subtitles, and will begin playing at a random point in the media anywhere between 2% and 30% of the way through.',
+    repo: 'https://github.com/ndom91/jellyfin-random-macos-screensaver',
+    status: 'live',
+    featured: true,
+    tags: ['Swift', 'Jellyfin'],
   },
   {
     title: 'react-timezone-select',

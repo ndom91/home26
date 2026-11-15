@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import type { PostListItem } from '../lib/blog'
-import { PostCardMeta } from './PostCardMeta'
+import { PostCardMeta, PostCardTags } from './PostCardMeta'
 import { PostCover, postCardShellClass } from './PostCover'
 
 export function PostCard({ post, eager = false }: { post: PostListItem; eager?: boolean }) {
@@ -19,18 +19,25 @@ export function PostCard({ post, eager = false }: { post: PostListItem; eager?: 
         decoding="async"
       />
       <div className="flex flex-1 flex-col p-4">
-        <PostCardMeta post={post} />
+        <PostCardMeta post={post} showTags={false} />
         <h2 className="mt-4 text-balance font-heading font-extrabold text-[2rem] tracking-[0.005em] leading-[0.9] text-blog-text transition-colors group-hover:text-blog-accent">
           {post.title}
         </h2>
         <p className="mt-3 mb-5 text-pretty font-reading text-sm leading-6 text-blog-description">
           {post.description}
         </p>
-        <div className="font-mono mt-auto flex items-center justify-between border-t border-blog-rule pt-3 text-[10px] uppercase tracking-widest text-blog-muted transition-colors group-hover:text-blog-accent">
-          <span>{post.type === 'field-notes' ? 'Read note' : 'Read post'}</span>
-          <span className="transition-transform duration-250 ease-smooth-out group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0">
-            →
-          </span>
+        <div className="mt-auto">
+          {post.tags.length > 0 && (
+            <div className="mb-4 flex flex-wrap gap-2">
+              <PostCardTags post={post} />
+            </div>
+          )}
+          <div className="font-mono flex items-center justify-between border-t border-blog-rule pt-3 text-[10px] uppercase tracking-widest text-blog-muted transition-colors group-hover:text-blog-accent">
+            <span>{post.type === 'field-notes' ? 'Read note' : 'Read post'}</span>
+            <span className="transition-transform duration-250 ease-smooth-out group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0">
+              →
+            </span>
+          </div>
         </div>
       </div>
     </Link>
