@@ -12,7 +12,7 @@ export function PostShare({
   url: string
   className?: string
 }) {
-  const [copied, setCopied] = useState<'url' | 'markdown' | null>(null)
+  const [copied, setCopied] = useState(false)
   const [copyError, setCopyError] = useState(false)
   const resetTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const encodedUrl = encodeURIComponent(url)
@@ -31,14 +31,13 @@ export function PostShare({
 
   useEffect(() => () => clearTimeout(resetTimer.current), [])
 
-  const copy = async (format: 'url' | 'markdown') => {
+  const copyUrl = async () => {
     try {
-      const markdownTitle = title.replace(/[\\[\]]/g, '\\$&')
-      await navigator.clipboard.writeText(format === 'url' ? url : `[${markdownTitle}](${url})`)
+      await navigator.clipboard.writeText(url)
       clearTimeout(resetTimer.current)
       setCopyError(false)
-      setCopied(format)
-      resetTimer.current = setTimeout(() => setCopied(null), 1500)
+      setCopied(true)
+      resetTimer.current = setTimeout(() => setCopied(false), 1500)
     } catch {
       setCopyError(true)
     }
@@ -63,16 +62,14 @@ export function PostShare({
             </a>
           </li>
         ))}
-        {(['url', 'markdown'] as const).map((format) => (
-          <li key={format}>
-            <button type="button" onClick={() => copy(format)} className={actionClassName}>
-              <span aria-hidden="true" className="text-blog-faint">
-                └
-              </span>
-              {copied === format ? 'Copied ✓' : `Copy ${format === 'url' ? 'URL' : 'markdown'}`}
-            </button>
-          </li>
-        ))}
+        <li>
+          <button type="button" onClick={copyUrl} className={actionClassName}>
+            <span aria-hidden="true" className="text-blog-faint">
+              └
+            </span>
+            {copied ? 'Copied ✓' : 'Copy URL'}
+          </button>
+        </li>
       </ul>
       <p role="status" className={copyError ? 'mt-2 text-sm text-blog-muted' : 'sr-only'}>
         {copyError ? 'Could not copy. Please try again.' : copied ? 'Copied to clipboard.' : ''}
