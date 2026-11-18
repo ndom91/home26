@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { type CSSProperties, Suspense, useRef } from 'react'
 import { BlueskyComments } from '../components/BlueskyComments'
 import { LinkScreenshotProvider } from '../components/mdx/link-screenshot-context'
+import { PostShare } from '../components/PostShare'
 import { ProgressiveImage } from '../components/ProgressiveImage'
 import { SiteFooter } from '../components/SiteFooter'
 import { SiteHeader } from '../components/SiteHeader'
@@ -138,6 +139,8 @@ function BlogPost() {
   const meta = Route.useLoaderData()
   const articleRef = useRef<HTMLElement>(null)
   const PostBody = getPostBody(meta.bodyPath)
+  const readTime = formatReadTime(meta.readTimeSeconds)
+  const postUrl = `${blogUrl}/${meta.slug}`
 
   return (
     <div className="flex min-h-screen flex-col bg-blog-bg text-blog-text">
@@ -244,30 +247,73 @@ function BlogPost() {
         </div>
       </header>
 
-      <div className="flex-1 px-6 py-12 sm:py-16">
-        <div className="xl:grid xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-x-12">
-          <TableOfContents
-            key={meta.slug}
-            headings={meta.headings}
-            containerRef={articleRef}
-            className="hidden xl:col-start-1 xl:block xl:h-[calc(100dvh-3rem)] xl:justify-self-end xl:self-start xl:sticky xl:top-6 xl:w-56"
-          />
-          <article
-            id="article-introduction"
-            ref={articleRef}
-            className="prose mx-auto max-w-2xl font-reading xl:col-start-2"
-          >
-            <LinkScreenshotProvider urls={meta.linkScreenshotUrls}>
-              <Suspense>
-                <PostBody components={mdxComponents} />
-              </Suspense>
-            </LinkScreenshotProvider>
-          </article>
+      <div className="flex-1 px-6">
+        <div className="mx-auto max-w-7xl min-[1100px]:grid min-[1100px]:grid-cols-[340px_minmax(0,1fr)] min-[1100px]:gap-x-[72px]">
+          <aside className="sticky top-0 hidden h-dvh min-h-0 -translate-x-[clamp(0rem,calc((100vw_-_80rem)/2_-_3rem),8rem)] flex-col justify-between gap-[clamp(16px,5dvh,40px)] py-[clamp(16px,5dvh,40px)] min-[1100px]:flex">
+            <div className="flex min-h-0 flex-col gap-[clamp(12px,3dvh,24px)]">
+              <div className="shrink-0">
+                <Link
+                  to="/blog"
+                  className="inline-block py-2 font-mono text-xs uppercase tracking-widest text-blog-muted transition-colors hover:text-blog-accent focus-visible:outline-2 focus-visible:outline-blog-accent motion-reduce:transition-none"
+                >
+                  ← WRITING
+                </Link>
+                <p className="mt-2 max-w-[300px] wrap-break-word font-heading text-[1.75rem] font-bold leading-[1.05] text-blog-text">
+                  {meta.title}
+                </p>
+              </div>
+              <TableOfContents
+                key={meta.slug}
+                headings={meta.headings}
+                containerRef={articleRef}
+                readTime={readTime}
+              />
+            </div>
+            <PostShare key={meta.slug} title={meta.title} url={postUrl} />
+          </aside>
+          <div className="min-w-0 pt-12 sm:pt-16">
+            {meta.headings.length > 0 ? (
+              <details className="mx-auto mb-10 max-w-[680px] border-y border-blog-rule min-[1100px]:hidden">
+                <summary className="cursor-pointer py-4 font-mono text-sm uppercase tracking-widest text-blog-muted marker:text-blog-accent focus-visible:outline-2 focus-visible:outline-blog-accent">
+                  On this page
+                </summary>
+                <TableOfContents
+                  key={meta.slug}
+                  headings={meta.headings}
+                  containerRef={articleRef}
+                  readTime={readTime}
+                  mobile
+                  className="pb-5"
+                />
+              </details>
+            ) : null}
+            <article
+              id="article-introduction"
+              ref={articleRef}
+              className="prose mx-auto max-w-[680px] font-reading min-[1100px]:ml-0"
+            >
+              <LinkScreenshotProvider urls={meta.linkScreenshotUrls}>
+                <Suspense>
+                  <PostBody components={mdxComponents} />
+                </Suspense>
+              </LinkScreenshotProvider>
+            </article>
+            <PostShare
+              key={`mobile-${meta.slug}`}
+              title={meta.title}
+              url={postUrl}
+              className="mx-auto mt-12 max-w-[680px] border-t border-blog-rule pt-6 min-[1100px]:hidden"
+            />
+          </div>
         </div>
-        <ArticleNavigation nextPost={meta.nextPost} previousPost={meta.previousPost} />
-        {meta.discussionAtprotoUri ? (
-          <BlueskyComments discussionAtprotoUri={meta.discussionAtprotoUri} />
-        ) : null}
+        <div className="mx-auto max-w-7xl pb-12 sm:pb-16">
+          <div className="min-w-0 min-[1100px]:ml-[412px]">
+            <ArticleNavigation nextPost={meta.nextPost} previousPost={meta.previousPost} />
+            {meta.discussionAtprotoUri ? (
+              <BlueskyComments discussionAtprotoUri={meta.discussionAtprotoUri} />
+            ) : null}
+          </div>
+        </div>
       </div>
 
       <SiteFooter variant="blog" />

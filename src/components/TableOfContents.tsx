@@ -1,90 +1,43 @@
 import { type MouseEvent, type RefObject, useEffect, useRef, useState } from 'react'
 import type { PostHeading } from '../lib/post-headings'
 
-// Distance from the viewport top at which a heading is considered "current".
-// Roughly clears the sticky site header plus a little breathing room.
-const ACTIVE_OFFSET_PX = 128
-const INTRODUCTION_ID = 'article-introduction'
+// A shared offset keeps the active section and anchor landing position aligned.
+const ACTIVE_OFFSET_PX = 140
 const MARKER_GAP_PX = 12
-const MARKER_SIZE_PX = 6
+const MARKER_SIZE_PX = 5
 const ARC_STEPS = 16
-// Matches the `xl:block` breakpoint the TOC is shown at; below it the TOC is
-// hidden, so scroll tracking is skipped entirely.
-const VISIBLE_QUERY = '(min-width: 80rem)'
-let scrollFrame = 0
-
-function scrollToProgressSection(
-  event: MouseEvent<HTMLAnchorElement>,
-  id: string,
-  onComplete?: () => void
-) {
-  if (event.button !== 0 || event.metaKey || event.altKey || event.ctrlKey || event.shiftKey) {
-    return
-  }
-
-  const target = document.getElementById(id)
-  if (!target) return
-
-  event.preventDefault()
-  window.history.pushState(null, '', `#${id}`)
-  const top = Math.min(
-    Math.max(0, target.getBoundingClientRect().top + window.scrollY - ACTIVE_OFFSET_PX),
-    document.documentElement.scrollHeight - window.innerHeight
-  )
-
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    window.scrollTo({ top, behavior: 'auto' })
-    onComplete?.()
-    return
-  }
-
-  window.cancelAnimationFrame(scrollFrame)
-  const start = window.scrollY
-  const distance = top - start
-  const duration = Math.min(700, Math.max(250, Math.abs(distance) * 0.25))
-  const startedAt = performance.now()
-
-  const scroll = (now: number) => {
-    const progress = Math.min(1, (now - startedAt) / duration)
-    window.scrollTo({ top: start + distance * (1 - (1 - progress) ** 3), behavior: 'auto' })
-    if (progress < 1) {
-      scrollFrame = window.requestAnimationFrame(scroll)
-    } else {
-      onComplete?.()
-    }
-  }
-
-  scrollFrame = window.requestAnimationFrame(scroll)
-}
 
 export function TableOfContents({
   headings,
   containerRef,
   className,
+  readTime,
+  mobile = false,
 }: {
   /** Extracted at build time (src/lib/post-headings.ts), so the TOC prerenders. */
   headings: PostHeading[]
   containerRef: RefObject<HTMLElement | null>
   className?: string
+  readTime: string
+  mobile?: boolean
 }) {
   const [activeId, setActiveId] = useState<string | null>(null)
-  // Progress bars are written straight to a CSS var: scroll fires every frame
-  // and a React state update there would re-render the whole TOC.
-  const progressRefs = useRef(new Map<string, HTMLSpanElement>())
+  const [progress, setProgress] = useState(0)
+  const scrollerRef = useRef<HTMLDivElement>(null)
   const markerRef = useRef<HTMLSpanElement>(null)
   const headingRefs = useRef(new Map<string, HTMLLIElement>())
   const markerPosition = useRef<{ x: number; y: number } | null>(null)
   const markerAnimation = useRef<Animation | null>(null)
-  const pendingHeadingId = useRef<string | null>(null)
 
   // Track which heading the reader is currently under as they scroll.
   useEffect(() => {
-    if (headings.length === 0) return
-
     const container = containerRef.current
     if (!container) return
 
-    const visible = window.matchMedia(VISIBLE_QUERY)
+    const visible = window.matchMedia(mobile ? '(width < 1100px)' : '(min-width: 1100px)')
+    const observer = new ResizeObserver(() => {
+      if (visible.matches) onScroll()
+    })
     let frame = 0
 
     const updateActive = () => {
@@ -93,37 +46,17 @@ export function TableOfContents({
         .map((heading) => document.getElementById(heading.id))
         .filter((node): node is HTMLElement => node !== null)
 
+      const article = container.getBoundingClientRect()
+      const distance = article.height - window.innerHeight + ACTIVE_OFFSET_PX
+      let fraction = 0
+      if (article.top <= ACTIVE_OFFSET_PX) {
+        fraction =
+          distance <= 0 ? 1 : Math.max(0, Math.min(1, (ACTIVE_OFFSET_PX - article.top) / distance))
+      }
+      setProgress(Math.round(fraction * 100))
+
       if (nodes.length === 0) return
-
-      const scrollMargin = Number.parseFloat(getComputedStyle(nodes[0]).scrollMarginTop) || 0
-      const activeOffset = ACTIVE_OFFSET_PX + scrollMargin
-
-      const sections = nodes.filter((node) => node.tagName === 'H2')
-      const sectionIds = [INTRODUCTION_ID, ...sections.map((section) => section.id)]
-      const sectionStarts = [
-        container.getBoundingClientRect().top,
-        ...sections.map((section) => section.getBoundingClientRect().top),
-      ]
-      const articleBottom = container.getBoundingClientRect().bottom
-      const articleComplete = articleBottom <= window.innerHeight
-      sectionIds.forEach((sectionId, index) => {
-        let progress = 1
-        if (!articleComplete) {
-          const start = sectionStarts[index]
-          const nextSection = sectionStarts[index + 1]
-          // The final section completes when the article has fully entered the viewport.
-          const end = nextSection ?? articleBottom - window.innerHeight + activeOffset
-          const distance = end - start
-          progress =
-            distance <= 0
-              ? Number(start <= ACTIVE_OFFSET_PX)
-              : Math.max(0, Math.min(1, (activeOffset - start) / distance))
-        }
-        progressRefs.current.get(sectionId)?.style.setProperty('--section-progress', `${progress}`)
-      })
-
-      // Keep a clicked heading selected until the controlled scroll reaches it.
-      if (pendingHeadingId.current) return
+      const articleComplete = article.bottom <= window.innerHeight
 
       // Treat the final heading as current once the article has been fully read.
       if (articleComplete) {
@@ -134,7 +67,7 @@ export function TableOfContents({
       // Otherwise the current section is the last heading above the offset line.
       let current = nodes[0].id
       for (const node of nodes) {
-        if (node.getBoundingClientRect().top <= activeOffset) {
+        if (node.getBoundingClientRect().top <= ACTIVE_OFFSET_PX + 1) {
           current = node.id
         } else {
           break
@@ -153,11 +86,13 @@ export function TableOfContents({
       frame = 0
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
+      observer.disconnect()
     }
     const sync = () => {
       stop()
       if (!visible.matches) return
       updateActive()
+      observer.observe(container)
       window.addEventListener('scroll', onScroll, { passive: true })
       window.addEventListener('resize', onScroll, { passive: true })
     }
@@ -169,7 +104,7 @@ export function TableOfContents({
       stop()
       visible.removeEventListener('change', sync)
     }
-  }, [headings, containerRef])
+  }, [headings, containerRef, mobile])
 
   // Sweep the marker along a short arc rather than teleporting it between sections.
   useEffect(() => {
@@ -181,84 +116,101 @@ export function TableOfContents({
     if (!marker || !heading || !list) return
 
     const link = heading.querySelector<HTMLAnchorElement>('a')
-    if (!link) return
+    const scroller = scrollerRef.current
+    if (!link || !scroller) return
 
-    const headingRect = heading.getBoundingClientRect()
-    const listRect = list.getBoundingClientRect()
-    const linkStyle = getComputedStyle(link)
-    const lineHeight = Number.parseFloat(linkStyle.lineHeight)
-    const markerY =
-      headingRect.top -
-      listRect.top +
-      (Number.isNaN(lineHeight)
-        ? (headingRect.height - MARKER_SIZE_PX) / 2
-        : Number.parseFloat(linkStyle.paddingBlockStart) + (lineHeight - MARKER_SIZE_PX) / 2)
-    const nextPosition = {
-      x:
-        link.getBoundingClientRect().left -
-        listRect.left +
-        Number.parseFloat(linkStyle.paddingInlineStart) -
-        MARKER_GAP_PX,
-      y: markerY,
-    }
+    const positionMarker = () => {
+      if (heading.getClientRects().length === 0 || heading.offsetHeight === 0) return
+      const headingRect = heading.getBoundingClientRect()
+      const bounds = scroller.getBoundingClientRect()
+      if (headingRect.top < bounds.top) scroller.scrollTop -= bounds.top - headingRect.top
+      else if (headingRect.bottom > bounds.bottom)
+        scroller.scrollTop += headingRect.bottom - bounds.bottom
 
-    if (!markerPosition.current) {
-      marker.style.transform = `translate3d(${nextPosition.x}px, ${nextPosition.y}px, 0)`
-      markerPosition.current = nextPosition
-      return
-    }
-
-    let currentPosition = markerPosition.current
-    if (markerAnimation.current) {
-      const transform = getComputedStyle(marker).transform
-      if (transform !== 'none') {
-        const matrix = new DOMMatrixReadOnly(transform)
-        currentPosition = { x: matrix.m41, y: matrix.m42 }
+      // Both rects are read after scrolling; the marker is in list coordinates.
+      const listRect = list.getBoundingClientRect()
+      const itemRect = heading.getBoundingClientRect()
+      const linkStyle = getComputedStyle(link)
+      const lineHeight = Number.parseFloat(linkStyle.lineHeight)
+      const markerY =
+        itemRect.top -
+        listRect.top +
+        (Number.isNaN(lineHeight)
+          ? (itemRect.height - MARKER_SIZE_PX) / 2
+          : Number.parseFloat(linkStyle.paddingBlockStart) + (lineHeight - MARKER_SIZE_PX) / 2)
+      const nextPosition = {
+        x:
+          link.getBoundingClientRect().left -
+          listRect.left +
+          Number.parseFloat(linkStyle.paddingInlineStart) -
+          MARKER_GAP_PX,
+        y: markerY,
       }
-      markerAnimation.current.cancel()
-    }
 
-    const distance = nextPosition.y - currentPosition.y
-    const horizontalDistance = nextPosition.x - currentPosition.x
-    markerPosition.current = nextPosition
-    marker.style.transform = `translate3d(${nextPosition.x}px, ${nextPosition.y}px, 0)`
+      if (!markerPosition.current) {
+        marker.style.transform = `translate3d(${nextPosition.x}px, ${nextPosition.y}px, 0)`
+        markerPosition.current = nextPosition
+        return
+      }
 
-    if (
-      (distance === 0 && horizontalDistance === 0) ||
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    ) {
-      return
-    }
-
-    // A quadratic curve bulges half as far as its control point, so this
-    // swings the dot up to ~44px left of the list on long jumps.
-    const arcOffset = Math.min(88, 12 + Math.abs(distance) * 0.3)
-    const controlX = Math.min(currentPosition.x, nextPosition.x) - arcOffset
-    markerAnimation.current = marker.animate(
-      // Enough keyframes that the wide arc reads as a curve, not a polyline.
-      Array.from({ length: ARC_STEPS + 1 }, (_, index) => {
-        const progress = index / ARC_STEPS
-        const remaining = 1 - progress
-        const x =
-          remaining ** 2 * currentPosition.x +
-          2 * remaining * progress * controlX +
-          progress ** 2 * nextPosition.x
-        const y =
-          remaining ** 2 * currentPosition.y +
-          2 * remaining * progress * (currentPosition.y + distance / 2) +
-          progress ** 2 * nextPosition.y
-
-        return {
-          offset: progress,
-          transform: `translate3d(${x}px, ${y}px, 0)`,
+      let currentPosition = markerPosition.current
+      if (markerAnimation.current) {
+        const transform = getComputedStyle(marker).transform
+        if (transform !== 'none') {
+          const matrix = new DOMMatrixReadOnly(transform)
+          currentPosition = { x: matrix.m41, y: matrix.m42 }
         }
-      }),
-      {
-        duration: 250,
-        easing: 'ease-out',
-        fill: 'both',
+        markerAnimation.current.cancel()
       }
-    )
+
+      const distance = nextPosition.y - currentPosition.y
+      const horizontalDistance = nextPosition.x - currentPosition.x
+      markerPosition.current = nextPosition
+      marker.style.transform = `translate3d(${nextPosition.x}px, ${nextPosition.y}px, 0)`
+
+      if (
+        (distance === 0 && horizontalDistance === 0) ||
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
+        return
+      }
+
+      // A quadratic curve bulges half as far as its control point, so this
+      // swings the dot up to ~44px left of the list on long jumps.
+      const arcOffset = Math.min(88, 12 + Math.abs(distance) * 0.3)
+      const controlX = Math.min(currentPosition.x, nextPosition.x) - arcOffset
+      markerAnimation.current = marker.animate(
+        // Enough keyframes that the wide arc reads as a curve, not a polyline.
+        Array.from({ length: ARC_STEPS + 1 }, (_, index) => {
+          const progress = index / ARC_STEPS
+          const remaining = 1 - progress
+          const x =
+            remaining ** 2 * currentPosition.x +
+            2 * remaining * progress * controlX +
+            progress ** 2 * nextPosition.x
+          const y =
+            remaining ** 2 * currentPosition.y +
+            2 * remaining * progress * (currentPosition.y + distance / 2) +
+            progress ** 2 * nextPosition.y
+
+          return {
+            offset: progress,
+            transform: `translate3d(${x}px, ${y}px, 0)`,
+          }
+        }),
+        {
+          duration: 250,
+          easing: 'ease-out',
+          fill: 'both',
+        }
+      )
+    }
+
+    positionMarker()
+    const observer = new ResizeObserver(positionMarker)
+    observer.observe(list)
+    observer.observe(scroller)
+    return () => observer.disconnect()
   }, [activeId])
 
   useEffect(() => {
@@ -266,96 +218,91 @@ export function TableOfContents({
   }, [])
 
   const navigateToHeading = (event: MouseEvent<HTMLAnchorElement>, id: string) => {
-    pendingHeadingId.current = id
-    setActiveId(id)
-    scrollToProgressSection(event, id, () => {
-      pendingHeadingId.current = null
+    if (event.button !== 0 || event.metaKey || event.altKey || event.ctrlKey || event.shiftKey)
+      return
+    const target = document.getElementById(id)
+    if (!target) return
+    event.preventDefault()
+    window.history.pushState(null, '', `#${id}`)
+    target.tabIndex = -1
+    target.focus({ preventScroll: true })
+    window.scrollTo({
+      top: target.getBoundingClientRect().top + window.scrollY - ACTIVE_OFFSET_PX,
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'instant'
+        : 'smooth',
     })
   }
 
-  if (headings.length === 0) return null
-
-  const sections = [
-    { id: INTRODUCTION_ID, text: 'Introduction' },
-    ...headings.filter((heading) => heading.level === 2),
-  ]
-
   return (
-    <nav aria-label="Table of contents" className={`font-reading ${className ?? ''}`}>
-      <div className="flex h-full gap-6">
-        {/* -ml/pl gives the marker arc room: overflow-y-auto also clips horizontally. */}
-        <div className="-ml-12 min-w-0 flex-1 overflow-y-auto pl-12">
-          <p className="text-[10px] uppercase tracking-[0.28em] text-blog-faint">On this page</p>
-          <ul className="relative mt-4 space-y-0.5 pl-6">
-            {activeId ? (
-              <span
-                ref={markerRef}
-                aria-hidden="true"
-                className="pointer-events-none absolute left-0 top-0 size-1.5 rounded-full bg-blog-accent"
-              />
-            ) : null}
-            {headings.map((heading) => {
-              const isActive = heading.id === activeId
-              return (
-                <li
-                  key={heading.id}
-                  ref={(element) => {
-                    if (element) {
-                      headingRefs.current.set(heading.id, element)
-                    } else {
-                      headingRefs.current.delete(heading.id)
-                    }
-                  }}
-                >
-                  <a
-                    href={`#${heading.id}`}
-                    aria-current={isActive ? 'location' : undefined}
-                    data-active={isActive || undefined}
-                    onClick={(event) => navigateToHeading(event, heading.id)}
-                    className={`block py-1 text-sm leading-snug text-blog-muted transition-colors hover:text-blog-accent data-[active]:text-blog-accent ${
-                      heading.level === 3 ? 'pl-3' : ''
-                    }`}
-                  >
-                    {heading.text}
-                  </a>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-        <ol aria-label="Article progress" className="flex w-1 shrink-0 flex-col gap-1">
-          {sections.map((section) => (
-            <li key={section.id} className="relative min-h-7 flex-1">
-              <a
-                href={`#${section.id}`}
-                aria-label={`Jump to ${section.text}`}
-                onClick={(event) =>
-                  section.id === INTRODUCTION_ID
-                    ? scrollToProgressSection(event, section.id)
-                    : navigateToHeading(event, section.id)
-                }
-                className="absolute -inset-x-3 inset-y-0 flex justify-center outline-offset-4 focus-visible:outline-2 focus-visible:outline-blog-accent"
-              >
-                <span className="sr-only">Jump to {section.text}</span>
+    <nav
+      aria-label="Table of contents"
+      className={`flex min-h-0 flex-col gap-[clamp(8px,2.5dvh,20px)] font-reading ${className ?? ''}`}
+    >
+      {headings.length > 0 ? (
+        <>
+          {!mobile ? (
+            <p className="shrink-0 font-mono text-xs uppercase tracking-[0.28em] text-blog-muted">
+              On this page
+            </p>
+          ) : null}
+          {/* The left gutter keeps the bouncing marker inside the scrollable area. */}
+          <div ref={scrollerRef} className="-ml-10 min-h-0 overflow-y-auto pl-10">
+            <div className="relative">
+              {activeId ? (
                 <span
+                  ref={markerRef}
                   aria-hidden="true"
-                  className="block h-full w-1 overflow-hidden rounded-full bg-blog-rule"
-                >
-                  <span
-                    ref={(element) => {
-                      if (element) {
-                        progressRefs.current.set(section.id, element)
-                      } else {
-                        progressRefs.current.delete(section.id)
-                      }
-                    }}
-                    className="block h-full origin-top bg-blog-accent [scale:1_var(--section-progress,0)]"
-                  />
-                </span>
-              </a>
-            </li>
-          ))}
-        </ol>
+                  className="pointer-events-none absolute left-0 top-0 size-[5px] rounded-full bg-blog-accent"
+                />
+              ) : null}
+              <ul className="pl-[15px]">
+                {headings.map((heading) => {
+                  const isActive = heading.id === activeId
+                  return (
+                    <li
+                      key={heading.id}
+                      ref={(element) => {
+                        if (element) headingRefs.current.set(heading.id, element)
+                        else headingRefs.current.delete(heading.id)
+                      }}
+                    >
+                      <a
+                        href={`#${heading.id}`}
+                        aria-current={isActive ? 'true' : undefined}
+                        data-active={isActive || undefined}
+                        onClick={(event) => navigateToHeading(event, heading.id)}
+                        className={`block py-[3px] text-[0.9375rem] leading-[1.4] text-blog-muted transition-colors hover:text-blog-accent focus-visible:outline-2 focus-visible:outline-blog-accent data-[active]:text-blog-accent motion-reduce:transition-none ${
+                          heading.level === 3 ? 'pl-[15px]' : ''
+                        }`}
+                      >
+                        {heading.text}
+                      </a>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          </div>
+        </>
+      ) : null}
+      <div className="flex shrink-0 items-center gap-3">
+        <div
+          role="progressbar"
+          aria-label="Reading progress"
+          aria-valuenow={progress}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          className="h-[3px] w-[150px] max-w-[45%] overflow-hidden rounded-full bg-blog-rule"
+        >
+          <span
+            className="block h-full origin-left bg-blog-accent"
+            style={{ transform: `scaleX(${progress / 100})` }}
+          />
+        </div>
+        <span className="whitespace-nowrap font-mono text-xs tabular-nums text-blog-muted">
+          {progress}% · {readTime}
+        </span>
       </div>
     </nav>
   )

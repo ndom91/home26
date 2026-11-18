@@ -749,7 +749,7 @@ html[data-theme='dark'] :where([data-rehype-pretty-code-figure]) span {
 
 .prose :where(h1, h2, h3, h4, h5, h6) {
   position: relative;
-  scroll-margin-top: 1.5rem;
+  scroll-margin-top: 140px;
   line-height: 1;
   letter-spacing: 0.02em;
   text-wrap: balance;
