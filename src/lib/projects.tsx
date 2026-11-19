@@ -25,11 +25,11 @@ export type Project = {
 
 const projects: Project[] = [
   {
-    title: 'domino-news',
+    title: 'domino-wire',
     blurb:
       'Domino Wire brings reporting from different publishers together, groups articles into stories, and links related stories into narratives. Compare coverage, follow how events unfold, and find stories you may have missed.',
     repo: 'https://github.com/ndom91/domino-news',
-    demo: 'https://domino-wire.ndo.dev',
+    demo: 'https://dominowire.com',
     status: 'live',
     tags: ['News', 'RSS', 'Aggregator'],
     featured: true,
