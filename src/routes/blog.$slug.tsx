@@ -173,7 +173,7 @@ function BlogPost() {
                 {meta.publishedAt.slice(0, 4)}
               </p>
               <h1
-                className="max-w-4xl text-balance font-heading text-[min(clamp(3.15rem,5.5vw,6.55rem),calc(100cqi/var(--title-fit-em)))] font-extrabold uppercase leading-[0.94] tracking-normal text-blog-text wrap-break-word"
+                className="max-w-4xl text-balance font-heading text-[min(clamp(2.25rem,3.6vw,4rem),calc(100cqi/var(--title-fit-em)))] font-extrabold uppercase leading-[1] tracking-[-0.01em] text-blog-text wrap-break-word"
                 style={{ '--title-fit-em': longestWordEm(meta.title) } as CSSProperties}
               >
                 {meta.title}
@@ -258,7 +258,7 @@ function BlogPost() {
                 >
                   ← WRITING
                 </Link>
-                <p className="mt-2 max-w-[300px] wrap-break-word font-heading text-[1.75rem] font-bold leading-[1.05] text-blog-text">
+                <p className="mt-2 max-w-[300px] wrap-break-word font-heading text-[1.3rem] font-semibold leading-[1.15] text-blog-text">
                   {meta.title}
                 </p>
               </div>
@@ -372,7 +372,7 @@ function ArticleNavLink({
         <p className="font-mono mb-4 text-[9px] uppercase tracking-widest text-blog-faint transition-colors group-hover:text-blog-accent">
           {isNext ? 'Next article' : 'Prev article'}
         </p>
-        <h2 className="text-balance font-heading text-xl font-extrabold uppercase leading-[0.95] text-blog-text transition-colors group-hover:text-blog-accent sm:text-4xl">
+        <h2 className="text-balance font-heading text-lg font-extrabold uppercase leading-[1] text-blog-text transition-colors group-hover:text-blog-accent sm:text-2xl">
           {post.title}
         </h2>
         <p className="mt-4 line-clamp-2 text-pretty font-reading text-sm leading-6 text-blog-description">

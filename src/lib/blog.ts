@@ -21,64 +21,65 @@ export function readTimeLabel(seconds: number): string {
   return `${Math.max(1, Math.round(seconds / 60))} min`
 }
 
-// Glyph advance widths (in em) for Manuka Bold, extracted from the font's
-// hmtx table (unitsPerEm 1000). Titles render uppercase font-extrabold, which
-// resolves to the Bold file, so only caps/digits/punctuation matter.
-const MANUKA_800_ADVANCES: Record<string, number> = {
-  A: 0.324,
-  B: 0.331,
-  C: 0.321,
-  D: 0.334,
-  E: 0.265,
-  F: 0.263,
-  G: 0.324,
-  H: 0.347,
-  I: 0.164,
-  J: 0.325,
-  K: 0.334,
-  L: 0.253,
-  M: 0.427,
-  N: 0.339,
-  O: 0.331,
-  P: 0.33,
-  Q: 0.331,
-  R: 0.335,
-  S: 0.31,
-  T: 0.297,
-  U: 0.327,
-  V: 0.319,
-  W: 0.436,
-  X: 0.324,
-  Y: 0.312,
-  Z: 0.271,
-  '0': 0.331,
-  '1': 0.204,
-  '2': 0.312,
-  '3': 0.32,
-  '4': 0.339,
-  '5': 0.32,
-  '6': 0.33,
-  '7': 0.308,
-  '8': 0.326,
-  '9': 0.33,
-  '-': 0.2,
-  "'": 0.144,
-  '’': 0.157,
-  '&': 0.338,
-  '.': 0.157,
-  ',': 0.157,
-  ':': 0.157,
-  '!': 0.159,
-  '?': 0.319,
-  '/': 0.253,
-  '(': 0.234,
-  ')': 0.234,
+// Glyph advance widths (in em) for Clash Display at wght 700, extracted from
+// the variable font's hmtx table (unitsPerEm 1000). Titles render uppercase
+// font-extrabold, which clamps to the font's 700 maximum, so only
+// caps/digits/punctuation matter.
+const HEADING_ADVANCES: Record<string, number> = {
+  A: 0.828,
+  B: 0.714,
+  C: 0.77,
+  D: 0.761,
+  E: 0.648,
+  F: 0.648,
+  G: 0.797,
+  H: 0.748,
+  I: 0.248,
+  J: 0.664,
+  K: 0.731,
+  L: 0.625,
+  M: 0.952,
+  N: 0.736,
+  O: 0.786,
+  P: 0.67,
+  Q: 0.786,
+  R: 0.709,
+  S: 0.684,
+  T: 0.691,
+  U: 0.736,
+  V: 0.788,
+  W: 1.123,
+  X: 0.8,
+  Y: 0.766,
+  Z: 0.697,
+  '0': 0.733,
+  '1': 0.407,
+  '2': 0.66,
+  '3': 0.688,
+  '4': 0.721,
+  '5': 0.725,
+  '6': 0.718,
+  '7': 0.611,
+  '8': 0.694,
+  '9': 0.718,
+  '-': 0.481,
+  "'": 0.235,
+  '’': 0.304,
+  '&': 0.773,
+  '.': 0.304,
+  ',': 0.304,
+  ':': 0.304,
+  '!': 0.352,
+  '?': 0.652,
+  '/': 0.514,
+  '(': 0.349,
+  ')': 0.393,
 }
 
-// Hero titles render at tracking-normal (Manuka is condensed by nature);
-// letter-spacing applies after every glyph.
-const HEADING_TRACKING_EM = 0
-const FALLBACK_ADVANCE_EM = 0.4
+// Letter-spacing applies after every glyph; keep in sync with the hero
+// title's tracking class.
+const HEADING_TRACKING_EM = -0.01
+const FALLBACK_ADVANCE_EM = 0.75
 
 // Em width of the widest word in a title, used to cap the hero font-size so
 // no word ever breaks mid-word: font-size = min(clamp(...), 100cqi / em).
@@ -86,7 +87,7 @@ export function longestWordEm(title: string): number {
   const words = title.toUpperCase().split(/\s+/).filter(Boolean)
   const widths = words.map((word) =>
     [...word].reduce(
-      (sum, char) => sum + (MANUKA_800_ADVANCES[char] ?? FALLBACK_ADVANCE_EM) + HEADING_TRACKING_EM,
+      (sum, char) => sum + (HEADING_ADVANCES[char] ?? FALLBACK_ADVANCE_EM) + HEADING_TRACKING_EM,
       0
     )
   )

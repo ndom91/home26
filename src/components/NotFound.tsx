@@ -24,7 +24,7 @@ export function NotFound() {
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_32rem] lg:items-end">
             <h1
               id="notfound-title"
-              className="m-0 min-w-0 text-balance font-heading text-[clamp(12rem,26vw,20rem)] font-extrabold uppercase leading-[0.8] tracking-[-0.03em] text-blog-text"
+              className="m-0 min-w-0 text-balance font-heading text-[clamp(6rem,12vw,9.5rem)] font-extrabold uppercase leading-[0.85] tracking-[-0.02em] text-blog-text"
             >
               404
             </h1>

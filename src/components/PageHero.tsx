@@ -19,7 +19,7 @@ export function PageHero({ description, eyebrow, meta, title }: PageHeroProps) {
       <div className="relative mx-auto max-w-7xl">
         {eyebrow}
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end">
-          <h1 className="text-balance font-heading min-w-0 text-[clamp(7rem,15vw,13rem)] font-extrabold uppercase leading-35 tracking-[-0.375px] text-blog-text">
+          <h1 className="text-balance font-heading min-w-0 text-[clamp(3.5rem,7vw,6rem)] font-extrabold uppercase leading-[0.95] tracking-[-0.01em] text-blog-text">
             {title}
           </h1>
           <div className={`border-l pl-4 lg:pb-3 border-rule`}>

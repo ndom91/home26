@@ -25,7 +25,7 @@ export const Route = createFileRoute('/projects')({
     ],
     links: [
       canonicalLink('/projects'),
-      fontPreload('/manuka-bold.woff2'),
+      fontPreload('/clash-display-variable.woff2'),
       fontPreload('/PPNeueMontreal-Variable.woff2'),
     ],
   }),

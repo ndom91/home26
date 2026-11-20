@@ -2,9 +2,9 @@
 @import "react-medium-image-zoom/dist/styles.css";
 
 @font-face {
-  font-family: 'Manuka';
-  src: url('/manuka-bold.woff2') format('woff2');
-  font-weight: 100 800;
+  font-family: 'Clash Display';
+  src: url('/clash-display-variable.woff2') format('woff2');
+  font-weight: 200 700;
   font-style: normal;
   font-display: swap;
 }
@@ -96,16 +96,16 @@
    eliminating the layout shift when the real web font swaps in. Override
    values are derived from each font's own metrics (next/font algorithm). */
 @font-face {
-  font-family: 'Manuka Fallback';
-  /* Manuka is condensed: ~0.54x Arial Bold on mixed-case titles, ~0.46x on
-     uppercase heroes. 50% splits the difference. Declared as a weight range
+  font-family: 'Clash Display Fallback';
+  /* Clash Display Bold is ~1.07x Arial Bold on mixed-case titles and ~1.0x on
+     uppercase heroes; 104% splits the difference. Declared as a weight range
      so headings do not get synthetic bold on top of Arial Bold. */
   src: local('Arial Bold'), local('Arial-BoldMT'), local('Helvetica Neue Bold');
   font-weight: 100 900;
-  size-adjust: 50%;
-  ascent-override: 178.02%;
-  descent-override: 22%;
-  line-gap-override: 3.2%;
+  size-adjust: 104%;
+  ascent-override: 85.58%;
+  descent-override: 24.04%;
+  line-gap-override: 8.65%;
 }
 @font-face {
   font-family: 'Neue Montreal Fallback';
@@ -150,7 +150,7 @@
 
 @theme {
   --font-body: 'IBM Plex Mono', 'IBM Plex Mono Fallback', ui-monospace, monospace;
-  --font-heading: 'Manuka', 'Manuka Fallback', sans-serif;
+  --font-heading: 'Clash Display', 'Clash Display Fallback', sans-serif;
   --font-reading: 'Neue Montreal', 'Neue Montreal Fallback', ui-sans-serif, system-ui, sans-serif;
   --font-domino: 'The Future', 'The Future Fallback', var(--font-heading);
   --font-mono: 'Space Mono', 'Space Mono Fallback', monospace;

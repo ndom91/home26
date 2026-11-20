@@ -3,7 +3,10 @@ import { fontPreload } from '../lib/font-preload'
 
 export const Route = createFileRoute('/blog')({
   head: () => ({
-    links: [fontPreload('/manuka-bold.woff2'), fontPreload('/PPNeueMontreal-Variable.woff2')],
+    links: [
+      fontPreload('/clash-display-variable.woff2'),
+      fontPreload('/PPNeueMontreal-Variable.woff2'),
+    ],
   }),
   component: () => <Outlet />,
 })
